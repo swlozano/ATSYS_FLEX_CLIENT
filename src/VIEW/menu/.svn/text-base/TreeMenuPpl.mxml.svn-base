@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+	
+ <mx:Tree itemClick="{item_click(event)}"  id="myTreeNav" creationComplete="ccomplete()" enabled="{UsuariosSysMl.getInstance().mostrarMenu}" height="100%" width="100%" selectedIndex="0" labelField="@label" styleName="fseTree" disclosureClosedIcon="{arrowSide}"
+ 	disclosureOpenIcon="{arrowDown}" showRoot="true" dataProvider="{treeNavData}" change="{treeChanged(event),rHppl()}" iconField="@icon" verticalScrollPolicy="off" horizontalScrollPolicy="off"/>	
+	
+
+<mx:XMLList id="treeNavData"  >
+     <node label="Gestión de usuarios" data="-1"   >
+    	<node label="Usuarios" icon="usuarios" data="1"  />
+    	<node label="Roles" icon="rol" data="2"    />
+    </node>
+    
+     <node  label="Centro de Cuentas" data="-1" >
+    	<node label="Caja Menor" icon="icocajamenor"  data="3"   /> 
+    	<node label="Cuentas de Banco" icon="cbanko" data="14"    />
+    	<node label="Centro de Costo" icon="centrocosto" data="4"    />
+    	<node label="Movimientos" icon="movment" data="5"    />
+    </node>
+      
+    <node label="Gestión de Contratación" data="-1" >
+    	<node label="Recurso Humano"  icon="rechumano" data="6"   />
+    	<node label="Oficio" icon="oficio" data="8"    />
+    	<node label="Contratos" icon="contrato" data="9"    />
+    	<node label="Causación" icon="valorfpago" data="16"    />
+    </node>
+    
+    <node label="Gestión de Personas"  data="-1">
+    	<node label="Personas" icon="personas" data="10"/>
+    </node>
+    
+    <node label="Gestión de Facturas"  data="-1">
+    	<node label="Facturas" icon="factura" data="11"/>
+    </node>
+    
+    <node label="Cuentas de Cobro"  data="-1">
+    	<node label="Cuentas de Cobro" icon="ccobro" data="12"/>
+    </node>
+    
+    <node label="Cuentas por Pagar"  data="-1">
+    	<node label="Cuentas por Pagar" icon="cpagar" data="13"/>
+    </node> 
+    
+    
+</mx:XMLList>
+	      
+<mx:Script>
+	<![CDATA[
+		import MODEL.CuentasCobroMl;
+		import EVENT.CuentasCobroEvent;
+		import EVENT.CuentasPorPagarEvent;
+		import MODEL.UtilidadesMl;
+		import mx.core.Application;
+		import MODEL.RecursoHumanoMl;
+		import VIEW.contratacion.CausacionPpl;
+		import MODEL.CausacionesMl;
+		import MODEL.FacturasMl;
+		import VO.FechasPagoVO;
+		import MODEL.ContratoMl;
+		import EVENT.ContratoEvent;
+		import VO.ContratoVO;
+		import EVENT.OficioEvent;
+		import VO.OficioVO;
+		import EVENT.RecursoHumanoEvent;
+		import VO.RecursoHumanoVO;
+		import EVENT.FacturaEvent;
+		import VO.FacturaVO;
+		import mx.events.ListEvent;
+		import MODEL.PantallasMl;
+		import VO.UsuarioAlternoVO;
+		import VO.CajaMenorVO;
+		import EVENT.CajaMenorEvent;
+		import mx.controls.Alert;
+		import mx.collections.ArrayCollection;
+		import MODEL.PermisosMl;
+		import MODEL.UsuariosSysMl;
+		import EVENT.CentroCostoEvent;
+		import VO.CentroCostroVO;
+		import EVENT.PersonaEvent;
+		import VO.PersonaVO;
+		import EVENT.RolesSysEvent;
+		import VO.RolSysVO;
+		import com.adobe.cairngorm.control.CairngormEventDispatcher;
+		import EVENT.UsuariosSysEvent;
+		
+		import mx.events.FlexEvent;
+		
+		[Bindable]
+		public var currentView:Number = 0;
+		
+		[Bindable]
+		public var currentImg:Class;
+		
+		[Bindable]
+        public var selectedNode:XML;
+        
+        [Bindable]
+        [Embed(source="/REC/IMAGENES/delete.png")]
+        public var Non:Class;
+		[Bindable]
+		[Embed(source="/REC/IMAGENES/alertopt.png")]
+		public var alertidea:Class; 
+		 
+		[Bindable]
+			[Embed(source="/REC/IMAGENES/chart.png")]
+			public var finds:Class;
+				
+			[Bindable]
+			[Embed(source="/REC/IMAGENES/chart2.png")]
+			public var finds2:Class; 
+		 
+		private function item_click(evt:ListEvent):void{
+		
+		   var item:Object=Tree(evt.currentTarget).selectedItem;
+		   if(myTreeNav.dataDescriptor.isBranch(item)){
+		   
+		      myTreeNav.expandItem(item,!myTreeNav.isItemOpen(item),true);
+		   
+		   }
+		
+		} 
+		 
+		public function treeChanged(event:Event):void {
+                selectedNode=Tree(event.target).selectedItem as XML;
+                currentView = selectedNode.@data;
+                
+                
+                if (currentView != -1) {
+   
+                 	listarDatos(currentView);
+                	if(validarPermisos(currentView) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1 )
+                	 	this.dispatchEvent( new Event("change") );
+                	 else
+                	 {
+                	 	currentView = 0;
+                	 	this.dispatchEvent( new Event("change") );
+                	 	Alert.show(PermisosMl.MSG_PERMISO+" "+PermisosMl.MSG_ALERTA_PERMISO,"Mensaje de alerta",0,null,null,alertidea,0);
+                	
+                	
+                		
+                	}
+                } 
+        }
+        public function ccomplete():void{
+        	
+        	PermisosMl.getInstance().CloseMainMenu= myTreeNav;
+        	
+        }
+      
+       public function rHppl():void{
+       	
+       	if(currentView==11){
+       	
+       	  if(FacturasMl.getInstance().FacturasPpl!=null){	
+       	 	
+       	 	
+       	    FacturasMl.getInstance().FacturasPpl.mnuabajo.btnfind.toolTip="Reporte de Facturas";
+       	    FacturasMl.getInstance().FacturasPpl.mnuabajo.find =finds;
+       	    FacturasMl.getInstance().FacturasPpl.mnuabajo.find2 = finds2;
+       	    
+       	    if(FacturasMl.getInstance().FacturasPpl.viewStckPpl.selectedIndex==1 || FacturasMl.getInstance().FacturasPpl.viewStckPpl.selectedIndex==2){
+       	    	
+       	    	FacturasMl.getInstance().FacturasPpl.viewStckPpl.selectedIndex=0;
+       	    	FacturasMl.getInstance().FacturasPpl.mnudown.enabled=true;
+       	    	FacturasMl.getInstance().FacturasPpl.hbxMnu.enabled=true;
+       	    }
+       	    
+       	    
+       	  }
+       		/*UtilidadesMl.getInstance().Clon_MenuAbajo.btnfind.upSkin="@Embed(source='REC/IMAGENES/chart.png')";
+       		UtilidadesMl.getInstance().Clon_MenuAbajo.btnfind.downSkin="@Embed(source='REC/IMAGENES/chart2.png')";
+       		UtilidadesMl.getInstance().Clon_MenuAbajo.btnfind.overSkin="@Embed(source='REC/IMAGENES/chart.png')";
+       		//upSkin="@Embed(source='REC/IMAGENES/find.png')" downSkin="@Embed(source='REC/IMAGENES/find2.png')" overSkin="@Embed(source='REC/IMAGENES/find.png')"
+       		*/
+       	}
+       	
+       	 if(currentView==6){
+       	 	
+       	     if(RecursoHumanoMl.getInstance().RecursoHumanoPpl!=null){
+       	   	  
+	       	 	if(RecursoHumanoMl.getInstance().RecursoHumanoPpl.viewStckPpl.selectedIndex==1){
+	       	 		
+	       	 		RecursoHumanoMl.getInstance().RecursoHumanoPpl.viewStckPpl.selectedIndex=0;
+	       	 		RecursoHumanoMl.getInstance().RecursoHumanoPpl.mnudown.enabled=true;
+	       	 		
+	       	 	}  
+       	     }
+       	 	  
+       	 }else if(currentView==9){
+       	 	
+       	     if(ContratoMl.getInstance().ContratoPpl!=null){
+       	   	  
+	       	 	if(ContratoMl.getInstance().ContratoPpl.viewStckPpl.selectedIndex==1){
+	       	 		
+	       	 		ContratoMl.getInstance().ContratoPpl.viewStckPpl.selectedIndex=0;
+	       	 		ContratoMl.getInstance().ContratoPpl.mnudown.enabled=true;
+	       	 	}  
+       	     }
+       	 	  
+       	 }
+        
+       }
+       
+        public function listarDatos(numcurrent:Number):void{
+        
+          switch(numcurrent){
+          
+             case 1:
+              
+               UsuariosSysMl.getInstance().cbxCoincidenciaVisible = false;
+               var us:UsuariosSysVO;
+		       var evento1:UsuariosSysEvent = new UsuariosSysEvent(UsuariosSysEvent.LISTAR_US,us);
+		 	   CairngormEventDispatcher.getInstance().dispatchEvent(evento1);
+              
+             break;
+             
+             case 2:
+              
+                var rol:RolSysVO;
+                var evento2:RolesSysEvent = new RolesSysEvent(RolesSysEvent.LISTAR_ROLES,rol);
+                CairngormEventDispatcher.getInstance().dispatchEvent(evento2);
+                
+             break;
+             
+             case 3:
+		 	 
+		 	    var cjmenor:CajaMenorVO;
+		 	    cjmenor = new CajaMenorVO(0,0,"",0,0,0,null,0,0,0,false);
+		 	    var evento3:CajaMenorEvent = new CajaMenorEvent(CajaMenorEvent.LISTAR_CAJA_MENOR,cjmenor);
+		 	    CairngormEventDispatcher.getInstance().dispatchEvent(evento3);
+             
+             break;
+            
+             case 4:
+             
+                var centrocosto:CentroCostroVO;
+                var evento4:CentroCostoEvent = new CentroCostoEvent(CentroCostoEvent.LISTAR_CENTRO_COSTO,centrocosto);
+                CairngormEventDispatcher.getInstance().dispatchEvent(evento4); 
+               
+             break;
+            
+             case 5:
+		 	    PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_MOVIMIENTO_PPL;
+		 	    var cjmenors:CajaMenorVO;
+		 	    var evento5:CajaMenorEvent = new CajaMenorEvent(CajaMenorEvent.LISTAR_CAJA_USUARIO_ESPECIFICO,null);
+		 	    CairngormEventDispatcher.getInstance().dispatchEvent(evento5);
+             
+             break;
+             
+             case 6:
+               
+                //RecursoHumanoMl.getInstance().RecursoHumanoPpl.viewStckPpl.selectedIndex=0;
+               
+		 	    var recHumano:RecursoHumanoVO;
+		 	    var evento6:RecursoHumanoEvent = new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_RECURSO_HUMANO,null,null);
+		 	    CairngormEventDispatcher.getInstance().dispatchEvent(evento6);
+             
+             break;
+             
+             case 8:
+             
+		 	    var oficio:OficioVO;
+		 	    var evento8:OficioEvent = new OficioEvent(OficioEvent.LISTAR_OFICIO,null);
+		 	    CairngormEventDispatcher.getInstance().dispatchEvent(evento8);
+             
+             break;
+             
+             case 9:  
+             
+			 	   var contrato:ContratoVO;
+			 	   ContratoMl.getInstance().banEstadoContrato = 1;
+			 	   var evento9:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_CONTRATO,contrato,null,null);
+			 	   CairngormEventDispatcher.getInstance().dispatchEvent(evento9);
+             
+             break;
+             
+             case 10:
+              
+                var persona:PersonaVO;
+                var evento10:PersonaEvent = new PersonaEvent(PersonaEvent.LISTAR_PERSONAS,persona);
+                CairngormEventDispatcher.getInstance().dispatchEvent(evento10);
+                
+             break;
+             
+             case 11:
+                
+                
+                var factura:FacturaVO;
+                FacturasMl.getInstance().tipoEstado = 2;
+                FacturasMl.getInstance().tipoFecha = 3; 
+                FacturasMl.getInstance().fechaInicio = null;
+                FacturasMl.getInstance().fechaFin = null;
+                FacturasMl.getInstance().Filtrarpersona = -1;
+                PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_LISTAR_FACTURAS;
+                var event11:PersonaEvent = new PersonaEvent(PersonaEvent.LISTAR_PERSONAS,null);
+                CairngormEventDispatcher.getInstance().dispatchEvent(event11);
+                
+                /*var evento11:FacturaEvent = new FacturaEvent(FacturaEvent.LISTAR_FACTURA,factura);
+                CairngormEventDispatcher.getInstance().dispatchEvent(evento11);*/
+                
+             break;
+             
+             case 12:
+               
+               CuentasCobroMl.getInstance().idtipoEstado=6;
+               var event12:CuentasCobroEvent = new CuentasCobroEvent(CuentasCobroEvent.LISTAR_TODO);
+               CairngormEventDispatcher.getInstance().dispatchEvent(event12);
+             
+             break;
+             
+             case 13:
+             
+                
+                PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_CUENTAS_POR_PAGAR_PPL;
+		 	    
+		 	    var evento13:RecursoHumanoEvent = new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_RECURSO_HUMANO,null,null);
+		 	    CairngormEventDispatcher.getInstance().dispatchEvent(evento13); 
+		 	    
+             
+             break;
+             
+             case 14:
+             
+                var cajmenor:CajaMenorVO;
+                cajmenor= new CajaMenorVO(0,0,"",0,0,0,null,0,0,1,false);
+		 	    var evento14:CajaMenorEvent = new CajaMenorEvent(CajaMenorEvent.LISTAR_CAJA_MENOR,cajmenor);
+		 	    CairngormEventDispatcher.getInstance().dispatchEvent(evento14);
+             
+             break;
+             
+             case 16:
+            
+             	if(ContratoMl.getInstance().CausacionPpl != null)
+				{             
+             		ContratoMl.getInstance().CausacionPpl.viewStackCausaciones.selectedIndex = 0;
+             		ContratoMl.getInstance().CausacionPpl.dgCausaciones.selectedIndex = 0;
+             		ContratoMl.getInstance().CausacionPpl.initCollections();
+             		ContratoMl.getInstance().listCausacionNomina = null;
+             		
+    			}
+    			CausacionesMl.listarBonificaciones();
+             break;
+             
+           
+          }
+        
+        }
+        
+        public function validarPermisos(numcurrent:Number):Boolean{
+        
+          switch(numcurrent){
+          
+             case 1:
+              
+        		var idPermisos:ArrayCollection = new ArrayCollection();
+				idPermisos.addItem(PermisosMl.AGREGAR_USUARIOS);
+				idPermisos.addItem(PermisosMl.ELIMINAR_USUARIOS);
+				idPermisos.addItem(PermisosMl.MODIFICAR_USUARIOS);
+				return PermisosMl.getInstance().validarPermisos
+				(UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idPermisos);       
+              
+             break;
+             
+             case 2:
+              
+                var idpermisos2:ArrayCollection = new ArrayCollection();
+                idpermisos2.addItem(PermisosMl.AGREGAR_ROLES);
+                idpermisos2.addItem(PermisosMl.ELIMINAR_ROLES);
+                idpermisos2.addItem(PermisosMl.MODIFICAR_ROLES);
+                return PermisosMl.getInstance().validarPermisos
+                (UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idpermisos2);
+             
+                
+             break;
+             
+             case 3:
+             
+                var idPermisos3:ArrayCollection= new ArrayCollection();
+                idPermisos3.addItem(PermisosMl.AGREGAR_CAJA_MENOR);
+                idPermisos3.addItem(PermisosMl.ELIMINAR_CAJA_MENOR);
+                idPermisos3.addItem(PermisosMl.CONFIGURAR_CAJA_MENOR);
+                return PermisosMl.getInstance().validarPermisos
+                (UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idPermisos3);
+             
+             break;
+             
+             case 4:
+             
+                var idPermisos4:ArrayCollection= new ArrayCollection();
+                idPermisos4.addItem(PermisosMl.AGREGAR_CENTRO_DE_COSTO);
+                idPermisos4.addItem(PermisosMl.ELIMINAR_CENTRO_DE_COSTO);
+                idPermisos4.addItem(PermisosMl.MODIFICAR_CENTRO_DE_COSTO);
+                return PermisosMl.getInstance().validarPermisos
+                (UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idPermisos4);
+              
+             break;
+             
+             case 5:
+             
+                 var idpermisos5:ArrayCollection= new ArrayCollection();
+                 idpermisos5.addItem(PermisosMl.AGREGAR_MOVIMIENTOS);
+                 idpermisos5.addItem(PermisosMl.BUSCAR_MOVIMIENTOS);
+                 return PermisosMl.getInstance().validarPermisos(
+                 UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idpermisos5);
+             
+             break;
+             
+             case 6:
+             
+                 var idpermisos6:ArrayCollection= new ArrayCollection();
+                 idpermisos6.addItem(PermisosMl.AGREGAR_RECURSO_HUMANO);
+                 idpermisos6.addItem(PermisosMl.MODIFICAR_RECURSO_HUMANO);
+                 return PermisosMl.getInstance().validarPermisos(
+                 UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idpermisos6);
+             
+             break;
+             
+             case 8:
+             
+                 var idpermisos8:ArrayCollection= new ArrayCollection();
+                 idpermisos8.addItem(PermisosMl.AGREGAR_OFICIO);
+                 idpermisos8.addItem(PermisosMl.MODIFICAR_OFICIO);
+                 idpermisos8.addItem(PermisosMl.ELIMINAR_OFICIO);
+                 return PermisosMl.getInstance().validarPermisos(
+                 UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idpermisos8);
+             
+             break;
+             
+             case 9:
+             
+                 var idpermisos9:ArrayCollection= new ArrayCollection();
+                 idpermisos9.addItem(PermisosMl.AGREGAR_CONTRATO);
+                 idpermisos9.addItem(PermisosMl.TERMINAR_CONTRATO);
+                 idpermisos9.addItem(PermisosMl.LIQUIDAR_CONTRATO);
+                 idpermisos9.addItem(PermisosMl.ADENDAR_CONTRATO);
+                 idpermisos9.addItem(PermisosMl.AGREGAR_FICHA_PERMISO);
+                 idpermisos9.addItem(PermisosMl.ELIMINAR_FICHA_PERMISO);
+                 idpermisos9.addItem(PermisosMl.MODIFICAR_FICHA_PERMISO);
+                 
+                 idpermisos9.addItem(PermisosMl.AGREGAR_FICHA_INCAPACIDAD);
+                 idpermisos9.addItem(PermisosMl.ELIMINAR_FICHA_INCAPACIDAD);
+                 idpermisos9.addItem(PermisosMl.MODIFICAR_FICHA_INCAPACIDAD);
+                 
+                 idpermisos9.addItem(PermisosMl.AGREGAR_FICHA_PRESTAMO);
+                 idpermisos9.addItem(PermisosMl.ELIMINAR_FICHA_PRESTAMO);
+                 idpermisos9.addItem(PermisosMl.MODIFICAR_FICHA_PRESTAMO);
+                 
+                 idpermisos9.addItem(PermisosMl.AGREGAR_MEMORANDOS);
+                 idpermisos9.addItem(PermisosMl.ELIMINAR_MEMORANDOS);
+                 idpermisos9.addItem(PermisosMl.MODIFICAR_MEMORANDOS);
+                 
+                 return PermisosMl.getInstance().validarPermisos(
+                 UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idpermisos9);
+             
+             break;
+             
+             case 10:
+              
+                 var idpermisos10:ArrayCollection= new ArrayCollection();
+                 idpermisos10.addItem(PermisosMl.AGREGAR_PERSONAS);
+                 idpermisos10.addItem(PermisosMl.ELIMINAR_PERSONAS);
+                 idpermisos10.addItem(PermisosMl.MODIFICAR_PERSONAS);
+                 return PermisosMl.getInstance().validarPermisos(
+                 UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idpermisos10);
+                
+             break;
+             
+             case 11:
+              
+                 var idpermisos11:ArrayCollection= new ArrayCollection();
+                 idpermisos11.addItem(PermisosMl.AGREGAR_FACTURAS);
+                 idpermisos11.addItem(PermisosMl.ELIMINAR_FACTURAS);
+                 idpermisos11.addItem(PermisosMl.MODIFICAR_FACTURAS);
+                 idpermisos11.addItem(PermisosMl.GESTION_DE_ABONO_FACTURAS);
+                 idpermisos11.addItem(PermisosMl.REPORTES_DE_FACTURAS);
+                 return PermisosMl.getInstance().validarPermisos(
+                 UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idpermisos11);
+                
+             break;
+              
+             case 12:
+              
+                 var idpermisos12:ArrayCollection= new ArrayCollection();
+                 idpermisos12.addItem(PermisosMl.CUENTAS_DE_COBRO);
+                 return PermisosMl.getInstance().validarPermisos(
+                 UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idpermisos12);
+                
+             break; 
+              
+             case 13:
+              
+                 var idpermisos13:ArrayCollection= new ArrayCollection();
+                 idpermisos13.addItem(PermisosMl.AGREGAR_CUENTAS_POR_PAGAR);
+                 idpermisos13.addItem(PermisosMl.ELIMINAR_CUENTAS_POR_PAGAR);
+                 idpermisos13.addItem(PermisosMl.MODIFICAR_CUENTAS_POR_PAGAR);
+                 idpermisos13.addItem(PermisosMl.MODIFICAR_ESTADO_CUENTAS_POR_PAGAR);
+                 return PermisosMl.getInstance().validarPermisos(
+                 UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idpermisos13);
+                
+             break; 
+              
+             case 14:
+             
+                 var idpermisos14:ArrayCollection= new ArrayCollection();
+                 idpermisos14.addItem(PermisosMl.AGREGAR_CUENTAS_BANCO);
+                 idpermisos14.addItem(PermisosMl.ELIMINAR_CUENTAS_BANCO);
+                 idpermisos14.addItem(PermisosMl.MODIFICAR_CUENTAS_BANCO);
+                 return PermisosMl.getInstance().validarPermisos(
+                 UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idpermisos14);
+             
+             break;
+             
+             case 16:
+             
+                 var idpermisos16:ArrayCollection= new ArrayCollection();
+                 idpermisos16.addItem(PermisosMl.CAUSACIONES);
+                 return PermisosMl.getInstance().validarPermisos(
+                 UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idpermisos16);
+             
+             break;
+             
+             
+           
+          }
+        	return false;
+        }
+      
+        
+        [Bindable]
+		[Embed(source="REC/IMAGENES/us.png")]
+		public var usuarios:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/rol2.png")]
+		public var rol:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/iCajaMenor.png")]
+		public var icocajamenor:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/ccosto2.png")]
+		public var centrocosto:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/cbank2.png")]
+		public var cbanko:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/movment2.png")]
+		public var movment:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/recursohumano2.png")]
+		public var rechumano:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/valorfpago2.png")]
+		public var valorfpago:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/oficio2.png")]
+		public var oficio:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/contrato2.png")]
+		public var contrato:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/personas2.png")]
+		public var personas:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/factura2.png")]
+		public var factura:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/cuentacobro2.png")]
+		public var ccobro:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/cuentaspagar2.png")]
+		public var cpagar:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/arrowSide.png")]
+		public var arrowSide:Class;
+		
+		[Bindable]
+		[Embed(source="REC/IMAGENES/arrowDown.png")]
+		public var arrowDown:Class;
+		
+		
+		
+     	
+	]]>
+</mx:Script>	
+
+<mx:Metadata>
+        [Event("change")]
+    </mx:Metadata>
+
+</mx:Box>

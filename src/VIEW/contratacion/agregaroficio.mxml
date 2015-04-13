@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow  xmlns:mx="http://www.adobe.com/2006/mxml" 
+	initialize="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosAgregarOficio,0,-1 ,true)}"
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	layout="absolute" width="400" height="410"
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	showCloseButton="false">
+	<mx:Script>
+        <![CDATA[
+        	import MODEL.UtilidadesMl;
+        	import mx.core.Application;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import com.adobe.cairngorm.control.CairngormEvent;
+        	import EVENT.OficioEvent;
+        	import VO.OficioVO;
+        	import MODEL.PermisosMl;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           
+            [Bindable]
+            public var formIsValid:Boolean=false;
+            private var focussedFormControl:DisplayObject;
+           
+            public function agregarOficio():void{
+            	
+              if(formIsValid){	
+            	
+            	var oficio:OficioVO = new OficioVO(0,addnomoficio.text,addobjetocosto.text);
+            	var e:OficioEvent = new OficioEvent(OficioEvent.ADICIONAR_OFICIO,oficio);
+            	CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            	returnName();
+              }
+            	
+            }
+           
+           
+            private function returnName():void {
+                 PopUpManager.removePopUp(this);
+                 PermisosMl.getInstance().habilitarMenus();
+            }
+            
+            private function validateForm(event:Event):void{
+            
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(nameValidator);
+               validate(objValidator);
+            }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+            
+        ]]>
+    </mx:Script>
+    
+    
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Nombre del Oficio por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="nameValidator"
+        source="{addnomoficio}" 
+        property="text"
+        minLength="2"
+        maxLength="100"
+    />
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Objeto del Oficio por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="objValidator"
+        source="{addobjetocosto}" 
+        property="text"
+        minLength="2"
+        maxLength="500"
+    />
+    
+    
+	        
+	<mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+
+		<mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+			<mx:Canvas width="100%" height="100%" id="canvas1" >
+				<mx:Label  id="lblAddUs" text="{UtilidadesMl.getInstance().tituloPantalla}" color="#FFFFFF" fontWeight="bold" fontSize="13"
+ 		 		x="{(canvas1.width/2)-(lblAddUs.width/2)}" y="12"/>	
+			</mx:Canvas>
+		</mx:Box>
+ 
+		<mx:Box id="box2" height="79%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+			
+				<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+					
+					<mx:Form width="96%" height="70%" >
+						<mx:Spacer height="14"/>  
+					  	
+					  	<mx:FormItem label="       NOMBRE"  width="100%" styleName="labelTw"> 	
+					  	 	 <mx:TextInput id="addnomoficio" change="{validateForm(event)}" width="85%" maxChars="30"/>  	  	
+					  	 </mx:FormItem>
+					  	
+					  	<mx:Spacer height="10"/>
+					  	
+					  	<mx:FormItem label="OBJETO"  styleName="labelTw" width="100%" height="100%" > 	
+					  	 	 <mx:TextArea id="addobjetocosto" change="{validateForm(event)}" width="85%" height="100%" color="#000000" maxChars="500"/>  	  	
+					  	 </mx:FormItem>
+					    
+					    					    
+					   	
+					  	
+					</mx:Form>
+				</mx:Box>
+				
+						
+		</mx:Box>
+
+		<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+			<mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+				
+				<mx:HBox height="100%" width="50%" verticalAlign="middle">
+					
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+						<mx:Image source="{UtilidadesMl.getInstance().backEnable==true?(UtilidadesMl.getInstance().rutaback):UtilidadesMl.getInstance().rutaback2}"
+  	  					 toolTip="Atras" />	
+					</mx:Box>
+					
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+						<mx:Image id="ok" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  toolTip="Aceptar" enabled="{formIsValid}" click="{agregarOficio()}" />	
+					</mx:Box>
+					
+  				</mx:HBox>
+  				
+				<mx:HBox height="100%" width="50%" verticalAlign="middle">
+					
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+						<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar"/>	
+					</mx:Box>
+					
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+						<mx:Image source="{UtilidadesMl.getInstance().nextEnable==true?(UtilidadesMl.getInstance().next):UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" />	
+					</mx:Box>
+					
+  				</mx:HBox>
+  				
+			</mx:HBox>
+			
+		</mx:Box>
+	</mx:VBox>
+    
+</mx:TitleWindow>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

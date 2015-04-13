@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml" horizontalScrollPolicy="off" horizontalAlign="center" verticalAlign="middle" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			import MODEL.UtilidadesMl;
+		]]>
+	</mx:Script>
+	<mx:Label textAlign="center" text="{UtilidadesMl.getInstance().formaterFechas(data.fechaNacimiento)}" />
+</mx:Box>

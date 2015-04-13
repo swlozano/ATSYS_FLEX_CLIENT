@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow  xmlns:mx="http://www.adobe.com/2006/mxml" 
+    borderSkin="CSS.SKIN.PopUpSkin" 
+	layout="absolute" width="400" height="370"
+	initialize="ini()"
+	creationComplete="{PersonaMl.getInstance().Clon_pantallaAgregarPersona = this}"
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	showCloseButton="false">
+	<mx:Script>
+        <![CDATA[
+        	import mx.formatters.NumberBase;
+        	import MODEL.CajaMenorMl;
+        	import MODEL.PersonaMl;
+        	import mx.core.Application;
+        	import MODEL.UtilidadesMl;
+        	import MODEL.UsuariosSysMl;
+        	import MODEL.PermisosMl;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.PersonaEvent;
+        	import VO.PersonaVO;
+        	import com.adobe.cairngorm.control.FrontController;
+        	import mx.controls.Alert;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+             
+           [Bindable]
+            public var formIsValid:Boolean=false;
+            [Bindable]
+            public var formIsEmpty:Boolean=true;
+            
+            private var focussedFormControl:DisplayObject;
+            
+            [Embed(source="/REC/IMAGENES/warn2.png")]
+			public var alerta:Class;
+            
+            private function ini():void{
+            	
+            	vbxPpl.visible=false;
+            	vbxPpl.width=0;
+            	vbxPpl.height=0;
+            	
+            }
+            
+            private function returnName():void {
+            	 
+                 PopUpManager.removePopUp(this);
+                 PermisosMl.getInstance().CloseMainMenu.enabled=true;
+		         UsuariosSysMl.getInstance().mostrarSubMenu=true;
+            }
+            
+            private function returnName2():void {
+            	 
+            	 PersonaMl.getInstance().cual = "";
+                 PersonaMl.getInstance().numCual = "";
+            	 
+            	 
+            	 if(CajaMenorMl.getInstance().Clon_pantallaagregarCajaMenor!=null)
+                  {
+            	    CajaMenorMl.getInstance().Clon_pantallaagregarCajaMenor.cbxResponsable.selectedIndex=-1;
+            	    
+                  }
+                  
+                  if(CajaMenorMl.getInstance().Clon_pantallamodificarCajaMenor!=null)
+                  {
+            	    CajaMenorMl.getInstance().Clon_pantallamodificarCajaMenor.cbxModResponsable.selectedIndex=-1;
+                    CajaMenorMl.getInstance().Clon_pantallamodificarCajaMenor.cbxModResponsable.prompt="seleccione";
+                    CajaMenorMl.getInstance().Clon_pantallamodificarCajaMenor.formIsValid=false;
+                  }
+                  
+                  if(CajaMenorMl.getInstance().Clon_pantallaagregarCuenta!=null)
+                  {
+            	    CajaMenorMl.getInstance().Clon_pantallaagregarCuenta.cbxResponsable.selectedIndex=-1;
+                  }
+                  
+                  if(CajaMenorMl.getInstance().Clon_pantallamodificarCuenta!=null)
+                  {
+            	    CajaMenorMl.getInstance().Clon_pantallamodificarCuenta.cbxModResponsable.selectedIndex=-1;
+                    CajaMenorMl.getInstance().Clon_pantallamodificarCuenta.cbxModResponsable.prompt="seleccione";
+                    CajaMenorMl.getInstance().Clon_pantallamodificarCuenta.formIsValid=false;
+                  }
+                  
+                  
+                 PopUpManager.removePopUp(this);
+                 PermisosMl.getInstance().CloseMainMenu.enabled=true;
+		         UsuariosSysMl.getInstance().mostrarSubMenu=true;
+            }
+            
+            public function addPersona():void{
+            	
+            	if(formIsValid){
+            		
+            		var banAgregar:Boolean;
+            		
+            		if(Application.application.currentView==3){
+            			
+            			PersonaMl.getInstance().BanderaIsPersona = 1;
+            			
+            		}else if(Application.application.currentView==10){
+            			
+            			 PersonaMl.getInstance().BanderaIsPersona = 0;
+            		     
+            		     }
+            		       
+            		
+            		
+            		
+            	 	if(addNitpersona.text!="" && numfinalNIT.text==""){
+            	 		
+            	 		Alert.show("Si ingresas el NIT, se necesita tambien el Digito de Verificación","",0,null,null,alerta,0);
+            	 		
+            	 	    }else if(addNitpersona.text=="" && numfinalNIT.text!=""){
+            	 		
+            	 		       Alert.show("Si ingresas el NIT, se necesitan todos los digitos","",0,null,null,alerta,0); 
+            	 		 
+             	 	        }else{
+                 
+                                   if(chkboxDoc.selected){
+                                   	
+                                   	   //if(txtcual.text!="" && txtnumero.text=="")
+                                   	
+	                                   	 PersonaMl.getInstance().cual = txtcual.text;
+	                                   	 PersonaMl.getInstance().numCual = txtnumero.text;
+                                   	
+                                   } else{
+                                   	
+                                   	        PersonaMl.getInstance().cual = "";
+                                   	        PersonaMl.getInstance().numCual = "";
+                                   	        
+                                   	        txtcual.text="";
+                                   	        txtnumero.text="";
+                                   	
+                                         }
+                                     
+                                     if(txtcual.text!="" && txtnumero.text==""){
+                                     	
+                                     	Alert.show("Se necesitan ambos campos de la opcion OTRO","",0,null,null,alerta,0);
+                                     	
+                                     }else if(txtcual.text=="" && txtnumero.text!=""){
+                                     	
+                                     	      Alert.show("Se necesitan ambos campos de la opcion OTRO","",0,null,null,alerta,0);
+                                     	
+                                             }else{
+                                     
+                                     
+	                                    if(addNitpersona.text == "")
+					            		{
+					            			addNitpersona.text = "0";
+					            		}
+					            		if(addCedpersona.text == "")
+					            		{
+					            			addCedpersona.text = "0";
+					            		}
+					            		if(numfinalNIT.text == ""){
+					            			numfinalNIT.text = "0";
+					            		}
+					            		if(addtelefonopersona.text==""){
+					            		
+					            		   addtelefonopersona.text="0";
+					            		  
+					            		} 
+	                                     
+	                                     
+						                var concatNit:String = addNitpersona.text+numfinalNIT.text; 		
+						            		
+						                var nit:int = parseInt(concatNit);
+						                var ced:int = parseInt(addCedpersona.text); 
+						                
+						                var nom:String = addNompersona.text;		
+						            		   
+						           		var persona:PersonaVO = new PersonaVO(0,parseFloat(concatNit),parseInt(addCedpersona.text),addtelefonopersona.text,addNompersona.text,false);
+						                var event:PersonaEvent = new PersonaEvent(PersonaEvent.ADICIONAR_PERSONA,persona);
+						                CairngormEventDispatcher.getInstance().dispatchEvent(event);
+						                returnName();
+						                
+						                PersonaMl.getInstance().cual = "";
+	                                   	PersonaMl.getInstance().numCual = "";
+                                             }
+             	 	        }
+                }
+            }
+              
+            private function validateForm(event:Event):void{
+             
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               formIsEmpty = (addNompersona.text=="");
+               validate(nameValidator);
+            }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+            private function creationCompleteHandler():void
+            {
+               resetFocus();
+            }   
+            
+            private function clearFormHandler():void
+            {
+               addNompersona.text="";
+               addNompersona.errorString="";
+               formIsEmpty=true;
+               resetFocus();
+            }
+            
+            
+            
+            private function resetFocus():void
+            {
+                focusManager.setFocus(addNompersona);
+            }
+            
+            private function cambiarDocumentoId():void{
+            	
+            	if(chkboxDoc.selected==false){
+            		
+            		vbxPpl.visible=false;
+            		vbxPpl.width=0;
+            		vbxPpl.height=0;
+            		
+            	}else{
+            		
+            	      vbxPpl.visible=true;
+            		  vbxPpl.width=384;
+            		  vbxPpl.height=50;
+            	     
+            	     }
+            	
+            }
+            
+            
+        ]]>
+    </mx:Script>
+    
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Nombre o Razón Social por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="nameValidator"
+        source="{addNompersona}" 
+        property="text"
+        minLength="2"
+        maxLength="100"
+    />
+
+	
+	        
+	<mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+
+		<mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+			<mx:Canvas width="100%" height="100%" id="canvas1" >
+				<mx:Label  id="lblAddUs" text="AÑADIR PERSONAS" color="#FFFFFF" fontWeight="bold" fontSize="13"
+ 		 		x="{(canvas1.width/2)-(lblAddUs.width/2)}" y="12"/>	
+			</mx:Canvas>
+		</mx:Box>
+ 
+		<mx:Box id="box2" height="77%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+			
+				<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+					
+
+        <mx:Form  verticalScrollPolicy="off"   width="96%" height="70%" >
+	              
+	              <mx:Spacer height="8"/>
+	  	      	  <mx:FormItem label="NOMBRE O RAZÓN SOCIAL"   width="100%" styleName="labelTw" > 	
+	  	      	  	 <mx:TextInput  change="validateForm(event)" id="addNompersona" width="75%" maxChars="100" fontWeight="normal"/>  	  	
+	  	      	  </mx:FormItem>
+	  	      	   
+	  	      	   <mx:Spacer height="20"/>
+	  	      	   
+	  	      	  <mx:FormItem label="CÉDULA"   width="100%" styleName="labelTw">
+	  	      	  	 <mx:TextInput restrict="0-9" id="addCedpersona"  width="75%" fontSize="10" fontWeight="normal"/>
+	  	      	  </mx:FormItem>
+	  	      	  
+	  	      	  <mx:Spacer height="20"/>
+	  	      	  
+	  	      	  <mx:FormItem label="NIT"  width="100%" styleName="labelTw">
+	  	      	    
+	  	      	    <mx:HBox verticalAlign="middle" horizontalAlign="left" width="100%">
+	  	      	    	<mx:TextInput restrict="0123456789" id="addNitpersona"  width="50%" fontSize="10" fontWeight="normal"/>
+	  	      	    	  <mx:HRule width="5" strokeColor="#FFFFFF" height="1"/>
+	  	      	    	<mx:TextInput textAlign="center" id="numfinalNIT" restrict="1234567890" maxChars="1" width="3%" fontSize="10" fontWeight="normal"/>
+	  	      	    </mx:HBox>
+	  	      	  	     
+	  	      	  </mx:FormItem>
+	  	      	  
+	  	      	  <mx:Spacer height="15"/>
+	  	      	  
+	  	      	  <mx:Box verticalAlign="middle" horizontalAlign="center" width="100%">
+	  	      	  
+	  	      	     <mx:HRule width="98%" strokeColor="#CACACA"/>
+	  	      	  	
+	  	      	  </mx:Box>
+	  	      	  
+	  	      	  <mx:Spacer height="7"/>
+	  	      	  
+	  	      	  <mx:VBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	      	  	
+	  	      	  	 <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	      	  	 	<mx:Label text="OTRO TIPO DE DUCUMENTO" color="#FFFFFF" fontWeight="bold" fontSize="10"/>
+	  	      	  	 	<mx:CheckBox id="chkboxDoc" change="{cambiarDocumentoId()}" selected="false"/>
+	  	      	  	 </mx:HBox>
+	  	      	  	 
+			  	      	  	 <mx:VBox id="vbxPpl" width="100%" verticalAlign="middle" horizontalAlign="center">
+			  	      	  	 	
+			  	      	  	 	<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+					  	      	  	 	<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+					  	      	  	 		<mx:Label text="Cual?" color="#FFFFFF" fontWeight="bold" fontSize="10"/>
+					  	      	  	 	</mx:Box>
+					  	      	  	 	
+					  	      	  	 	<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+					  	      	  	 		<mx:TextInput id="txtcual" width="70%"/>
+					  	      	  	 	</mx:Box>
+					  	        </mx:HBox>
+					  	        <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+					  	      	  	 	<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+					  	      	  	 		<mx:Label text="Número" color="#FFFFFF" fontWeight="bold" fontSize="10"/>
+					  	      	  	 	</mx:Box>
+					  	      	  	 	
+					  	      	  	 	<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+					  	      	  	 		<mx:TextInput id="txtnumero" width="70%"/>
+					  	      	  	 	</mx:Box>
+					  	        </mx:HBox>
+			  	      	  	 	  
+			  	      	  	 </mx:VBox>
+	  	      	  	
+	  	      	  </mx:VBox>
+	  	      	  
+	  	      	  <mx:Spacer height="7"/>
+	  	      	  
+	  	      	  <mx:Box verticalAlign="middle" horizontalAlign="center" width="100%">
+	  	      	  
+	  	      	     <mx:HRule width="98%" strokeColor="#CACACA"/>
+	  	      	  	
+	  	      	  </mx:Box>
+	  	      	  
+	  	      	  <mx:Spacer height="15"/>
+	  	      	  
+	  	      	  <mx:FormItem label="TELÉFONO"   width="100%"   fontSize="11" color="#FFFFFF">
+	  	      	  	 <mx:TextInput restrict="0-9" id="addtelefonopersona"  width="75%"  color="#000000" fontWeight="normal" fontSize="10"/>
+	  	      	  </mx:FormItem>
+	  	      	  
+	  	      	  
+	  	      	  
+	  	      	 
+	         
+	   </mx:Form>
+				</mx:Box>
+				
+						
+		</mx:Box>
+
+		<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+			<mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+				<mx:HBox height="100%" width="50%" verticalAlign="middle">
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+						<mx:Image source="{UtilidadesMl.getInstance().rutaback2}"
+  	  					 toolTip="Atras" />	
+					</mx:Box>
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+						<mx:Image id="ok" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  toolTip="Aceptar" enabled="{formIsValid}" click="{addPersona()}" />	
+					</mx:Box>
+  				</mx:HBox>
+				<mx:HBox height="100%" width="50%" verticalAlign="middle">
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+						<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName2()}" toolTip="Cancelar"/>	
+					</mx:Box>
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+						<mx:Image source="{UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" />	
+					</mx:Box>
+  				</mx:HBox>
+			</mx:HBox>
+		</mx:Box>
+	</mx:VBox>
+</mx:TitleWindow>
+
+
+
+
+
+
+

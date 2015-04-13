@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cairngorm:ServiceLocator
+    xmlns:cairngorm="com.adobe.cairngorm.business.*"
+    xmlns:mx="http://www.adobe.com/2006/mxml">
+    
+    <mx:RemoteObject id="gestionUsuarios" 
+        showBusyCursor="true"
+        destination="usuarioSistema" >
+        <!--mx:method name="create"/-->
+    </mx:RemoteObject>  
+    
+     <mx:RemoteObject id="rolDao" 
+        showBusyCursor="true"
+        destination="rolDao" >
+    </mx:RemoteObject> 
+    
+    <mx:RemoteObject id="CajaMenor" 
+        showBusyCursor="true"
+        destination="cajaMenorDao" >
+    </mx:RemoteObject>
+    
+    <mx:RemoteObject id="gestionMovimientos" 
+        showBusyCursor="true"
+        destination="movimientoDao" >
+    </mx:RemoteObject>
+   
+    <mx:RemoteObject id="gestionPersonas" 
+        showBusyCursor="true"
+        destination="personaDao" >
+    </mx:RemoteObject>
+    
+    <mx:RemoteObject id="gestionCentroCosto" 
+        showBusyCursor="true"
+        destination="centroCostoDao" >
+    </mx:RemoteObject>
+    
+    <mx:RemoteObject id="gestionFacturas" 
+        showBusyCursor="true"
+        destination="facturaDao" >
+    </mx:RemoteObject>
+      
+    <mx:RemoteObject id="gestionrecursoHumano" 
+        showBusyCursor="true"
+        destination="recursoHumanoDao" >
+    </mx:RemoteObject>
+    
+    <mx:RemoteObject id="gestionOficios" 
+        showBusyCursor="true"
+        destination="oficioDao" >
+    </mx:RemoteObject>
+     
+    <mx:RemoteObject id="gestionContratos" 
+        showBusyCursor="true"
+        destination="contratoDao" >
+    </mx:RemoteObject>
+    
+    <mx:RemoteObject id="gestionValorFormapago" 
+        showBusyCursor="true"
+        destination="valorFormaPagoDao" >
+    </mx:RemoteObject>
+    
+    <mx:RemoteObject id="gestionSolicitudesServicios" 
+        showBusyCursor="true"
+        destination="fichaDao" >
+    </mx:RemoteObject>
+    
+    <mx:RemoteObject id="fechas" 
+        showBusyCursor="true"
+        destination="fechas" >
+    </mx:RemoteObject>
+    
+    <mx:RemoteObject id="causacionNomina" 
+        showBusyCursor="true"
+        destination="causacionNominaDao" >
+    </mx:RemoteObject>
+    
+    <mx:RemoteObject id="causacionPs" 
+        showBusyCursor="true"
+        destination="causacionPsDao" >
+    </mx:RemoteObject>
+    
+    
+    <mx:RemoteObject id="gestionCuentasCobro" 
+        showBusyCursor="true"
+        destination="cuentasCobroDao" >
+    </mx:RemoteObject>
+    
+    <mx:RemoteObject id="causacionDao" 
+        showBusyCursor="true"
+        destination="causacionDao" >
+    </mx:RemoteObject>
+      
+    <mx:RemoteObject id="gestionLiquidacion" 
+        showBusyCursor="true"
+        destination="liquidacionDao" >
+    </mx:RemoteObject>
+    
+    <mx:RemoteObject id="gestionCuentasXpagar" 
+        showBusyCursor="true"
+        destination="cuentaPorPagarDao" >
+    </mx:RemoteObject>
+    
+    <mx:RemoteObject id="reporteFacturas" 
+        showBusyCursor="true"
+        destination="reporteFacturaDao" >
+    </mx:RemoteObject>
+    
+</cairngorm:ServiceLocator>

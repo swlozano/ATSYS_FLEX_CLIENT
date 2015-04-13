@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/ATSYS_WEB/!svn/ver/110/ATSYS_WEB/src/COMMAND/Factura
+END
+AddFacturaCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Factura/AddFacturaCommand.as
+END
+ListarIvasCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/ATSYS_WEB/!svn/ver/61/ATSYS_WEB/src/COMMAND/Factura/ListarIvasCommand.as
+END
+ModificarAbonoFacturaCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Factura/ModificarAbonoFacturaCommand.as
+END
+ModificarFacturaCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Factura/ModificarFacturaCommand.as
+END
+ListarFacturaCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/ATSYS_WEB/!svn/ver/61/ATSYS_WEB/src/COMMAND/Factura/ListarFacturaCommand.as
+END
+EliminarAbonoFacturaCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Factura/EliminarAbonoFacturaCommand.as
+END
+EliminarFacturaCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Factura/EliminarFacturaCommand.as
+END
+ListarAbonosFacturaCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ATSYS_WEB/!svn/ver/61/ATSYS_WEB/src/COMMAND/Factura/ListarAbonosFacturaCommand.as
+END
+GenerarReporteFacturaCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/ATSYS_WEB/!svn/ver/45/ATSYS_WEB/src/COMMAND/Factura/GenerarReporteFacturaCommand.as
+END
+AddAbonoFacturaCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Factura/AddAbonoFacturaCommand.as
+END
+ListarRetencionesCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/ATSYS_WEB/!svn/ver/110/ATSYS_WEB/src/COMMAND/Factura/ListarRetencionesCommand.as
+END

@@ -1,0 +1,844 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox width="100%" height="100%" xmlns:mx="http://www.adobe.com/2006/mxml" 
+	creationComplete="{crearPantalla(),initCollections()}"   styleName="glassPods" verticalAlign="middle" horizontalAlign="center" xmlns:menu="VIEW.menu.*">
+	
+	<mx:Box width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom">
+	 <mx:VRule height="10" visible="false"/>
+	 	
+    	<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			<mx:LinkButton visible="{viewStackCausaciones.selectedIndex!=0?(viewStackCausaciones.selectedIndex!=5?(true):(false)):(false)}" 
+				 id="lkVolverCausacion" textAlign="center" label="Volver a Causaciones"
+				 color="#FFFFFF"  textDecoration="underline" fontWeight="bold" click="{lkVolverCausacionClick()}" fontSize="12"/>
+	        <mx:MenuBar textAlign="center" cornerRadius="7" labelField="@label" itemClick="{menuHandler(event)}" 
+			            dataProvider="{menuBarCollection}"/> 
+			     
+      	</mx:HBox>
+      	   
+      	        	     	
+			      	<mx:ViewStack id="viewStackCausaciones" height="95%" width="95%" selectedIndex="0">
+			      	
+			           <!--INDICE 0-->	
+			      	
+				      	  <mx:Box width="95%" height="95%" >
+								<mx:DataGrid width="100%"  height="97%" dataProvider="{ContratoMl.getInstance().listCausacionNomina}" id="dgCausaciones" themeColor="#307BAB" alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15">
+									<mx:columns>
+										<mx:DataGridColumn labelFunction="dg_labelFuncNombreEmpleado" textAlign="center" headerText="Empleado"  width="250"/>
+										<mx:DataGridColumn labelFunction="dg_labelFuncIbc" textAlign="center" headerText="IBC" />
+										<mx:DataGridColumn labelFunction="dg_labelFuncdiasTrabajados" textAlign="center" headerText="DIAS TRABAJADOS" />
+										<mx:DataGridColumn labelFunction="dg_labelFuncsubTotal" textAlign="center" headerText="SUBTOTAL" />
+										<mx:DataGridColumn labelFunction="dg_labelFuncAuxtransporte" textAlign="center" headerText="AUX.TRANSPORTE" />
+										<mx:DataGridColumn  textAlign="center" headerText="Total a pagar" labelFunction="labelFuncTotalApagar" />
+										<mx:DataGridColumn  textAlign="center" headerText="Caus. empresa" itemRenderer="VIEW.Items.Causacion.ItemGenerarCC"/>
+										<mx:DataGridColumn  textAlign="center" headerText="Total caus. empresa" labelFunction="labelFuncTotalCausaEmpresa" />
+										
+									</mx:columns>
+								</mx:DataGrid>
+						  </mx:Box>
+						
+						<!--INDICE 1-->
+						
+						<mx:Box width="95%" height="95%" >
+						
+							<mx:DataGrid width="100%"  height="97%"  
+								id="dgCausacioEmpresa" themeColor="#307BAB" 
+								alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15"
+								dataProvider="{ContratoMl.getInstance().CausacionPpl.listCausacionEmpresa}">
+								<mx:columns>
+									<mx:DataGridColumn  textAlign="center" headerText="Tipo asocaja" labelFunction="labelFuncTipoAsocaja"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Año" labelFunction="labelFuncYear" />
+									<mx:DataGridColumn  textAlign="center" headerText="Porcentaje"  labelFunction="labelFuncPorcentaje"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Aplica a" labelFunction="labelFuncAplicaA"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Valor" labelFunction="labelFuncValor"/>
+								</mx:columns>
+							</mx:DataGrid>
+							
+						</mx:Box>
+						
+						<!--INDICE 2-->
+						
+						<mx:Box width="95%" height="95%" >
+						
+							<mx:DataGrid width="100%"  height="97%"  
+								id="dgBonificaciones" themeColor="#307BAB" 
+								alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15"
+								dataProvider="{CausacionesMl.getInstance().listaBonificaciones}">
+								<mx:columns>
+									<mx:DataGridColumn  textAlign="center" headerText="Bonificación" dataField="nombre"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Valor" dataField="valor"/>
+									<mx:DataGridColumn headerText="Seleccionar" dataField="id"  textAlign="center">
+										        	       <mx:itemRenderer >
+														   <mx:Component>
+														      <mx:CheckBox  click="data.seleccionado=!data.seleccionado"  
+														      selected="{data.seleccionado}"  horizontalCenter="true"/>
+														   </mx:Component>   
+													   </mx:itemRenderer>
+										        	     </mx:DataGridColumn>
+								</mx:columns>
+							</mx:DataGrid>
+							
+						</mx:Box>
+						
+						<!--INDICE 3-->
+						
+						<mx:Box width="95%" height="95%" >
+						
+							<mx:DataGrid width="100%"  height="97%"  
+								id="dgProvisiones" themeColor="#307BAB" 
+								alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15"
+								dataProvider="{CausacionesMl.getInstance().listaProvisiones}">
+								<mx:columns>
+									<mx:DataGridColumn  textAlign="center" headerText="Provisión" dataField="nombre"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Observación" dataField="observacion"/>
+									<mx:DataGridColumn headerText="Seleccionar" dataField="id"  textAlign="center">
+										        	       <mx:itemRenderer >
+														   <mx:Component>
+														      <mx:CheckBox   click="data.seleccionado=!data.seleccionado"  
+														       selected="{data.seleccionado}"  horizontalCenter="true" />
+														      
+														   </mx:Component>   
+													   </mx:itemRenderer>
+										        	     </mx:DataGridColumn>
+									<mx:DataGridColumn  textAlign="center" headerText="Valor" itemRenderer="VIEW.Items.Causacion.ItemAddValProvision" dataField="valor" />
+								</mx:columns>
+							</mx:DataGrid>
+							
+						</mx:Box>
+						
+						<!--INDICE 4-->
+								
+						<mx:Box width="95%" height="95%" >
+						
+							<mx:DataGrid width="100%"  height="97%"  
+								id="dgDeducciones" themeColor="#307BAB" 
+								alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15"
+								dataProvider="{CausacionesMl.getInstance().listaDeducciones}">
+								<mx:columns>
+									<mx:DataGridColumn  textAlign="center" headerText="Deducción" dataField="nombre"/>
+									<mx:DataGridColumn  textAlign="center" headerText="valor" dataField="valor"/>
+									<mx:DataGridColumn headerText="Seleccionar" dataField="id"  textAlign="center">
+										        	       <mx:itemRenderer >
+														   <mx:Component>
+														      <mx:CheckBox  click="data.seleccionado=!data.seleccionado"  
+														      selected="{data.seleccionado}"  horizontalCenter="true"/>
+														   </mx:Component>   
+													   </mx:itemRenderer>
+										        	     </mx:DataGridColumn>
+								</mx:columns>
+							</mx:DataGrid>
+							
+						</mx:Box>
+						
+						<!--INDICE 5-->
+						
+						<mx:Box width="95%" height="95%" >
+							<mx:DataGrid width="100%"  height="97%" dataProvider="{ContratoMl.getInstance().listCausacionps}" id="dgCausacionesPs" themeColor="#307BAB" alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15">
+								<mx:columns>
+								
+									<mx:DataGridColumn  textAlign="center" labelFunction="dg_labelFuncNomContratista" dataField="contratista" headerText="Contratista"  width="250"/>
+									<mx:DataGridColumn  textAlign="center" labelFunction="dg_labelFuncBasico" headerText="Básico" />
+									<mx:DataGridColumn  textAlign="center" labelFunction="dg_labelFuncDiasTrabajados" dataField="diasTrabajados" headerText="Dias Trabajados" />
+									<mx:DataGridColumn  textAlign="center" labelFunction="dg_labelFuncRut" dataField="rut" headerText="Rut" />
+									<mx:DataGridColumn  textAlign="center" labelFunction="dg_labelFuncdevengados" headerText="Devengados" />
+									<mx:DataGridColumn  textAlign="center" labelFunction="dg_labelFunctotalBonificaciones" headerText="Total Bonificaciones"  />
+									<mx:DataGridColumn  textAlign="center" labelFunction="dg_labelFunctotalpagar" headerText="Total a Pagar"  />
+									
+								</mx:columns>
+							</mx:DataGrid>
+					  </mx:Box>
+						
+								
+			      	</mx:ViewStack>
+		
+		     <!--/mx:Box-->
+		     
+		  <!--/mx:ViewStack-->  
+		
+	</mx:Box>
+	<!--menu:MenuAbajo/-->
+	<mx:Script>
+	<![CDATA[
+		import EVENT.CausacionEvent;
+		import mx.events.CloseEvent;
+		import com.adobe.cairngorm.control.CairngormEvent;
+		import mx.managers.PopUpManager;
+		import VO.ValorIdVO;
+		import VO.CausacionNominaVO;
+		import mx.collections.ArrayCollection;
+		import MODEL.CausacionesMl;
+		import mx.controls.Alert;
+		import mx.collections.XMLListCollection;
+		import mx.events.MenuEvent;
+		import flash.sampler.getInvocationCount;
+		import MODEL.UtilidadesMl;
+		import mx.controls.Menu;
+		import MODEL.PantallasMl;
+		import com.adobe.cairngorm.control.CairngormEventDispatcher;
+		import EVENT.ContratoEvent;
+		import VIEW.otros.CbxCoincidencia;
+		import MODEL.ContratoMl;
+		import MODEL.OficioMl;
+		
+		 
+		
+		     [Bindable]
+			 [Embed(source="/REC/IMAGENES/f.png")]
+		 	  public var buscar:Class;
+		 	 
+		 	 [Bindable] public var listCausacionEmpresa:Object;
+		 	 
+		 	 [Bindable]
+              private var ArrayOpciones:Array = [{generarCausaciones:'GENERAR CAUSACIONES', id:1},{generarCausaciones:'VER CAUSACIONES', id:2}];
+		 	 
+		 	[Bindable]
+            public var menuBarCollection:XMLListCollection;
+    		
+    		[Bindable]
+            public var menubarXMLInicio:XMLList =
+                <>
+                	<menuitem label="Causaciones" >
+                        <menuitem label="Generar causación" data="4" enabled="true" />
+                        <menuitem label="Calcular causación" data="5" enabled="false"/>
+                        <menuitem label="Guardar causación" data="6" enabled="true"/>
+                        <menuitem label="Ver causaciones" data="7" enabled="true"/>
+                    </menuitem>                	
+                    <menuitem label="Agregar" >
+                        <menuitem label="Bonificaciones" data="1" enabled="true"/>
+                        <menuitem label="Provisiones" data="2" enabled="true"/>
+                        <menuitem label="Deducciones" data="3" enabled="true"/>
+                    </menuitem>
+                </>;
+                
+                
+		 	//////////////////////////////////////////////////ps///////////////////
+		 	 
+		 	 public function dg_labelFuncNomContratista(item:Object, dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;	
+                 
+              	 nombre= item.causacionPs.contratista;
+              	 
+                 return nombre;
+             }
+		 	 
+		 	 public function dg_labelFuncDiasTrabajados(item:Object, dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;	
+                 
+              	 nombre= item.causacionPs.diasTrabajados;
+              	 
+                 return nombre;
+             }
+             
+             public function dg_labelFuncRut(item:Object, dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;	
+                 
+              	 nombre= item.causacionPs.rut;
+              	 
+                 return nombre;
+             }
+		 	 
+		 	 public function dg_labelFuncBasico(item:Object, dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;	
+                 
+              	 nombre= item.causacionPs.basico;
+              	 
+              	 nombre = UtilidadesMl.getInstance().formaterMoneda(nombre);
+                 
+                 return nombre;
+             }
+		 	
+		 	 public function dg_labelFuncdevengados(item:Object, dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;	
+                 
+              	 nombre= item.causacionPs.devengados;
+              	 
+              	 nombre = UtilidadesMl.getInstance().formaterMoneda(nombre);
+                 
+                 return nombre;
+             }
+		 	 
+		 	 public function dg_labelFunctotalBonificaciones(item:Object, dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;	
+                 
+              	 nombre= item.causacionPs.totalBonificaciones;
+              	 
+              	 nombre = UtilidadesMl.getInstance().formaterMoneda(nombre);
+                 
+                 return nombre;
+             }
+             
+             public function dg_labelFunctotalpagar(item:Object, dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;	
+                 
+              	 nombre= item.causacionPs.totalAPagar;
+              	 
+              	 nombre = UtilidadesMl.getInstance().formaterMoneda(nombre);
+                 
+                 return nombre;
+             }
+		 	 
+		 	 
+		 	//////////////////////////////////////////////////////////////////////
+		 	 public function dg_labelFuncNombreEmpleado(item:Object, dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;	
+                 
+              	 nombre= item.causacionNomina.nombreEmpleado;
+                 
+                 return nombre;
+             }
+             
+             public function dg_labelFuncIbc(item:Object, dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;	
+                 
+              	 nombre= item.causacionNomina.ibc;
+              	 
+              	 nombre = UtilidadesMl.getInstance().formaterMoneda(nombre);
+                 
+                 return nombre;
+             }
+             
+             public function dg_labelFuncdiasTrabajados(item:Object, dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;	
+                 
+              	   nombre= item.causacionNomina.diasTrabajados;
+                 
+                 return nombre;
+             }
+              public function dg_labelFuncsubTotal(item:Object, dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;	
+                 
+              	   nombre= item.causacionNomina.subtotal;
+              	   nombre = UtilidadesMl.getInstance().formaterMoneda(nombre);
+                 
+                 return nombre;
+             }
+             
+             public function dg_labelFuncAuxtransporte(item:Object, dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;	
+                 
+              	   nombre= item.causacionNomina.tributaria.auxilioTrasporte;
+              	   nombre = UtilidadesMl.getInstance().formaterMoneda(nombre);
+                 
+                 return nombre;
+             }
+             
+             
+		 	 
+		 	 public function crearPantalla():void
+		     {
+			
+			    ContratoMl.getInstance().CausacionPpl = this;
+				
+		     }
+		     
+		     public function showWindow(index:int):void{
+		     	
+		     	 if(index==1){
+		     	 	 
+		     	 	 PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_PARAMETROS_GENERAR_CAUSACION;
+		     	 	 
+		     	 	 var e:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_TIPO_CONTRATO,null,null,null);
+					 CairngormEventDispatcher.getInstance().dispatchEvent(e);
+		     	 	
+		     	 }
+		     	
+		     }
+		     
+		     private function labelFuncTipoAsocaja(item:Object,dgcolumn:DataGridColumn):String{
+		     	return ""+item.valoresAsocaja.tipoAsocaja.nombre;	
+
+		     }
+		     private function labelFuncYear(item:Object,dgcolumn:DataGridColumn):String{
+		     	return ""+item.valoresAsocaja.ano;	
+
+		     }
+		     private function labelFuncPorcentaje(item:Object,dgcolumn:DataGridColumn):String{
+		     	return ""+item.valoresAsocaja.porcentaje;	
+
+		     }
+		     private function labelFuncAplicaA(item:Object,dgcolumn:DataGridColumn):String{
+		     	return ""+item.valoresAsocaja.aplicaA;	
+
+		     }
+		     private function labelFuncValor(item:Object,dgcolumn:DataGridColumn):String{
+		     	return ""+item.valor;	
+		     }
+		     private function lkVolverCausacionClick():void{
+		     	
+		     	if(!guardarCausacion)
+		     	{
+						if(verificarDatosSeleccionados())
+						{		     		
+		     				Alert.yesLabel = "SI";
+        					Alert.noLabel = "NO";
+        					Alert.show("Los datos que no se hayan calculado se perderán." + "\n" +"¿Está seguro de continuar?","",Alert.YES|Alert.NO,this,handlerAlertReturnCausaPpl,null,1);
+		    			}
+		    			else{
+			    				  if(CausacionesMl.getInstance().currentTipoCausacion == 2)
+						     		{
+						     			viewStackCausaciones.selectedIndex = 0;
+						     		}
+						     		else{
+						     			viewStackCausaciones.selectedIndex = 5;
+						     		} 	
+		    			    }
+		     	}
+		     	else
+		     	{
+		     		if(CausacionesMl.getInstance().currentTipoCausacion == 2)
+		     		{
+		     			viewStackCausaciones.selectedIndex = 0;
+		     		}
+		     		else{
+		     			viewStackCausaciones.selectedIndex = 5;
+		     		} 
+		     	}
+		     	
+		     }
+		     
+		     private function labelFuncTotalCausaEmpresa(item:Object,dgcolumn:DataGridColumn):String{
+		     	return ""+item.causacionNomina.totalCausEmpresa;
+		     }
+		 	 private function labelFuncTotalApagar(item:Object,dgcolumn:DataGridColumn):String{
+		     	return ""+item.causacionNomina.totalAPagar;
+		     }
+		     private function getProvisionesSeleccionadas():Array{
+		     	
+		     	
+		     	var arrayRetorno:Array = new Array();
+		     	
+		     	for each(var x:* in CausacionesMl.getInstance().listaProvisiones){
+		     		
+		     		if(x.seleccionado){
+		     			var valorIdVO:ValorIdVO = new ValorIdVO().ValorIdVOConstructor(x.id,x.valor);
+		     			arrayRetorno.push(valorIdVO);	
+		     		}
+		     					     		
+		     	}
+		     	return arrayRetorno;
+		     	
+		     }
+		     
+		     private function clickGurdarCausacion():void{
+		     	CausacionesMl.crearCausacion();
+		     }
+		     /******************************************************/
+		     	 var  guardarCausacion:Boolean = false;
+                private function menuHandler(event:MenuEvent):void  {
+                	var op:int =event.item.@data;
+                	var matenerDatos:Boolean;
+                	switch(op){
+                		case 1:
+                		//AGREGAR BONIFICACIONES
+                		if(CausacionesMl.getInstance().currentTipoCausacion == 2){	
+                			
+                			if(dgCausaciones.selectedItem != null)
+                			{
+                				if(viewStackCausaciones.selectedIndex==0)
+                				{
+                					matenerDatos = false;	
+                					CausacionesMl.getInstance().getBonificacionsSeleccionadas(dgCausaciones.selectedIndex,matenerDatos);
+                					CausacionesMl.getInstance().getDeduccionesSelecciondas(dgCausaciones.selectedIndex,matenerDatos);	
+                					CausacionesMl.getInstance().getProvisionesSelecciondas(dgCausaciones.selectedIndex,matenerDatos);
+                				}
+                				else
+                				{
+                					matenerDatos = true;
+                				}
+                				modificarItemsMenuBar(2);
+                				viewStackCausaciones.selectedIndex = 2;
+                				//CausacionesMl.getInstance().getBonificacionsSeleccionadas(dgCausaciones.selectedIndex,matenerDatos);
+                			}
+                			else{
+                		    	Alert.show("Debe seleccionar una causación","Seleccione causación");
+              			    }
+		           		}else{
+               			    menuHandlerPS(event);
+              		     }
+                		
+                		break;
+                			
+                		case 2:
+                			//Provisiones
+                			if(CausacionesMl.getInstance().currentTipoCausacion==2)
+                			{
+	                			if(dgCausaciones.selectedItem != null)
+	                			{
+	                				if(viewStackCausaciones.selectedIndex==0)
+	                				{
+	                					matenerDatos = false;
+	                					CausacionesMl.getInstance().getBonificacionsSeleccionadas(dgCausaciones.selectedIndex,matenerDatos);
+	                					CausacionesMl.getInstance().getDeduccionesSelecciondas(dgCausaciones.selectedIndex,matenerDatos);	
+	                					CausacionesMl.getInstance().getProvisionesSelecciondas(dgCausaciones.selectedIndex,matenerDatos);	
+	                				}
+	                				else
+	                				{
+	                					matenerDatos = true;
+	                				}
+	                				modificarItemsMenuBar(2);
+	                				viewStackCausaciones.selectedIndex = 3;
+	                				fijarValoresArrayProvisiones();
+	                				
+	                			}
+	                			else
+	                				Alert.show("Debe seleccionar una causación","Seleccione causación");
+	                		}
+	                		else{
+	                			menuHandlerPS(event);
+	                		}
+                			break;
+                		case 3:
+                		//AGREGAR DEDUCCIONES
+                			if(CausacionesMl.getInstance().currentTipoCausacion==2)
+                			{
+	                			if(dgCausaciones.selectedItem != null)
+	                			{
+	                				if(viewStackCausaciones.selectedIndex==0)
+	                				{
+	                					matenerDatos = false;
+	                					CausacionesMl.getInstance().getBonificacionsSeleccionadas(dgCausaciones.selectedIndex,matenerDatos);
+	                					CausacionesMl.getInstance().getDeduccionesSelecciondas(dgCausaciones.selectedIndex,matenerDatos);	
+	                					CausacionesMl.getInstance().getProvisionesSelecciondas(dgCausaciones.selectedIndex,matenerDatos);
+	                				}
+	                				else
+	                				{
+	                					matenerDatos = true;
+	                				}
+	                				modificarItemsMenuBar(2);
+	                				//menuBarCollection = new XMLListCollection(menubarXMLAgregar);
+	                				viewStackCausaciones.selectedIndex = 4;
+	                				//CausacionesMl.getInstance().getDeduccionesSelecciondas(dgCausaciones.selectedIndex,matenerDatos);
+	                				//CausacionesMl.listarBonificaciones();
+	                			}
+	                			else
+	                				Alert.show("Debe seleccionar una causación","Seleccione causación");
+	                		}
+	                		else{
+	                			menuHandlerPS(event);
+	                		}
+                			break;
+                		case 4:
+                			//LLAMAR PANTALLA GENERAR CAUSACION
+                			viewStackCausaciones.selectedIndex = 0;
+                			PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_PARAMETROS_GENERAR_CAUSACION;
+		     	 	 		var e:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_TIPO_CONTRATO,null,null,null);
+		     	 	 		CairngormEventDispatcher.getInstance().dispatchEvent(e);
+		     	 	 		
+		     	 	 		//var e:ContratoEvent = new ContratoEvent(ContratoEvent.CONSULTAR_EXISTENCIA_CAUSACIONES,null, 
+					 		
+                		break;
+                		case 5:
+                			//Calcular causacion
+                			if(CausacionesMl.getInstance().currentTipoCausacion==2)
+                			{
+	                			if(ContratoMl.getInstance().listCausacionNomina != null && verificarDatosSeleccionados() ){
+	                   				calcularCausacionesNomina();
+	                   				guardarCausacion = true;
+	                   				viewStackCausaciones.selectedIndex = 0;
+	                   				modificarItemsMenuBar(1);
+	                   				//initCollections();		
+	                   			}
+	                			else{
+	                				Alert.show("No se puede realizar el cálculo de la causación. No se encontraron datos seleccionados.");
+	                			}
+	                		}
+	                		else{
+	                			menuHandlerPS(event);
+	                		}
+                			break;
+                			
+                		case 6:
+                			//Generar causacion
+                		   //if()
+                				if(CausacionesMl.getInstance().currentTipoCausacion==2)
+                				{
+		                			if(guardarCausacion)
+		                			{
+		                				clickGurdarCausacion();
+		                				guardarCausacion = false;			
+		                			}
+		                			else
+		                			{
+		                				if(ContratoMl.getInstance().listCausacionNomina!=null)
+		                				{
+		                					
+		                						Alert.yesLabel = "SI";
+		                						Alert.noLabel = "NO";
+		                						Alert.show("¿Está seguro que desea guardar sin calcular la causación?","",Alert.YES|Alert.NO,PantallasMl.atsys as Sprite,handlerAlertSaveCausacion,null,1);
+		                					
+		                					
+		                				}
+		                				else
+		                					{
+		                						Alert.show("No se encontró ninguna causación para guardar");
+		                					}
+		                			}
+		                		}
+		                		else{
+		                			menuHandlerPS(event);
+		                		}
+                			
+                			
+                			break;
+                	}
+                
+            }
+
+            // Event handler to initialize the MenuBar control.
+            public function initCollections():void {
+                menuBarCollection = new XMLListCollection(menubarXMLInicio); 
+            }
+            
+            [Bindable] public var arrayValoresProvisiones:Array;
+            private function fijarValoresArrayProvisiones():void{
+            	arrayValoresProvisiones = new Array();
+            	for (var i:int = 0; i<(CausacionesMl.getInstance().listaProvisiones as ArrayCollection).length;i++)
+            	{
+            		arrayValoresProvisiones.push(0);
+            	}
+           }
+            
+            private function calcularCausacionesNomina():void{
+            	var causacionNominaVO:CausacionNominaVO  = new CausacionNominaVO();
+            	causacionNominaVO = CausacionesMl.getInstance().arrayCuentasNominaVO.getItemAt(dgCausaciones.selectedIndex) as CausacionNominaVO; 
+            	var idsBonificaciones:Array = new Array();
+            	idsBonificaciones = getBonificacionesSeleccionadas();
+            	
+            	if(idsBonificaciones.length>0)
+	      		  	causacionNominaVO.idsBonificaciones = idsBonificaciones; 
+            	causacionNominaVO.provisiones = getProvisionesSeleccionadas();
+            	causacionNominaVO.deducciones = getDeduccionesSeleccionadas();
+            	CausacionesMl.getInstance().arrayCuentasNominaVO.setItemAt(causacionNominaVO,dgCausaciones.selectedIndex);
+            	CausacionesMl.calcularCausacionNominaCommand(); 
+            	
+            }
+            private function getDeduccionesSeleccionadas():Array{
+            	var array:Array = new Array();
+            	for each(var x:* in CausacionesMl.getInstance().listaDeducciones){
+            		if(x.seleccionado)   
+            		{
+            			var valorIdVo:ValorIdVO = new ValorIdVO().ValorIdVOConstructor(x.id,0);
+            			array.push(valorIdVo);
+            		}
+            	}
+            	return array;
+            }
+            private function getBonificacionesSeleccionadas():Array{
+            	
+            	var arIdsBonificacionesSelect:Array = new Array();
+            	for each(var x:* in (CausacionesMl.getInstance().listaBonificaciones  as ArrayCollection))
+            	{
+            		if(x.seleccionado){
+            			arIdsBonificacionesSelect.push(x.id);
+            		}
+            	}
+            	return arIdsBonificacionesSelect;
+            }
+            
+            private function verificarDatosSeleccionados():Boolean  
+            {
+            	var retorno:Boolean = false;
+            	for each(var i:* in CausacionesMl.getInstance().listaBonificaciones)
+            	{
+            		if(i.seleccionado==true)
+            		{
+            			retorno = true;
+            			break;
+            		}
+            	}
+            	if(!retorno)
+            	{
+            		for each(var j:* in CausacionesMl.getInstance().listaDeducciones)
+	            	{
+	            		if(j.seleccionado==true)
+	            		{
+	            			retorno = true;
+	            			break;
+	            		}
+	            	}
+	
+            	}
+            	if(!retorno)
+            	{
+            		for each(var k:* in CausacionesMl.getInstance().listaProvisiones)
+	            	{
+	            		if(k.seleccionado==true)
+	            		{
+	            			retorno = true;
+	            			break;
+	            		}
+	            	}
+            		
+            	}
+            	
+            	return retorno;	
+            }
+            
+            private function handlerAlertSaveCausacion(event:CloseEvent):void{
+            
+	            switch(event.detail){
+	            	
+		             case Alert.YES:
+		                clickGurdarCausacion();
+		                viewStackCausaciones.selectedIndex = 0;
+		             break;
+	            }
+            }
+            
+            private function handlerAlertReturnCausaPpl(event:CloseEvent):void{
+            
+	            switch(event.detail){
+	            	
+		             case Alert.YES:
+		             	if(CausacionesMl.getInstance().currentTipoCausacion==2){
+		                	viewStackCausaciones.selectedIndex = 0;
+		                	modificarItemsMenuBar(1);
+		              	}
+		              	else{
+		              		viewStackCausaciones.selectedIndex = 5;
+		              	}
+		             break;
+	            }
+            }
+            
+            private function modificarItemsMenuBar(op:int):void{
+            	switch(op){
+            		case 1:
+            		
+            			menubarXMLInicio.menuitem[0].@enabled = true;
+            			menubarXMLInicio.menuitem[1].@enabled = false;
+            			menubarXMLInicio.menuitem[2].@enabled = true;
+            			menubarXMLInicio.menuitem[3].@enabled = true;
+            			
+            		break;
+            		
+            		case 2:
+            		       		
+            			menubarXMLInicio.menuitem[0].@enabled = false;
+            			menubarXMLInicio.menuitem[1].@enabled = true;
+            			menubarXMLInicio.menuitem[2].@enabled = true;
+            			menubarXMLInicio.menuitem[3].@enabled = false;
+            			 
+            		break;
+            	
+            	}
+            }
+            
+            private function menuHandlerPS(event:MenuEvent):void{
+            	var op:int =event.item.@data;
+            	switch(op){
+            		
+            		case 1://AGREGAR BONIFICACIONES
+            			if( dgCausacionesPs.selectedItem!=null){
+            				
+            				if(viewStackCausaciones.selectedIndex!=2&&viewStackCausaciones.selectedIndex!=3&&viewStackCausaciones.selectedIndex!=4)
+            				{
+            					CausacionesMl.getInstance().getBonificacionsSeleccionadasPs(dgCausacionesPs.selectedIndex);
+            					CausacionesMl.getInstance().getProvisionesSelecciondasPs(dgCausacionesPs.selectedIndex);
+            					CausacionesMl.getInstance().getDeduccionesSelecciondasPs(dgCausacionesPs.selectedIndex);	
+            				}
+           			       	
+           			       	modificarItemsMenuBar(2);
+           			       	viewStackCausaciones.selectedIndex = 2;
+           			       	
+        			    }else{
+       			    	    Alert.show("Debe seleccionar una causación","Seleccione causación");
+       			         }
+            		break;
+            		
+            		case 2://PROVISIONES
+            			if(dgCausacionesPs.selectedItem != null)
+            			{
+            				
+            				if(viewStackCausaciones.selectedIndex!=2&&viewStackCausaciones.selectedIndex!=3&&viewStackCausaciones.selectedIndex!=4)
+            				{
+            					CausacionesMl.getInstance().getBonificacionsSeleccionadasPs(dgCausacionesPs.selectedIndex);	
+            					CausacionesMl.getInstance().getProvisionesSelecciondasPs(dgCausacionesPs.selectedIndex);
+            					CausacionesMl.getInstance().getDeduccionesSelecciondasPs(dgCausacionesPs.selectedIndex);
+            				}
+            					
+            				modificarItemsMenuBar(2);
+            				viewStackCausaciones.selectedIndex = 3;
+            				
+            				
+            			}
+            			else
+            				Alert.show("Debe seleccionar una causación","Seleccione causación");
+            		break;
+            		
+            		case 3://DEDUCCIONES
+            			if(dgCausacionesPs.selectedItem != null)
+            			{
+            				if(viewStackCausaciones.selectedIndex!=2&&viewStackCausaciones.selectedIndex!=3&&viewStackCausaciones.selectedIndex!=4)
+            				{
+            					CausacionesMl.getInstance().getBonificacionsSeleccionadasPs(dgCausacionesPs.selectedIndex);	
+            					CausacionesMl.getInstance().getProvisionesSelecciondasPs(dgCausacionesPs.selectedIndex);
+            					CausacionesMl.getInstance().getDeduccionesSelecciondasPs(dgCausacionesPs.selectedIndex);
+            				}
+            					
+            				modificarItemsMenuBar(2);
+            				viewStackCausaciones.selectedIndex = 4;
+            				
+            			}
+            			else
+            				Alert.show("Debe seleccionar una causación","Seleccione causación");
+            		break;
+            		
+            		case 4:
+            		
+            		break;
+            		
+            		case 5:
+            		   
+	            			modificarItemsMenuBar(1);
+	            			calcularCausacionesPs();
+	            			CausacionesMl.getInstance().crearCausacionPsVO();
+	            			viewStackCausaciones.selectedIndex=5;
+	            			var evs:CausacionEvent = new CausacionEvent(CausacionEvent.CALCULAR_CAUSACION_PS);
+	            			CairngormEventDispatcher.getInstance().dispatchEvent(evs);
+	            			
+	            			
+            			
+            			
+            			
+            			
+            		break;
+            		
+            		case 6:
+            			CausacionesMl.getInstance().crearCausacionPsVO();
+            			var evento:CausacionEvent = new CausacionEvent(CausacionEvent.CREAR_CAUSACIONES_PS);
+            			CairngormEventDispatcher.getInstance().dispatchEvent(evento);
+            		break;
+            	
+            	}
+            }
+            
+            private function calcularCausacionesPs():void{
+            	    	 
+            	var idsBonificaciones:Array = new Array();
+            	idsBonificaciones = getBonificacionesSeleccionadas();
+            	
+            	var objSeleccionado:Object = dgCausacionesPs.selectedItem;
+            	objSeleccionado.causacionPs.idsBonificaciones = idsBonificaciones;
+            	objSeleccionado.causacionPs.validVoProvisiones = getProvisionesSeleccionadas();
+            	objSeleccionado.causacionPs.valIdVoDeducciones	= getDeduccionesSeleccionadas();
+            	(ContratoMl.getInstance().listCausacionps as ArrayCollection).setItemAt(objSeleccionado,dgCausacionesPs.selectedIndex);
+            	
+            	
+            }
+            
+	]]>
+   </mx:Script>
+	
+</mx:VBox>

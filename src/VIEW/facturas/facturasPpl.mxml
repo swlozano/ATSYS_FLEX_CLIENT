@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox width="100%" height="100%" creationComplete="{crearPantalla()}"  xmlns:mx="http://www.adobe.com/2006/mxml"   styleName="glassPods" verticalAlign="middle" horizontalAlign="center" xmlns:menu="VIEW.menu.*">
+	
+	
+	
+	<mx:Script>
+	<![CDATA[
+		import mx.controls.Alert;
+		import MODEL.PersonaMl;
+	    ///comentaro
+		import com.adobe.cairngorm.control.CairngormEventDispatcher;
+		import EVENT.FacturaEvent;
+		import MODEL.UtilidadesMl;
+		import mx.controls.dataGridClasses.DataGridColumn;
+		import mx.collections.ArrayCollection;
+		import MODEL.FacturasMl;
+		
+		[Bindable]
+	    [Embed(source="/REC/IMAGENES/f.png")]
+		public var buscar:Class;
+		 	 
+		 [Bindable]
+            [Embed(source="/REC/IMAGENES/warn2.png")]
+			 public var alerta:Class;	 
+		 	 
+		 [Bindable]	 
+         public var arr:Array = [{estado:'Pagadas', id:1},{estado:'No Pagadas', id:2},{estado:'Todas', id:3}];
+
+          [Bindable] public var mnuabajo:Object = null;
+         
+         [Bindable]	 
+         public var tipof:Array = [{tfecha:'Fecha facturación', id:1},{tfecha:'Fecha pactada pago', id:2},{tfecha:'Todas', id:3}];
+         
+         [Bindable]
+         [Embed(source="/REC/IMAGENES/openNav2.png")]
+         public var openNav:Class;
+         
+            [Bindable]
+			[Embed(source="/REC/IMAGENES/chart.png")]
+			public var finds:Class;
+				
+			[Bindable]
+			[Embed(source="/REC/IMAGENES/chart2.png")]
+			public var finds2:Class;
+         
+		 public function crearPantalla():void
+		 {
+		 	estadofactura.selectedIndex = 1;
+		 	tipoFecha.selectedIndex = 2;  
+		 	
+		 	mnuabajo = mnudown;
+		 	
+			FacturasMl.getInstance().FacturasPpl = this;
+			mnudown.btnfind.toolTip="Reporte de Facturas";
+			mnudown.find=finds;
+			mnudown.find2=finds2;
+			
+		 }
+		   
+		 public function filtrar():void{
+		 	
+		 	if(PersonaMl.getInstance().listPersonas!=null){
+		 		
+		 		if(PersonaMl.getInstance().listPersonas.length>0){
+		 	
+				 	FacturasMl.getInstance().fechaInicio = f_in.selectedDate;
+				 	FacturasMl.getInstance().fechaFin = f_fin.selectedDate;
+				 	FacturasMl.getInstance().tipoEstado = estadofactura.selectedItem.id;
+				 	FacturasMl.getInstance().tipoFecha = tipoFecha.selectedItem.id;
+				 	
+				 	var prueba:int;
+				 	prueba = FacturasMl.getInstance().tipoEstado;
+				 	prueba = FacturasMl.getInstance().tipoFecha;
+				 	
+				 	if(Filtropersona.selectedIndex == -1){
+				 		
+				 		FacturasMl.getInstance().Filtrarpersona = -1;
+				 		
+				 	}else{
+				 		
+				 		    FacturasMl.getInstance().Filtrarpersona = Filtropersona.selectedItem.id;
+				 		
+				 	     }
+				 	
+				 	
+				 	
+				 	var e:FacturaEvent = new FacturaEvent(FacturaEvent.LISTAR_FACTURA,null);
+				 	CairngormEventDispatcher.getInstance().dispatchEvent(e);
+		 	
+		 		}else{
+		 		
+		 	           Alert.show("No existen Facturas que filtrar...Agregue una para realizar esta operación","Mensaje de alerta",0,null,null,alerta,0);
+		 	      
+		 	         }
+		 		
+		 		
+		 	}else{
+		 		
+		 	       Alert.show("No existen Facturas que filtrar...Agregue una para realizar esta operación","Mensaje de alerta",0,null,null,alerta,0);
+		 	      
+		 	     }
+		 	
+		 	
+		 	
+		 }
+		 
+		 public function dg_labelFunc(item:Object, dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;	
+                 
+              	 nombre= item.persona.nombreRs;
+                 
+                 return nombre;
+         }
+         
+        public function dg_labelFuncnitPersona(item:Object,dgcolumn:DataGridColumn):String {
+         
+          
+          
+	         var retorno:String;
+	         
+	         if(item.persona.nit!=null){  
+	              
+	               retorno = item.persona.nit.toString();
+	          
+               	   if(retorno != "0"){        
+	           
+			           var st:String = retorno.substring(0,(retorno.length)-1);
+		            	 
+		               var st2:String = retorno.substr(retorno.length-1,retorno.length);
+			         
+			           retorno = st + " - " + st2;
+               	   }else{
+               	   	
+               	   	     retorno="";
+               	   	
+               	        }
+              }else{
+               	   	
+               	   	  retorno="";
+               	   	
+               	   }
+	      	
+	         return retorno;
+               
+        }
+		 	 
+		 public function dg_labelFuncItem(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var cantidad:String;
+                  
+                 cantidad = item.detalleFacturaVOs.length.toString();
+              	
+                 return cantidad;
+         }
+         
+         private function dg_labelFuncPorcentaje(item:Object,dgcolumn:DataGridColumn):String {
+           	
+                 return item.retencionVO.porcentaje +"";
+         }
+         
+         private function dg_labelFuncNombrePorcen(item:Object,dgcolumn:DataGridColumn):String {
+           	
+                 return item.retencionVO.nombre +"";
+         }
+		 	
+		 	
+		 private function dg_labelFunctionIva(item:Object,dgcolumn:DataGridColumn):String{
+		 	
+		 	var retorno:String;
+		 	 
+		 	retorno = UtilidadesMl.getInstance().formaterMoneda(item.valorIva); 
+		 	 
+		 	return retorno; 
+		 	
+		 	
+		 }	
+		 	 
+		 private function dg_labelFunctionRet(item:Object,dgcolumn:DataGridColumn):String{
+		 	
+		 	var retorno:String;
+		 	 
+		 	retorno = UtilidadesMl.getInstance().formaterMoneda(item.valorRetenciones); 
+		 	 
+		 	return retorno; 
+		 	
+		 }	 
+		 	 
+		 private function dg_labelFunctionTotal(item:Object,dgcolumn:DataGridColumn):String{
+		 	
+		 	var retorno:String;
+		 	 
+		 	retorno = UtilidadesMl.getInstance().formaterMoneda(item.totalApagar); 
+		 	 
+		 	return retorno; 
+		 	
+		 }		 
+		 
+		 
+		 private function dg_labelFunctionSaldo(item:Object,dgcolumn:DataGridColumn):String{
+		 	
+		 	var retorno:String;
+		 	 
+		 	retorno = UtilidadesMl.getInstance().formaterMoneda(item.saldo); 
+		 	 
+		 	return retorno; 
+		 	
+		 }	
+		 
+		 private function dg_labelFunctionPrecio(item:Object,dgcolumn:DataGridColumn):String{
+		 	
+		 	var retorno:String;
+		 	 
+		 	retorno = UtilidadesMl.getInstance().formaterMoneda(item.precio); 
+		 	 
+		 	return retorno; 
+		 	
+		 }
+		 private function dg_labelFunctiontotal(item:Object,dgcolumn:DataGridColumn):String{
+		 	
+		 	var retorno:String;
+		 	 
+		 	retorno = UtilidadesMl.getInstance().formaterMoneda(item.total); 
+		 	 
+		 	return retorno; 
+		 	
+		 }
+		 
+		 private function dg_labelFunctionValorPje(item:Object,dgcolumn:DataGridColumn):String{
+		 	
+		 	var retorno:String;
+		 	 
+		 	retorno = UtilidadesMl.getInstance().formaterMoneda(item.valor); 
+		 	 
+		 	return retorno; 
+		 	
+		 }
+		 	 
+		  public function dg_labelFunctotal(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var cantidad:String;
+                 var aux:Number; 
+                  
+                  aux = parseFloat(item.total);
+                  
+                  if(aux<0){
+                  	
+                  	 aux = aux * -1;
+                  	
+                  }else{
+                  	
+                  	    aux = aux * 1;
+                  	
+                       }
+                    
+                 cantidad = aux.toString();
+                 cantidad = UtilidadesMl.getInstance().formaterMoneda(cantidad);
+                 return cantidad;
+         }	   
+		 	 
+	]]>
+   </mx:Script>    
+	
+	  
+	<mx:Box width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom">
+	<mx:VRule height="10" visible="false"/>
+	
+	    <mx:Box width="95%" verticalAlign="middle" horizontalAlign="center">
+	
+			 <mx:HBox enabled="{viewStckPpl.selectedIndex!=0?(false):(true)}" id="hbxMnu" width="100%" verticalAlign="middle" horizontalAlign="left">
+			    
+			    <mx:Image buttonMode="true" toolTip="Filtrar" click="{filtrar()}" source="{buscar}"/>
+			    
+			    <mx:ComboBox maxWidth="100" toolTip="Filtro por Estado" labelField="estado" id="estadofactura" dataProvider="{arr}"/>
+			    
+			    <mx:ComboBox maxWidth="130" toolTip="Filtro por tipo de Fechas" labelField="tfecha" id="tipoFecha" dataProvider="{tipof}"/>
+			    
+			    <mx:ComboBox maxWidth="135"  prompt="Seleccione Cliente" dataProvider="{PersonaMl.getInstance().listPersonsToFiltrar}" toolTip="{Filtropersona.selectedItem.nombreRs}" labelField="nombreRs" id="Filtropersona"/>
+			    
+			    <mx:Label text="Fecha inicio"  fontWeight="bold" color="#FFFFFF" fontSize="12"/>
+			    <mx:DateField id="f_in" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}"/>
+			    <mx:Label text="Fecha fin"  fontWeight="bold" color="#FFFFFF" fontSize="12"/>
+			    <mx:DateField id="f_fin" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}"/>
+			    
+			</mx:HBox>
+			
+			<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			
+				<mx:LinkButton label="Volver a Facturas"  textAlign="left" 
+			    	click="{viewStckPpl.selectedIndex = 0}"
+			    	visible="{viewStckPpl.selectedIndex != 0 ?(true):(false)}" color="#FFFFFF" textDecoration="underline"/>
+			 	<mx:LinkButton label="Volver a Items" textAlign="left"
+			 		click="{viewStckPpl.selectedIndex = 1}"
+			 		visible="{viewStckPpl.selectedIndex == 2 ?(true):(false)}" color="#FFFFFF" textDecoration="underline"/>
+				
+				
+			</mx:HBox>
+			
+	</mx:Box>
+	
+			  
+	<mx:ViewStack  width="95%" height="95%" id="viewStckPpl" selectedIndex="0">
+			
+			<mx:Box width="100%" height="100%" >
+				<mx:DataGrid  width="100%" horizontalScrollPolicy="auto" selectable="{FacturasMl.getInstance().selectableFactura}" dataProvider="{FacturasMl.getInstance().listfacturas}" height="100%" id="dgfacturas" fontSize="15" themeColor="#307BAB" alternatingItemColors="[#F7F7F7, #D8DEE8]">
+					<mx:columns>
+						<mx:DataGridColumn dataField="numeroFactura" textAlign="center" headerText="No"  width="150"/>
+						<mx:DataGridColumn dataField="estadoFactura" textAlign="center" headerText="Estado"  width="120"/>
+						<mx:DataGridColumn headerText="Fecha facturación" dataField="fechaFacturacion" itemRenderer="VIEW.Items.Facturas.ItemFechaFactura" width="125"/>
+						<mx:DataGridColumn headerText="Fecha pago" dataField="fechaPactadaPago" itemRenderer="VIEW.Items.Facturas.ItemFechaPactadaFactura" width="125"/>
+						<mx:DataGridColumn headerText="Items" labelFunction="dg_labelFuncItem" itemRenderer="VIEW.Items.Facturas.ItemVerItemsFactura" width="50" textAlign="center"/>
+						<mx:DataGridColumn headerText="Persona"  labelFunction="dg_labelFunc" width="200"  textAlign="center"/>
+						<mx:DataGridColumn headerText="Nit Persona"  labelFunction="dg_labelFuncnitPersona" width="150"  textAlign="center"/>
+						<mx:DataGridColumn headerText="Subtotal" dataField="subtutal" width="150" itemRenderer="VIEW.Items.Facturas.ItemSubtotalFactura" />
+						<mx:DataGridColumn headerText="Iva" labelFunction="dg_labelFunctionIva" width="150" textAlign="center"  dataField="valorIva"/>  
+						<mx:DataGridColumn headerText="Total" textAlign="center" labelFunction="dg_labelFunctotal" width="150"  />
+						<mx:DataGridColumn headerText="Retenciones" textAlign="center" width="200" labelFunction="dg_labelFunctionRet"  dataField="valorRetenciones" />
+						<mx:DataGridColumn headerText="Total a pagar" textAlign="center" width="250" labelFunction="dg_labelFunctionTotal" dataField="totalApagar"  />
+						<mx:DataGridColumn headerText="Saldo" textAlign="center" width="150" labelFunction="dg_labelFunctionSaldo"  dataField="saldo"  />
+						  
+					</mx:columns>
+				</mx:DataGrid>
+			</mx:Box>
+			
+			<mx:Box width="100%" height="100%" >	
+				<mx:DataGrid width="100%" selectable="{FacturasMl.getInstance().selectableFactura}"
+					 dataProvider="{dgfacturas.selectedItem.detalleFacturaVOs}" 
+					height="100%" id="dgItemsFactura" themeColor="#307BAB" 
+					alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15">
+					<mx:columns>
+						<mx:DataGridColumn textAlign="center" headerText="Descrip Bien/Servicio" 
+							dataField="descripcionBienServicio"  />
+						<mx:DataGridColumn headerText="Cantidad" 
+							dataField="cantidad" 
+							 textAlign="center"/>
+						<mx:DataGridColumn headerText="Precio" 
+							dataField="precio" 
+							labelFunction="dg_labelFunctionPrecio"
+							 textAlign="center"/>
+						<mx:DataGridColumn headerText="Total" 
+							dataField="total" 
+							labelFunction="dg_labelFunctiontotal"
+							 textAlign="center"/>
+							 <mx:DataGridColumn headerText="Retenciones" 
+								itemRenderer="VIEW.Items.Facturas.ItemVerRetcionItem" 
+							 textAlign="center"/>	 
+					</mx:columns>
+				</mx:DataGrid>
+			</mx:Box>
+			<!--
+				View stack selectem index = 2
+			 -->
+			<mx:Box width="100%" height="100%" >
+				<mx:DataGrid width="100%" 
+				selectable="{FacturasMl.getInstance().selectableFactura}"
+				dataProvider="{dgItemsFactura.selectedItem.facturaRetencionVOs}" 
+				height="100%" id="dgRetenciones" themeColor="#307BAB" 
+				alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15">
+					<mx:columns>
+						<mx:DataGridColumn textAlign="center" 
+							headerText="Retención" 
+							labelFunction="dg_labelFuncNombrePorcen"/>
+						<mx:DataGridColumn headerText="Porcentaje" 
+							labelFunction="dg_labelFuncPorcentaje"
+							 textAlign="center"/>
+						<mx:DataGridColumn headerText="Valor" 
+							dataField="valor" 
+							labelFunction="dg_labelFunctionValorPje"
+							 textAlign="center"/>
+					</mx:columns>
+			    </mx:DataGrid>
+			</mx:Box>
+			
+			
+		
+		</mx:ViewStack>
+		
+		
+	</mx:Box>
+	<menu:MenuAbajo id="mnudown" enabled="{viewStckPpl.selectedIndex!=0?(false):(true)}" />
+	
+	
+</mx:VBox>

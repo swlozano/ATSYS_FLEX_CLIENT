@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow  xmlns:mx="http://www.adobe.com/2006/mxml" 
+	initialize="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosModificarRoles,0,-1 ,true)}"
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	layout="absolute" width="400" height="410"
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	showCloseButton="false">
+	<mx:Script>
+        <![CDATA[
+        	import mx.core.Application;
+        	import MODEL.UtilidadesMl;
+        	import MODEL.UsuariosSysMl;
+        	import mx.collections.ArrayCollection;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.RolesSysEvent;
+        	import VO.RolSysVO;
+        	import MODEL.RolSysMl;
+        	import MODEL.PermisosMl;
+        	import mx.controls.Alert;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           
+           [Bindable]
+            public var formIsValid:Boolean=true;
+            [Bindable]
+            public var formIsEmpty:Boolean=true;
+           
+            private var focussedFormControl:DisplayObject;
+           
+            private function returnName():void {
+                 PopUpManager.removePopUp(this);
+                 RolSysMl.getInstance().selectableRol=true;
+                 PermisosMl.getInstance().CloseMainMenu.enabled=true;
+		         UsuariosSysMl.getInstance().mostrarSubMenu=true;
+            }
+            
+            public function modificarRoles():void{
+            	
+               if(formIsValid){
+           		var roles:RolSysVO = new RolSysVO(RolSysMl.getInstance().rolesPpl.dgroles.selectedItem.id,modNomrol.text,false,getPermisosSeleccionados());		
+           	 	var event: RolesSysEvent = new RolesSysEvent(RolesSysEvent.MODIFICAR_ROLES,roles);
+            	CairngormEventDispatcher.getInstance().dispatchEvent(event);
+           		returnName();
+               }
+            }
+            
+            public function getPermisosSeleccionados():Array
+            {
+            	PermisosMl.getInstance().idPermisosSelect = new Array();
+            	
+            	for each( var x:* in PermisosMl.getInstance().listPermisos)
+            	{
+            		if(x.asignado)
+            		    PermisosMl.getInstance().idPermisosSelect.push(x.id);
+            	}
+            	
+            	return PermisosMl.getInstance().idPermisosSelect;
+            }
+            
+            private function validateForm(event:Event):void{
+            
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               formIsEmpty = (modNomrol.text=="");
+               validate(nameValidator);
+            }
+               
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+            private function creationCompleteHandler():void
+            {
+               resetFocus();
+            }   
+            
+            private function clearFormHandler():void
+            {
+               modNomrol.text="";
+               modNomrol.errorString="";
+               formIsEmpty=true;
+               resetFocus();
+            }
+            
+            private function resetFocus():void
+            {
+                focusManager.setFocus(modNomrol);
+            }
+            
+            public function checkall():void{
+            
+               PermisosMl.getInstance().checkarAllPermisos();              
+               var cont:int=0;
+               var ar:ArrayCollection = new ArrayCollection();
+               ar=PermisosMl.getInstance().listPermisos as ArrayCollection;
+               for each(var x:* in PermisosMl.getInstance().listPermisos){
+               
+                  if(checkbxselecallpermisos.selected){
+                    
+                    x.asignado=true;
+                     
+                  }else{
+                  
+                    x.asignado=false;
+                    
+                  }
+                  ar.getItemAt(cont).asignado=x.asignado;
+               		cont++;
+               }
+               PermisosMl.getInstance().listPermisos=ar;
+               
+              
+            }
+            
+        ]]>
+    </mx:Script>
+     <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Nombre del Rol por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="nameValidator"
+        source="{modNomrol}" 
+        property="text"
+        minLength="2"
+        maxLength="50"
+    />
+    
+    
+    
+    
+    <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+
+		<mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+			<mx:Canvas width="100%" height="100%" id="canvas1" >
+				<mx:Label  id="lblAddUs" text="{UtilidadesMl.getInstance().tituloPantalla}" color="#FFFFFF" fontWeight="bold" fontSize="13"
+ 		 		x="{(canvas1.width/2)-(lblAddUs.width/2)}" y="12"/>	
+			</mx:Canvas>
+		</mx:Box>
+ 
+		<mx:Box id="box2" height="79%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+			
+				<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+						<mx:Spacer height="10"/>
+						<mx:HRule height="10"  strokeColor="#FFFFFF" width="96%"/>
+					<mx:Form width="96%" height="20%" verticalScrollPolicy="off">
+					
+						<mx:FormItem label="             NOMBRE ROL" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11" borderColor="#5E7382" borderStyle="none">
+							<mx:TextInput maxChars="20" id="modNomrol" text="{RolSysMl.getInstance().rolesPpl.dgroles.selectedItem.nombre}" change="validateForm(event)" width="75%"/>
+						</mx:FormItem>
+						
+										
+					</mx:Form>
+						<mx:HRule height="10"  strokeColor="#FFFFFF" width="96%"/>
+						<mx:HBox width="100%"  verticalAlign="middle" horizontalAlign="center">
+						      <mx:Label text="PERMISOS"  fontWeight="bold" fontSize="11" color="#ffffff"/>
+						</mx:HBox>
+					
+					  <mx:Box verticalAlign="middle" horizontalAlign="center" width="100%" fontWeight="bold" >
+				        	    <mx:HBox width="99%" verticalAlign="middle" horizontalAlign="center">
+				        	       <mx:Label text="SELECCIONAR TODOS" color="#FFFFFF" fontSize="11" fontWeight="bold"/>
+	  	      	       				<mx:CheckBox selected="false" id="checkbxselecallpermisos" change="checkall()" />	
+				        	    </mx:HBox>
+					   </mx:Box>    	
+				
+						<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+						        
+					  	      <mx:DataGrid dataProvider="{PermisosMl.getInstance().listPermisos}" width="96%" height="95%" >
+					  	      	  <mx:columns>
+					  	      	  	<mx:DataGridColumn headerText="Nombre del Permiso" dataField="nombre" textAlign="center" />
+					  	      	     <mx:DataGridColumn headerText="Asignado" dataField="id"  textAlign="center">
+					  	      	       <mx:itemRenderer >
+										   <mx:Component>
+										      <mx:CheckBox  click="data.asignado=!data.asignado"  
+										      selected="{data.asignado}"  horizontalCenter="true"/>
+										   </mx:Component>   
+									   </mx:itemRenderer>
+					  	      	     </mx:DataGridColumn>
+					  	      	  </mx:columns>
+					  	      </mx:DataGrid>
+						   </mx:Box>
+				</mx:Box>
+		</mx:Box>
+
+		<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+			<mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+				<mx:HBox height="100%" width="50%" verticalAlign="middle">
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+						<mx:Image source="{UtilidadesMl.getInstance().backEnable==true?(UtilidadesMl.getInstance().rutaback):UtilidadesMl.getInstance().rutaback2}"
+  	  					 toolTip="Atras" />	
+					</mx:Box>
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+						<mx:Image id="ok" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  toolTip="Aceptar" enabled="{formIsValid}" click="{modificarRoles()}" />	
+					</mx:Box>
+  				</mx:HBox>
+				<mx:HBox height="100%" width="50%" verticalAlign="middle">
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+						<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar"/>	
+					</mx:Box>
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+						<mx:Image source="{UtilidadesMl.getInstance().nextEnable==true?(UtilidadesMl.getInstance().next):UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" />	
+					</mx:Box>
+  				</mx:HBox>
+			</mx:HBox>
+		</mx:Box>
+	</mx:VBox>
+    
+    
+</mx:TitleWindow>

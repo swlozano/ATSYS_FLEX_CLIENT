@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" 
+	  
+	 width="460" height="535" 
+	 creationComplete="creationCompletehandler()"
+	 color="#FFFFFF" fontSize="12" fontWeight="bold"
+	 borderSkin="CSS.SKIN.PopUpSkin" 
+	  x="{(Application.application.width/2)-(this.width/2)}"
+	  y = "{(Application.application.height/2)-(this.height/2)}"
+	  showCloseButton="false"
+	 >
+	<mx:CurrencyFormatter
+    	id="formatoMoneda"
+     	currencySymbol=""/> 
+     	    
+	<mx:Script>
+        <![CDATA[
+        	import VO.OtrosMasPs;
+        	import VO.ProvisionPs;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import mx.managers.PopUpManager;
+        	import MODEL.UtilidadesMl;
+        	import mx.core.Application;
+        	import MODEL.ContratoMl;
+        	import VO.OtroMasNomina;
+        	import mx.collections.ArrayCollection;
+        	
+        	
+           [Embed(source="/REC/IMAGENES/warn2.png")]
+		    public var alerta:Class;
+  
+            [Bindable]
+            public var formIsValid:Boolean=false;
+            
+            [Bindable]
+            public var valorRet:Number;
+            
+            [Bindable]
+            public var total:Number;
+           
+            private var focussedFormControl:DisplayObject;
+            ////////////////validar////////
+            
+           private function validateForm(event:Event):void{
+        
+	           focussedFormControl = event.target as DisplayObject;
+	           formIsValid = true;
+	           validate(obsValidator);
+	           validate(nomValidator);
+	           validate(ValorValidator);
+	           validate(porcentajeValidator);
+           }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+            ////////////////////////////////
+            
+	  		private function btnOk():void{
+	  			
+	  			 if(formIsValid){
+	  			
+		  			switch(ContratoMl.getInstance().CausacionPpl.op){
+		  				
+		  				case 10:
+		  					addItemOtroMasPs();
+		  				break;
+		  				
+		  				case 11:
+		  					modificarItemOtrosMas();
+		  				break;
+		  				
+		  			}
+		  		}
+	  		}	
+  			
+           
+           private function addItemOtroMasPs():void{
+          		         		
+          		var indexSeleccionado:int = ContratoMl.getInstance().CausacionPpl.dgCausacionesPs.selectedIndex;
+          		var objSeleccionado:Object = ContratoMl.getInstance().CausacionPpl.dgCausacionesPs.selectedItem;
+          		
+          		if(objSeleccionado.otrosMasPses == null)
+          		{
+          			objSeleccionado.otrosMasPses = new Array();
+          		}
+          		
+          		(objSeleccionado.otrosMasPses as Array).push(crearOtrosMasPs());
+          		(ContratoMl.getInstance().listCausacionps as ArrayCollection).setItemAt(objSeleccionado,indexSeleccionado);
+          		returnName();
+          		 
+           }
+           
+           private function modificarItemOtrosMas():void{
+           	
+           		var indexSeleccionado:int = ContratoMl.getInstance().CausacionPpl.dgCausacionesPs.selectedIndex;
+       			var indexSeleccionado1:int = ContratoMl.getInstance().CausacionPpl.dgOtrosMasPs.selectedIndex;
+       			var objSeleccionado:Object = ContratoMl.getInstance().CausacionPpl.dgCausacionesPs.selectedItem;
+       			(objSeleccionado.otrosMasPses as Array)[indexSeleccionado1]=crearOtrosMasPs();
+       			(ContratoMl.getInstance().listCausacionps as ArrayCollection).setItemAt(objSeleccionado,indexSeleccionado);
+          		returnName();
+       			
+           }
+           
+           private function crearOtrosMasPs():OtrosMasPs{
+           		
+           		var val:String;
+           		val = UtilidadesMl.getInstance().combertirDecimalToEntero(txtValor.text);
+           		
+           		var valret:String = UtilidadesMl.getInstance().combertirDecimalToEntero(txtValorRetencion.text);
+           		
+           		var totl:String = UtilidadesMl.getInstance().combertirDecimalToEntero(txtTotal.text);
+           		
+          		var otrosMasPs:OtrosMasPs = new OtrosMasPs().constructor(
+           		-1,txtNombre.text,txtAreaObservacion.text,new Number(val), new Number(txtPorcentaje.text),
+           		new Number(valret),new Number(totl),-1);
+           		return otrosMasPs;
+           }
+           
+           private function returnName():void {
+                 PopUpManager.removePopUp(this);
+            }
+            
+            
+            private function calcularTotal():void{
+            	
+            	var val:String = UtilidadesMl.getInstance().combertirDecimalToEntero(txtValor.text);
+                var valret:String = UtilidadesMl.getInstance().combertirDecimalToEntero(txtValorRetencion.text);             	
+            	
+            	this.total = parseFloat(val)-parseFloat(valret);
+            	
+            }
+            
+            private function calcularValorRetencion():void{
+            	
+            	
+            	var val:String = UtilidadesMl.getInstance().combertirDecimalToEntero(txtValor.text);
+            	var ptje:String = txtPorcentaje.text;
+            	
+            	this.valorRet = (parseFloat(val) * (parseFloat(ptje)/100));
+            	
+            	
+            }
+            
+            private function creationCompletehandler():void{
+            	
+            	if(ContratoMl.getInstance().CausacionPpl.dgOtrosMasPs.selectedItem==null){
+            		
+            		valorRet=0;
+            		total=0;
+            		
+            	}else{
+            		
+            		  valorRet =  ContratoMl.getInstance().CausacionPpl.dgOtrosMasPs.selectedItem.valorRetencion;
+            		  total = ContratoMl.getInstance().CausacionPpl.dgOtrosMasPs.selectedItem.total;
+            		  
+            		  
+            		
+            	     }
+            	
+            }
+            
+        ]]>
+    </mx:Script>
+       
+       
+       <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese la Observación¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="obsValidator"
+        source="{txtAreaObservacion}" 
+        property="text"
+        minLength="2"
+        maxLength="200"
+    />
+    
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Nombre por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo para ser válido¡¡"
+        id="nomValidator"
+        source="{txtNombre}" 
+        property="text"
+        minLength="2"
+        
+    />
+   
+   <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Valor por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo para ser válido¡¡"
+        id="ValorValidator"
+        source="{txtValor}" 
+        property="text"
+        minLength="2"
+        
+    />
+    
+    <mx:NumberValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Porcentaje por favor¡¡"
+    	
+        id="porcentajeValidator"
+        source="{txtPorcentaje}" 
+        property="text"
+        exceedsMaxError="!!El valor del porcentaje no debe ser mayor al 100%"
+        lowerThanMinError="!!El valor del porcentaje debe ser mayor que 0"
+        maxValue="100"
+        minValue="1"
+        
+    />
+       
+      <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+       
+        <mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+		 	<mx:Canvas width="100%" height="100%" id="canvas1"  fontSize="13">
+		 		<mx:Label  id="lblAddCmenor" text="AÑADIR OTROS MAS" color="#FFFFFF" fontWeight="bold" fontSize="13"
+		 	     x="{(canvas1.width/2)-(lblAddCmenor.width/2)}" y="12"/>	
+		 	</mx:Canvas>
+		 </mx:Box>
+       
+       <mx:Box id="box2" height="80%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+          	            
+      	            <mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+              
+				        <mx:Form  verticalScrollPolicy="off" width="94%" height="60%" >
+				    		
+				    			<mx:Spacer height="10" />
+				    			
+						    	<mx:FormItem label="     NOMBRE"  fontWeight="bold"  color="#FFFFFF" width="100%" fontSize="11"> 	
+							  	    <mx:TextInput change="{validateForm(event)}" maxChars="20"  id="txtNombre" width="80%" 
+							  	    	text="{
+							  	    	ContratoMl.getInstance().CausacionPpl.dgOtrosMasPs.selectedItem==null?
+							  	    	'':ContratoMl.getInstance().CausacionPpl.dgOtrosMasPs.selectedItem.nombre}"/>  	  	
+							  	</mx:FormItem>
+						    	
+						    	 <mx:Spacer height="20" />
+						    	
+							  	<mx:FormItem label="       OBSERVACIÓN"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11"> 	
+							  	    <mx:TextArea change="{validateForm(event)}"  id="txtAreaObservacion" width="80%" height="180" 
+							  	    	text="{ContratoMl.getInstance().CausacionPpl.dgOtrosMasPs.selectedItem==null?
+							  	    	'':ContratoMl.getInstance().CausacionPpl.dgOtrosMasPs.selectedItem.observacion}" color="#000000"/>  	  	
+							  	</mx:FormItem>
+						    	
+						    	<mx:Spacer height="20" />
+						    	
+						    	<mx:FormItem label="VALOR" cornerRadius="20" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11"> 	
+							  	    <mx:TextInput  restrict="0.1-9.9" 
+							  	    	id="txtValor" width="80%"
+							  	    	change="{validateForm(event),calcularValorRetencion(),calcularTotal()}"
+							  	    	focusIn="{txtValor.text=UtilidadesMl.getInstance().combertirDecimalToEntero(txtValor.text)}" 
+				    	 	            focusOut="{txtValor.text=UtilidadesMl.getInstance().formaterMoneda(txtValor.text)}" 
+							  	    	text="{ContratoMl.getInstance().CausacionPpl.dgOtrosMasPs.selectedItem==null?
+							  	    	'':ContratoMl.getInstance().CausacionPpl.dgOtrosMasPs.selectedItem.valor}"/>  	  	
+							  	</mx:FormItem>
+							  	
+							  	<mx:Spacer height="20" />
+							  	
+							  	<mx:FormItem label="PORCENTAJE" cornerRadius="20" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11"> 	
+							  	    <mx:TextInput  restrict="0.1-9.9" 
+							  	    	id="txtPorcentaje" width="30%"
+							  	    	
+							  	    	change="{validateForm(event),calcularValorRetencion(),calcularTotal()}"
+							  	    	focusIn="{txtValor.text=UtilidadesMl.getInstance().combertirDecimalToEntero(txtValor.text)}" 
+				    	 	            focusOut="{txtValor.text=UtilidadesMl.getInstance().formaterMoneda(txtValor.text)}" 
+							  	    	text="{ContratoMl.getInstance().CausacionPpl.dgOtrosMasPs.selectedItem==null?
+							  	    	'':ContratoMl.getInstance().CausacionPpl.dgOtrosMasPs.selectedItem.porcentaje}"/>  	  	
+							  	</mx:FormItem>
+							  	
+							  	<mx:Spacer height="20" />
+							  	
+							  	<mx:FormItem label="VALOR  RETENCIÓN" cornerRadius="20" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11"> 	
+							  	    <mx:TextInput  restrict="0.1-9.9" editable="false"
+							  	    	id="txtValorRetencion" width="80%"
+							  	    	change="{calcularTotal()}"
+							  	    	text="{UtilidadesMl.getInstance().formaterMoneda(valorRet)}"/>  	  	
+							  	</mx:FormItem>
+							  	
+							  	<mx:Spacer height="20" />
+							  	
+							  	<mx:FormItem label="TOTAL" cornerRadius="20" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11"> 	
+							  	    <mx:TextInput  restrict="0.1-9.9" editable="false"
+							  	    	id="txtTotal" width="80%"
+							  	    	text="{UtilidadesMl.getInstance().formaterMoneda(total)}"/>  	  	
+							  	</mx:FormItem>
+							  	
+							  	<mx:Spacer height="20" />
+							  						  	
+					  	</mx:Form>
+					  	
+					 </mx:Box>
+	    
+	     		</mx:Box>
+	    
+    	<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+	    <mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+	      
+	      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+	      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+	      		<mx:Image source="{UtilidadesMl.getInstance().backEnable==true?(UtilidadesMl.getInstance().rutaback):UtilidadesMl.getInstance().rutaback2}"
+	      			   toolTip="Atras" />	
+	      	</mx:Box>
+	      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+	      		<mx:Image id="ok" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  
+	      			toolTip="Aceptar" enabled="true" click="{btnOk()}" />	
+	      	</mx:Box>
+	      	
+	      </mx:HBox>
+	      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+	      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+	      			<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar" 
+	      				/>	
+	      		</mx:Box>
+	      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+	      			<mx:Image source="{UtilidadesMl.getInstance().nextEnable==true?(UtilidadesMl.getInstance().next):UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" />	
+	      		</mx:Box>
+	      		
+	    	</mx:HBox>
+	    </mx:HBox>
+				 	
+	 </mx:Box>
+    
+    </mx:VBox>
+    
+</mx:TitleWindow>
+
+
+
+
+
+
+

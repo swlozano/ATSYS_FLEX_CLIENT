@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="992" verticalAlign="middle" horizontalAlign="center" height="500">
+	<mx:Style>
+		  
+		  DataGrid {
+					   fontSize: 6;
+					   headerStyleName: "mydataGridHeaderStyle";
+				   }
+					
+					.mydataGridHeaderStyle {
+					   fontSize: 9;
+					}
+		  
+		  
+	</mx:Style>
+
+<mx:Script>
+	<![CDATA[
+		import MODEL.UtilidadesMl;
+		import mx.controls.dataGridClasses.DataGridColumn;
+		
+		    public function lblfunctionFechaOrigen(item:Object,datagridcolumn:DataGridColumn):String{
+				
+				var retorno:String;
+				
+				retorno = UtilidadesMl.getInstance().formaterFechas(item.fechaOrigen);
+				
+				return retorno;
+				
+				  
+			}
+		
+		public function lblfunctionvalor(item:Object,datagridcolumn:DataGridColumn):String{
+				
+				var retorno:String;
+				
+				retorno = UtilidadesMl.getInstance().formaterMoneda(item.valor);
+				
+				return retorno;
+				
+				
+			}
+		
+	]]>
+</mx:Script>
+	
+	<mx:Label id="Cpp" textAlign="center"/>
+	
+    <mx:PrintDataGrid id="dgCpp" width="100%" height="80%" styleName="DataGrid">
+        <mx:columns>
+            
+            <mx:DataGridColumn textAlign="left" labelFunction="lblfunctionFechaOrigen" dataField="fechaOrigen" headerText="Fecha Origen"  width="130"/>
+		    <mx:DataGridColumn textAlign="left" dataField="nombre" headerText="Nombre"  width="220"/>
+			<mx:DataGridColumn textAlign="left" headerText="Concepto" dataField="concepto" width="300"/>
+			<mx:DataGridColumn textAlign="left" headerText="Banco" dataField="banco" width="150"/>
+			<mx:DataGridColumn textAlign="left" headerText="Tipo Cuenta" dataField="tipoCuenta" width="150"/>
+			<mx:DataGridColumn textAlign="left" headerText="Número de Cuenta" dataField="numeroCuenta" width="200"/>
+			<mx:DataGridColumn textAlign="left" labelFunction="lblfunctionvalor" headerText="Valor" dataField="valor" width="180"/>
+            
+            
+        </mx:columns>
+    </mx:PrintDataGrid>
+	
+</mx:VBox>

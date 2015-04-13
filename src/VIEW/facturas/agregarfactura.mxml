@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow  xmlns:mx="http://www.adobe.com/2006/mxml" 
+	initialize="{UtilidadesMl.getInstance().backEnable=false,UtilidadesMl.getInstance().nextEnable=true}"
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	creationComplete="{FacturasMl.getInstance().clonAgregarFacturas = this,FacturasMl.getInstance().ValorIvaFactura=0,FacturasMl.getInstance().TotalFactura=0}"
+	layout="absolute" width="420" height="360"
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	showCloseButton="false">
+	
+	<mx:Script>
+        <![CDATA[
+        	import VO.ValorIdVO;  
+        	import mx.messaging.SubscriptionInfo;
+        	import VO.DetalleFacturaFx;
+        	import mx.core.Application;
+        	import MODEL.PermisosMl;
+            import flash.profiler.showRedrawRegions;
+        	import VO.FacturaVO;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import mx.collections.ArrayCollection;
+        	import MODEL.UtilidadesMl;
+        	import mx.controls.Alert;  
+        	import MODEL.PantallasMl;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.FacturaEvent;
+        	import MODEL.FacturasMl;
+        	import MODEL.PersonaMl;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           
+            
+            [Bindable]
+            public var formIsValid:Boolean=false;
+            [Bindable]
+            public var formIsEmpty:Boolean=true;
+            
+            [Bindable]
+            private var ArrayEstadoF:Array = [{estado:'Activa', id:1},{estado:'Anulada', id:2},{estado:'Anulada para la DIAN', id:3}];
+            
+            private var focussedFormControl:DisplayObject;
+            private var dgIvaIsCreate:Boolean=false;
+            
+            
+            private function itemSegunEstado():void{
+            	
+            	if(cbxestadoFactura.selectedItem.id==2){
+            		
+            	    //UtilidadesMl.getInstance().nextEnable=false;
+            		
+            		FacturasMl.getInstance().detallesFacturasFx = new ArrayCollection();
+            		
+            		var arretenVacias:Array = new Array();
+            		
+            		var detalleFacturaFx:DetalleFacturaFx  = new DetalleFacturaFx().
+		           	 DetalleFacturaFxConstructor
+		           	 (
+		           	 	0,
+		           	 	0,
+		           	 	"Anulada",
+		           	 	0,
+		           	 	0,
+		           	    arretenVacias
+		           	 );
+		           	 
+		           	 FacturasMl.getInstance().detallesFacturasFx.addItem(detalleFacturaFx);
+            		
+            	}else if(cbxestadoFactura.selectedItem.id==3){
+            		       
+            		      // UtilidadesMl.getInstance().nextEnable=false;
+            		       
+	            	        FacturasMl.getInstance().detallesFacturasFx = new ArrayCollection();
+	            		
+		            		var arretenVaciasD:Array = new Array();
+		            		
+		            		var detalleFacturaFxx:DetalleFacturaFx  = new DetalleFacturaFx().
+				           	 DetalleFacturaFxConstructor
+				           	 (
+				           	 	0,
+				           	 	0,
+				           	 	"Anulada Para la DIAN",
+				           	 	0,
+				           	 	0,
+				           	    arretenVaciasD
+				           	 );
+				           	 
+				           	 FacturasMl.getInstance().detallesFacturasFx.addItem(detalleFacturaFxx);
+            	        
+            	        }else if(cbxestadoFactura.selectedItem.id==1){
+            	        	      
+            	        	      
+            	        	      //FacturasMl.getInstance().detallesFacturasFx = new ArrayCollection();
+            	                  //UtilidadesMl.getInstance().nextEnable=true;
+            	                
+            	                }
+            	
+            }
+            
+            private function agregarFactura():void{
+           
+             if(formIsValid) {	
+            	
+		             if(FacturasMl.getInstance().detallesFacturasFx.length>0){ 	
+		            	
+		            	var fechaFac:Date = new Date(addFechafacturacionfac.text);
+		            	var fechaPac:Date = new Date(addFechapaPagofac.text);
+		            	var item:Array;
+		            	var cont:int=0;
+		            	
+		            	var idIva:int = -1;
+		            	 
+		            	 if(cbxestadoFactura.selectedItem.id==1){
+		            	 
+			            	if(dgIvaIsCreate)
+			            	{
+			            			idIva = dgIvas.selectedItem==null ?(-1):(dgIvas.selectedItem.id);
+			            	}  		    
+			            	
+			             }        	
+		            	
+		            	FacturasMl.getInstance().estadoFactura = cbxestadoFactura.selectedItem.estado;
+		            			 
+		            	var factura:FacturaVO = new FacturaVO(0,cbxaddpersonaFactura.selectedItem.id,fechaFac,fechaPac,
+		            	idIva,FacturasMl.getInstance().detallesFacturasFx,addnumeroFactura.text);
+		            	var e:FacturaEvent= new FacturaEvent(FacturaEvent.ADICIONAR_FACTURA,factura);
+		            	CairngormEventDispatcher.getInstance().dispatchEvent(e);
+		            	returnName();
+		            	  
+		            	}else{
+		            		
+		            		 Alert.show("!!PARA PODER AGREGAR UNA FACTURA SE DEBE TENER MÍNIMO UN ITEM","",0,null,null,alerta,0);
+		            		 
+		            	     }
+		           }
+            	
+            }
+            
+            
+            // A reference to the TextInput control in which to put the result.
+            [Bindable]
+		    [Embed(source="REC/IMAGENES/agregar.png")]
+		    public var agregar:Class;
+		     
+		     [Bindable]
+			 [Embed(source="REC/IMAGENES/quitar.png")]
+			 public var quitar:Class;
+			 
+			 [Bindable]
+			 [Embed(source="REC/IMAGENES/warn.png")]
+			 public var alerta:Class;
+            // Event handler for the OK button.
+            private function returnName():void {
+                 PopUpManager.removePopUp(this);
+                 FacturasMl.getInstance().DetalleFacturaArraycollection.removeAll();
+                 FacturasMl.getInstance().SubTotalFactura=0;
+                 FacturasMl.getInstance().TotalFactura=0;
+                 FacturasMl.getInstance().ValorIvaFactura=0;
+                 PermisosMl.getInstance().habilitarMenus();
+            }
+            
+            private function pantallaAddItem():void{
+              
+              var s:String;
+              var i:int;
+              
+              i= FacturasMl.getInstance().seletecIndexInAddItems = -1;
+              
+              s= FacturasMl.getInstance().descripcionServicioAddItem;
+              
+              s=FacturasMl.getInstance().precioAddItem;
+              
+              s=FacturasMl.getInstance().cantidadAddItem;
+              
+              FacturasMl.getInstance().seletecIndexInAddItems = -1; 
+              FacturasMl.getInstance().precioAddItem = "";
+              FacturasMl.getInstance().descripcionServicioAddItem = "";
+              FacturasMl.getInstance().cantidadAddItem = "";
+              
+              
+                        
+              PantallasMl.ESTADO_PANTALLA=PantallasMl.getInstance().PANTALLA_ADD_ITEM_FACTURA;
+              
+              var e:FacturaEvent=new FacturaEvent(FacturaEvent.LISTAR_RETENCIONES,null);
+              CairngormEventDispatcher.getInstance().dispatchEvent(e);
+              
+            }
+            
+            
+            public function getIvasSeleccionados():Array
+            {
+            	
+            	var arrayIvas:Array = new Array();
+            	
+            	for each( var x:* in FacturasMl.getInstance().listIvas)
+            	{
+            		if(x.asignado)
+            			arrayIvas.push(x.id);
+            	}
+            	
+            	return arrayIvas;
+            }
+            
+            
+            
+            private function eliminarItem():void{
+            
+            if(FacturasMl.getInstance().detallesFacturasFx.length>0){
+            
+              if(dgItems.selectedItem!=null){	
+            	   
+            	   FacturasMl.getInstance().SubTotalFactura = FacturasMl.getInstance().SubTotalFactura - dgItems.selectedItem.total;
+            	    FacturasMl.getInstance().totalIva();
+            	   FacturasMl.getInstance().detallesFacturasFx.removeItemAt(dgItems.selectedIndex);
+            	
+            	
+              }else{
+              	   
+              	    Alert.show("SELECCIONE UN ITEM DE LA LISTA PARA ELIMINARLO","",0,null,null,alerta,0);
+  
+                    }
+            }else{
+            	   Alert.show("NO HAY ITEMS PARA ELIMINAR. AGREGUE AL MENOS UNO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+                 }  
+                   
+            }
+            
+            private function validateForm(event:Event):void{
+            
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               formIsEmpty = (addFechafacturacionfac.text==""  /*&& addFechapaPagofac.text =="" && parseFloat(totalfac.text)==0 */);
+               validate(fechafacValidator);
+               validate(numerofacturaValidator);
+               //validate(fechapacValidator);
+               
+            }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+            private function creationCompleteHandler():void
+            {
+               resetFocus();
+            }   
+           
+           public function ejemplo():void{
+           	
+           	Alert.show("hi");
+           	
+           }
+           
+            private function clearFormHandler():void
+            {
+              
+               addFechafacturacionfac.text="";
+               addFechapaPagofac.text="";
+               
+               
+               addFechafacturacionfac.errorString="";
+               addFechapaPagofac.errorString="";
+              
+               
+               formIsEmpty=true;
+               resetFocus();
+            }
+           
+            private function resetFocus():void
+            {
+                focusManager.setFocus(addFechafacturacionfac);
+            }
+            
+            
+            private function resetRetenciones():void{
+            	var cont:int = 0;
+            	for each(var x:* in FacturasMl.getInstance().listRetenciones)
+            	{
+            		x.valor = 0;
+            		(FacturasMl.getInstance().listRetenciones as ArrayCollection).setItemAt(x,cont);
+            		cont++;	
+            	}
+            }
+            
+            private function getRetencionesSelecciondas():void{
+            	
+              if(FacturasMl.getInstance().detallesFacturasFx.length>0){
+              	
+             	
+                 	/*valorIdVO = new ValorIdVO().ValorIdVOConstructor(
+					FacturasMl.getInstance().agregarItemClone.dgretenciones.selectedItem.id,
+					txtValRetenciones.text==""?(0):(parseFloat(txtValRetenciones.text)));
+					FacturasMl.getInstance().valorIdsRetenciones[FacturasMl.getInstance().agregarItemClone.dgretenciones.selectedIndex]=valorIdVO;
+             	*/
+             	
+             	    var valorIdVO:ValorIdVO;
+             	
+            	if(dgItems.selectedItem != null)
+            	{
+	            	resetRetenciones();
+	            	var dfx:Object = dgItems.selectedItem;
+	            	var cont:int = 0;
+	            	for each(var x:* in FacturasMl.getInstance().listRetenciones)
+	            	{
+	            		for each(var idVo:* in dfx.valorIdVOs){
+	            			if(x.id==idVo.id){
+	            				x.valor = idVo.valor;
+	            				(FacturasMl.getInstance().listRetenciones as ArrayCollection).setItemAt(x,cont);
+	            			    
+	            			    ////////////////CAMBIO ADRIAN
+	            			    
+	            			      valorIdVO = new ValorIdVO().ValorIdVOConstructor(
+	            			      idVo.id,idVo.valor);
+	            			      
+	            			      FacturasMl.getInstance().valorIdsRetenciones[cont]=valorIdVO;
+	            			        
+	            			    
+	            			    /////////////////////////// 
+	            			      
+	            			
+	            			}
+	            			
+	            		}
+	            		cont++;
+	            		
+	            	}
+	            	
+	            	var obj:Object = FacturasMl.getInstance().listRetenciones;
+	            	
+		            FacturasMl.getInstance().descripcionServicioAddItem = dfx.descripcionBienServicio;
+		            FacturasMl.getInstance().precioAddItem = dfx.precio;
+		            FacturasMl.getInstance().cantidadAddItem = dfx.cantidad;
+		            FacturasMl.getInstance().seletecIndexInAddItems = dgItems.selectedIndex;
+		            PopUpManager.createPopUp(this, agregarItem, false);
+	            
+	            }else{
+	            	
+	            	  Alert.show("SELECCIONE UN ITEM DE LA LISTA PARA MODIFICARLO","",0,null,null,alerta,0);
+	            	
+	                 }
+	                 
+              }else{
+              	
+            	    Alert.show("NO HAY ITEMS PARA MODIFICAR. AGREGUE AL MENOS UN ITEM PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+                   
+                   }  
+	            
+            }
+            
+            private function dglabelfunct_total(item:Object,dgcolumn:DataGridColumn):String {
+            	
+            	var retorno:String;
+            	
+            	retorno = UtilidadesMl.getInstance().formaterMoneda(item.total);
+            	
+            	return retorno;
+            	
+            }
+            
+          
+          
+          public function direccionarAtras(index:int):void{
+              
+             // if(cbxestadoFactura.selectedItem.id==1){
+            
+	               if(index==0){
+	               	
+	                  viewStack1.selectedIndex=0; 
+	                  UtilidadesMl.getInstance().backEnable=false; 
+	                  UtilidadesMl.getInstance().nextEnable=true;
+	                  
+	               	
+	               }else if(index==1){
+	               	
+	               	        viewStack1.selectedIndex=0;
+	               	        UtilidadesMl.getInstance().backEnable=false;
+	               	        UtilidadesMl.getInstance().nextEnable=true;
+	               	
+	               	       }else if(index==2){
+	               	       	
+	               	       	       viewStack1.selectedIndex=1;
+	               	       	       UtilidadesMl.getInstance().backEnable=true;
+	               	       	       UtilidadesMl.getInstance().nextEnable=true;
+	               	       	
+	               	              }
+	            // }
+               	              
+            
+            }
+            
+            public function direccionarAdelante(index:int):void{
+              
+            // if(cbxestadoFactura.selectedItem.id==1){
+            
+               if(index==0){
+               	
+                  viewStack1.selectedIndex=1;  
+                  UtilidadesMl.getInstance().backEnable=true; 	 
+               	
+               }else if(index==1){
+               	
+               	       viewStack1..selectedIndex=2;
+               	       UtilidadesMl.getInstance().backEnable=true;
+               	       UtilidadesMl.getInstance().nextEnable=false;
+               	
+               	       }else if(index==2){
+               	       	
+               	       	       viewStack1..selectedIndex=2;
+               	       	       UtilidadesMl.getInstance().backEnable=true;
+               	               UtilidadesMl.getInstance().nextEnable=false;	
+               	              }
+            // }            
+            
+            }
+          
+          
+            
+        ]]>
+    </mx:Script>
+    
+    <mx:NumberFormatter
+    	id="nf"
+    	rounding="nearest"
+    	precision="1"
+    />
+    	
+   
+    
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Número de la Factura por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo para ser válido¡¡"
+        id="numerofacturaValidator"
+        source="{addnumeroFactura}" 
+        property="text"
+        minLength="2"
+        
+    />
+    
+    <mx:DateValidator
+    
+	   requiredFieldError="!!Este campo es Obligatorio. Ingrese la Fecha de facturación por favor¡¡"
+	    formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+	     id="fechafacValidator"
+        source="{addFechafacturacionfac}" 
+        property="text"
+    	
+    />
+    
+    <mx:DateValidator
+    
+	    requiredFieldError="!!Este campo es Obligatorio. Ingrese la fecha pactada para pago por favor¡¡"
+	    formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+	    id="fechapacValidator"
+        source="{addFechapaPagofac}" 
+        property="text"
+    	
+    />	
+	        
+	<mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+
+		<mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+			<mx:Canvas width="100%" height="100%" id="canvas1" >
+				<mx:Label  id="lblAddUs" text="AÑADIR FACTURA" color="#FFFFFF" fontWeight="bold" fontSize="13"
+ 		 		x="{(canvas1.width/2)-(lblAddUs.width/2)}" y="12"/>	
+			</mx:Canvas>
+		</mx:Box>
+ 
+		<mx:Box id="box2" height="76%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+			
+			<mx:ViewStack width="100%" id="viewStack1" height="100%" selectedIndex="{UtilidadesMl.getInstance().current}">
+				
+				<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+					<mx:Spacer height="40"/>
+					<mx:Form   verticalScrollPolicy="off" width="95%"  height="100%">
+				    	
+				    	<mx:FormItem label="ESTADO FACTURA"  width="100%" styleName="labelTw" >
+					  		<mx:ComboBox dataProvider="{ArrayEstadoF}" change="{itemSegunEstado()}" labelField="estado"  minWidth="{addFechafacturacionfac.width}" maxWidth="{addFechafacturacionfac.width}" id="cbxestadoFactura" />
+					  	</mx:FormItem>
+					  	
+				    	<mx:Spacer height="15"/>
+				    	
+				    	<mx:FormItem label="NÚMERO DE FACTURA"   width="100%" styleName="labelTw" > 	
+					  	    <mx:TextInput  change="validateForm(event)" id="addnumeroFactura" width="75%" color="#000000"/>  	  	
+					  	</mx:FormItem>
+					  	
+				    	<mx:Spacer height="15"/>
+				    	
+				    	<mx:FormItem textAlign="center" label="FECHA DE FACTURACIÓN (MM/DD/AA)"   width="100%" styleName="labelTw" > 	
+					  	    <mx:DateField editable="true" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" change="validateForm(event)" id="addFechafacturacionfac" width="75%" color="#000000"/>  	  	
+					  	</mx:FormItem>
+					  	
+					  <mx:Spacer height="15"/>
+					  
+				    	<mx:FormItem textAlign="center" label="FECHA PACTADA PAGO (MM/DD/AA)"  width="100%" styleName="labelTw" > 	
+					  	    <mx:DateField editable="true" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}"  id="addFechapaPagofac" width="75%" color="#000000"/>  	  	
+					  	</mx:FormItem>
+				    	
+				    	<mx:Spacer height="15"/>
+					  	
+					  	<mx:FormItem label="PERSONA"  width="100%" styleName="labelTw" >
+					  		<mx:ComboBox toolTip="{cbxaddpersonaFactura.selectedItem.nombreRs}" minWidth="{addFechafacturacionfac.width}" maxWidth="{addFechafacturacionfac.width}" id="cbxaddpersonaFactura" dataProvider="{PersonaMl.getInstance().listPersonas}" labelField="nombreRs" />
+					  	</mx:FormItem>
+					</mx:Form>
+				</mx:Box>
+				
+				<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+					<mx:VBox height="100%" width="100%" horizontalAlign="center" verticalAlign="middle">
+							
+							<mx:Spacer height="10"/>
+						  	<mx:Label text="ITEMS DE LA FACTURA" styleName="labelTw" />
+						   
+							<mx:DataGrid width="96%" height="100%"   id="dgItems" dataProvider="{FacturasMl.getInstance().detallesFacturasFx}"  textAlign="center" >
+						  	      <mx:columns>
+					                     <mx:DataGridColumn headerText="Descripción" dataField="descripcionBienServicio" textAlign="center" />
+					                     <mx:DataGridColumn headerText="Cantidad" dataField="cantidad" textAlign="center" />
+					                     <mx:DataGridColumn headerText="Precio" itemRenderer="VIEW.Items.Facturas.ItemFactura" dataField="precio"  textAlign="center" />
+					                     <mx:DataGridColumn headerText="Total" labelFunction="dglabelfunct_total" dataField="total" textAlign="center" />
+								 </mx:columns>
+				  	 		</mx:DataGrid>
+				  	 		    <!--itemRenderer="VIEW.Items.Facturas.ItemFactura"//labelFunction="dglabelfunct_total"-->
+				  	 		    <mx:VBox verticalAlign="middle" horizontalAlign="center">
+				  	 		    	 <mx:Label text="Total de la Factura Sin Ivas = {UtilidadesMl.getInstance().formaterMoneda(FacturasMl.getInstance().SubTotalFactura)}" textAlign="center" color="#FFFFFF"/>
+				  	 		    	 
+				  	 		    	 <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+							  	   	  	<mx:Button click="{FacturasMl.getInstance().banderaFormIsvalidGestionarItems=false,pantallaAddItem()}" toolTip="agregar Item" upSkin="@Embed(source='REC/IMAGENES/add_item.png')" downSkin="@Embed(source='REC/IMAGENES/add_item_down.png')" overSkin="@Embed(source='REC/IMAGENES/add_item.png')"/>
+							  	   	  	<mx:Button click="{eliminarItem()}" toolTip="eliminar Item" upSkin="@Embed(source='REC/IMAGENES/removeItem.png')" downSkin="@Embed(source='REC/IMAGENES/removeItemDown.png')" overSkin="@Embed(source='REC/IMAGENES/removeItem.png')"/>
+							  	   	    <mx:Button upSkin="@Embed(source='REC/IMAGENES/actualize.png')" downSkin="@Embed(source='REC/IMAGENES/actctualizeDown.png')" overSkin="@Embed(source='REC/IMAGENES/actualize.png')" click="{FacturasMl.getInstance().banderaFormIsvalidGestionarItems=true,getRetencionesSelecciondas()}" toolTip="actualizar Item"  />
+							  	     </mx:HBox>
+				  	 		    </mx:VBox>
+				  	 		    
+					  	 		
+							  	
+							  
+					</mx:VBox>
+				</mx:Box>
+				
+				<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+					<mx:VBox height="100%" width="100%" horizontalAlign="center" verticalAlign="middle">
+							<mx:Spacer height="5"/>
+							
+							<mx:VBox verticalAlign="middle" horizontalAlign="center">
+							   <mx:Label text="IVAS" styleName="labelTw" />	
+                               <mx:LinkButton click="{dgIvas.selectedIndex=-1,FacturasMl.getInstance().ValorIvaFactura =0,FacturasMl.getInstance().TotalFactura=FacturasMl.getInstance().SubTotalFactura}" label="No seleccionar Iva" color="#FFFFFF" textDecoration="underline"/>  							   
+							</mx:VBox>
+							
+							
+					  		<mx:DataGrid width="96%" change="{FacturasMl.getInstance().totalIva()}" dataProvider="{FacturasMl.getInstance().listIvas}"  id="dgIvas"  height="90%"  textAlign="center" creationComplete="{dgIvaIsCreate=true}">
+						  	      <mx:columns>
+					                     <mx:DataGridColumn headerText="Iva" dataField="nombre" textAlign="center" />
+					                     <mx:DataGridColumn headerText="porcentaje" dataField="porcentaje" textAlign="center" />
+					                     
+								  </mx:columns>
+					  	    </mx:DataGrid>
+						  	
+					</mx:VBox>
+					<mx:HBox verticalAlign="middle" horizontalAlign="center" >
+						
+						<mx:Label  text="Valor del Iva = {UtilidadesMl.getInstance().formaterMoneda(FacturasMl.getInstance().ValorIvaFactura)}" textAlign="center" color="#FFFFFF"/>
+						
+						<mx:Label  text="Total Iva Factura = {UtilidadesMl.getInstance().formaterMoneda(FacturasMl.getInstance().TotalFactura)}" textAlign="center" color="#FFFFFF"/>
+						
+					</mx:HBox>
+				</mx:Box>
+				
+				
+			</mx:ViewStack>			
+		</mx:Box>
+
+		<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+			<mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+				<mx:HBox height="100%" width="50%" verticalAlign="middle">
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+						<mx:Image source="{UtilidadesMl.getInstance().backEnable==true?(UtilidadesMl.getInstance().rutaback):UtilidadesMl.getInstance().rutaback2}"
+  	  					mouseOver="{direccionarAtras(viewStack1.selectedIndex)}" toolTip="Atras" />	
+					</mx:Box>
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+						<mx:Image id="ok" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  toolTip="Aceptar" enabled="{formIsValid}" click="{agregarFactura()}" />	
+					</mx:Box>
+  				</mx:HBox>
+				<mx:HBox height="100%" width="50%" verticalAlign="middle">
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+						<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar"/>	
+					</mx:Box>
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+						<mx:Image source="{UtilidadesMl.getInstance().nextEnable==true?(UtilidadesMl.getInstance().next):UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" mouseOver="{direccionarAdelante(viewStack1.selectedIndex)}"/>	
+					</mx:Box>
+  				</mx:HBox>
+			</mx:HBox>
+		</mx:Box>
+	</mx:VBox>
+    
+</mx:TitleWindow>
+
+
+
+
+
+
+
+
+
+
+

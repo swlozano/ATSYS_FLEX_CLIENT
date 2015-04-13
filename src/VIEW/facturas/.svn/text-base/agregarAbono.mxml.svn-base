@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow  xmlns:mx="http://www.adobe.com/2006/mxml" 
+	initialize="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosAgregarAbono,0,-1 ,true)}"
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	creationComplete="{creacionCompleta()}"
+	layout="absolute" width="400" height="220"
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	showCloseButton="false">
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.core.Application;
+			import MODEL.UtilidadesMl;
+			import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import EVENT.AbonoFacturaEvent;
+			import EVENT.FacturaEvent;
+			import MODEL.FacturasMl;
+			import VO.AbonoFacturaVO;
+			import mx.events.ValidationResultEvent;
+			import mx.validators.Validator;
+			import mx.managers.PopUpManager;
+			
+			
+			[Bindable]
+            public var formIsValid:Boolean=false;
+            [Bindable]
+            public var formIsEmpty:Boolean=true;
+            [Bindable]
+            public var fechaPagoFactura:Date;
+            
+            [Embed(source="/REC/IMAGENES/warn2.png")]
+		    public var alerta:Class;
+            
+             private var focussedFormControl:DisplayObject;
+			 
+			 private function validateForm(event:Event):void{
+         
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               formIsEmpty = (addfechaabonofac.text=="" && addvalorabonofac.text=="");
+               
+               validate(fechaValidator);
+               validate(valorValidator);
+               
+               
+            }
+            
+            public function creacionCompleta():void{
+            	
+            	//fechaPagoFactura = FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.fechaFacturacion;
+            	
+            }
+            
+            public function agregarabonoFactura():void{
+            	
+            	if(formIsValid){
+            	
+            	var fechaabono:Date= new Date(addfechaabonofac.text);
+            	var abonofac:AbonoFacturaVO = new AbonoFacturaVO(0,FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.id,fechaabono,parseFloat(addvalorabonofac.text));
+            	var e:AbonoFacturaEvent = new AbonoFacturaEvent(AbonoFacturaEvent.ADICIONAR_ABONO_FACTURA,abonofac);
+            	CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            	returnName();
+            	
+            	}
+            	
+            }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+               
+            } 
+            
+            private function creationCompleteHandler():void
+            {
+            	
+               resetFocus();
+              
+            }
+            
+            private function clearFormHandler():void
+            {
+               addfechaabonofac.text="";
+               addvalorabonofac.text="";
+               
+               addfechaabonofac.errorString="";
+               addvalorabonofac.errorString="";
+               
+               formIsEmpty=true;
+               resetFocus();
+            }
+            
+            private function resetFocus():void
+            {
+                focusManager.setFocus(addfechaabonofac);
+            }
+			
+			
+			private function returnName():void {
+                 PopUpManager.removePopUp(this);
+            }
+            
+            
+            public function validarRangoFechas(fecha:Date,df:DateField):void{
+            	
+            	 if(FacturasMl.getInstance().FacturasPpl.dgfacturas==null){
+            	 	
+            	 	trace("aqui esta el error");
+            	 	
+            	 }
+            	
+            	  var fechaPago:Date = FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.fechaFacturacion;
+            	  
+            	   
+            	  if(df.text!=""){   
+            	   
+            	   if(fecha < fechaPago)   
+            	    {
+            	    
+            	       Alert.show("La fecha del abono NO puede ser menor que la fecha de Facturación","Mensaje de alerta",0,null,null,alerta,0);
+            	       df.text="";
+            	       
+            	    }
+            	
+            	  }
+            }
+			
+		]]>
+	</mx:Script>
+	
+	 <!--mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese la fecha del abono por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="fechaValidator"
+        source="{addfechaabonofac}" 
+        property="text"
+        minLength="2"
+        maxLength="50"
+    /-->
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el valor del abono por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="valorValidator"
+        source="{addvalorabonofac}" 
+        property="text"
+        minLength="2"
+        maxLength="50"
+    /> 
+	
+	
+	<mx:DateValidator
+    
+	    requiredFieldError="!!Este campo es Obligatorio. Ingrese la fecha del abono por favor¡¡"
+	    formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+     	
+	    id="fechaValidator"
+        source="{addfechaabonofac}" 
+        property="text"
+    	
+    />		
+	        
+	<mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+
+		<mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+			<mx:Canvas width="100%" height="100%" id="canvas1" >
+				<mx:Label  id="lblAddUs" text="{UtilidadesMl.getInstance().tituloPantalla}" color="#FFFFFF" fontWeight="bold" fontSize="13"
+ 		 		x="{(canvas1.width/2)-(lblAddUs.width/2)}" y="12"/>	
+			</mx:Canvas>
+		</mx:Box>
+ 
+		<mx:Box id="box2" height="60%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+			
+				<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+			
+				<mx:Form  verticalScrollPolicy="off" width="96%" height="60%" >
+	              
+				  	      	  <mx:FormItem label="      FECHA DE ABONO (MM/DD/AA)"  textAlign="center" styleName="labelTw" width="100%" > 	
+				  	      	  	  <mx:DateField editable="true" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" id="addfechaabonofac" change="validateForm(event),validarRangoFechas(addfechaabonofac.selectedDate,addfechaabonofac)" width="75%"  color="#000000"/>  	  	
+				  	      	  </mx:FormItem>
+				  	      	   <mx:Spacer height="20"/>
+				  	      	  <mx:FormItem label="VALOR A ABONAR"    width="100%" styleName="labelTw">  	      	  	
+				  	      	  	 <mx:TextInput id="addvalorabonofac" change="validateForm(event)" restrict="0-9"  width="75%" textAlign="center"/>
+				  	      	  </mx:FormItem>
+			
+				   </mx:Form>
+				</mx:Box>
+			
+						
+		</mx:Box>
+
+		<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+			<mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+				<mx:HBox height="100%" width="50%" verticalAlign="middle">
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+						<mx:Image source="{UtilidadesMl.getInstance().backEnable==true?(UtilidadesMl.getInstance().rutaback):UtilidadesMl.getInstance().rutaback2}"
+  	  					 toolTip="Atras" mouseOver="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosAgregarAbono,0,-1 ,false)}" />	
+					</mx:Box>
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+						<mx:Image id="ok" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  toolTip="Aceptar" enabled="{formIsValid}" click="{agregarabonoFactura()}" />	
+					</mx:Box>
+  				</mx:HBox>
+				<mx:HBox height="100%" width="50%" verticalAlign="middle">
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+						<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar"/>	
+					</mx:Box>
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+						<mx:Image source="{UtilidadesMl.getInstance().nextEnable==true?(UtilidadesMl.getInstance().next):UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" 
+							mouseOver="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosAgregarAbono,0,-1 ,true)}"/>	
+					</mx:Box>
+  				</mx:HBox>
+			</mx:HBox>
+		</mx:Box>
+	</mx:VBox>	
+</mx:TitleWindow>

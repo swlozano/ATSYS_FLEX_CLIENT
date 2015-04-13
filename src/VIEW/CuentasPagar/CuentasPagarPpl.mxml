@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox width="100%" creationComplete="{CuentasPorPagarMl.getInstance().CuentasPorPagarPpl = this}" height="100%" xmlns:mx="http://www.adobe.com/2006/mxml"   styleName="glassPods" verticalAlign="middle" horizontalAlign="center" xmlns:menu="VIEW.menu.*">
+	
+	<mx:Script>
+		<![CDATA[
+			import VIEW.Items.CuentasPorPagar.ImprimirDataGridCuentasPpagar;
+			import mx.printing.FlexPrintJob;
+			import MODEL.UsuariosSysMl;
+			import MODEL.PermisosMl;
+			import VO.CuentaPorPagarVO;
+			import mx.events.MenuEvent;
+			import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import EVENT.CuentasPorPagarEvent;
+			import MODEL.PersonaMl;
+			import MODEL.RecursoHumanoMl;
+			import MODEL.PantallasMl;
+			import mx.managers.PopUpManager;
+			import mx.controls.Alert;
+			import MODEL.UtilidadesMl;
+			import mx.controls.dataGridClasses.DataGridColumn;
+			import MODEL.CuentasPorPagarMl;
+		    
+		      
+		    [Bindable]
+	        [Embed(source="/REC/IMAGENES/f.png")]
+		    public var buscar:Class;
+		    
+		    
+		    [Bindable]
+            private var ArrayEstado:Array = [{estado:'PAGADA', id:1},{estado:'POR PAGAR', id:2},{estado:'TODOS', id:3}];
+			
+			[Bindable]
+            private var ArrayDestino:Array = [{destino:'RECURSO HUMANO', id:1},{destino:'PERSONA', id:2},{destino:'TODOS', id:3}];
+			
+			
+			[Embed(source="/REC/IMAGENES/falla.png")]
+	        public var falla:Class;
+	        [Embed(source="/REC/IMAGENES/warn2.png")]
+			public var alerta:Class; 
+			
+			[Embed(source="/REC/IMAGENES/alertopt.png")]
+			public var alertidea:Class;
+           
+            [Bindable]
+            private var Arraytipo:Array = [
+            {tipo:'LIQUIDACION', id:1},
+            {tipo:'CAUSACION NOMINA', id:2},  
+            {tipo:'CAUSACION PRESTACION SERVICIOS', id:3},
+            {tipo:'CUENTA DE COBRO', id:4},
+            {tipo:'OTROS', id:5},
+            {tipo:'TODOS', id:6}];
+
+  
+            public function filtrar():void{
+            	
+            	if(cbxdestinoCuenta.selectedIndex==2){
+            		
+            	   CuentasPorPagarMl.getInstance().idRecHumanoToListar = -1;
+            	   CuentasPorPagarMl.getInstance().idPersonaToListar = -1;
+            	
+            	}
+            	
+            	if(cbxestado.selectedIndex==2){
+            		
+            	   CuentasPorPagarMl.getInstance().idEstadoToListar = -1;	
+            		
+            	}else{
+            		
+            	          CuentasPorPagarMl.getInstance().idEstadoToListar = cbxestado.selectedItem.id;	    
+            		
+            	     }
+            	     
+            	if(cbxtipocuenta.selectedIndex==5){
+            		
+            		CuentasPorPagarMl.getInstance().idTipoCuentaToListar = -1;
+            		
+            	 }else{
+            	 	
+            	 	    CuentasPorPagarMl.getInstance().idTipoCuentaToListar = cbxtipocuenta.selectedItem.id;
+            	 	
+            	      }     
+                
+                var a:int;
+                var b:int;
+                var c:int;
+                var d:int;
+                
+                a =  CuentasPorPagarMl.getInstance().idRecHumanoToListar;
+                b =  CuentasPorPagarMl.getInstance().idPersonaToListar;
+                c =  CuentasPorPagarMl.getInstance().idEstadoToListar;
+                d =  CuentasPorPagarMl.getInstance().idTipoCuentaToListar;
+                            	
+            	var evF:CuentasPorPagarEvent = new CuentasPorPagarEvent(CuentasPorPagarEvent.LISTAR_CUENTA_X_PAGAR,null);
+            	CairngormEventDispatcher.getInstance().dispatchEvent(evF);
+            	
+            }
+            
+            public function cambioEstado():void{
+            	
+            	if(cbxdestinoCuenta.selectedIndex==0){
+            		
+            		if(RecursoHumanoMl.getInstance().listRecursoHumano!=null){
+            			
+            		   if(RecursoHumanoMl.getInstance().listRecursoHumano.length>0){
+            		     
+            		      var busqRecHumano:BusquedaRec = BusquedaRec(PopUpManager.createPopUp(PantallasMl.atsys,BusquedaRec,true));
+	            		  PopUpManager.centerPopUp(busqRecHumano);
+            		      	
+            		   }else{
+            		   	    
+            		   	     cbxdestinoCuenta.selectedIndex = 2;
+                             Alert.show("No hay Recursos Humanos Por los Cuales Filtrar","Mensaje de alerta",0,null,null,alerta,0);		   	     
+            		   	
+            		        }
+            		  
+            		}else{
+            			   
+            			   cbxdestinoCuenta.selectedIndex = 2;
+            			   Alert.show("No hay Recursos Humanos Por los Cuales Filtrar","Mensaje de alerta",0,null,null,alerta,0);
+            			   
+            		     }
+            		
+            	}else if(cbxdestinoCuenta.selectedIndex==1){
+            		     
+            		      if(PersonaMl.getInstance().listPersonas!=null){
+            		      	
+            		      	 if(PersonaMl.getInstance().listPersonas.length>0){
+            		      	 	
+            		            var busqPersona:BusquedaPersona = BusquedaPersona(PopUpManager.createPopUp(PantallasMl.atsys,BusquedaPersona,true));
+            		            PopUpManager.centerPopUp(busqPersona);	    
+            		      	 
+            		      	 }else{
+            		   	              
+            		   	             cbxdestinoCuenta.selectedIndex = 2; 
+		                             Alert.show("No hay Personas Por las Cuales Filtrar","Mensaje de alerta",0,null,null,alerta,0);		   	     
+		            		   	
+		            		      }
+            		      	
+            		      }else{
+            		   	         
+            		   	         cbxdestinoCuenta.selectedIndex = 2;
+                                 Alert.show("No hay Personas Por las Cuales Filtrar","Mensaje de alerta",0,null,null,alerta,0);		   	     
+            		   	
+            		           }
+            		     
+            		      
+            		
+            	        }else if(cbxdestinoCuenta.selectedIndex==2){
+            	        	
+            	        	      CuentasPorPagarMl.getInstance().idRecHumanoToListar = -1;
+            	        	      CuentasPorPagarMl.getInstance().idPersonaToListar = -1;
+            	        	
+            	                }
+            	
+            }
+            
+                       			
+			public function lblfunctionFechaOrigen(item:Object,datagridcolumn:DataGridColumn):String{
+				
+				var retorno:String;
+				
+				retorno = UtilidadesMl.getInstance().formaterFechas(item.fechaOrigen);
+				
+				return retorno;
+				
+				
+			}
+			
+			
+			public function lblfunctionFechaPago(item:Object,datagridcolumn:DataGridColumn):String{
+				
+				var retorno:String;
+				
+				if(item.fechaPago!=null){
+				
+				  retorno = UtilidadesMl.getInstance().formaterFechas(item.fechaPago);
+				
+				
+				}else{
+					
+					    retorno="";
+					
+				     }
+				
+				
+				return retorno;
+				
+				
+			}
+			
+			public function lblfunctionValor(item:Object,datagridcolumn:DataGridColumn):String{
+				
+				var retorno:String;
+				
+				retorno = UtilidadesMl.getInstance().formaterMoneda(item.valor);
+				
+				return retorno;
+				
+				
+			}
+			  
+			public function menuHandler(event:MenuEvent):void{
+		      	
+		      	var op:int = event.item.@data;
+		      	
+		      	var ev:CuentasPorPagarEvent;
+		      	
+		      	 
+		      	switch(op){
+		      		
+		      		case 1:
+		      		//pagada
+		      		
+		      		
+		      		   if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_ESTADO_CUENTAS_POR_PAGAR)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1)
+                         {
+		      		
+				      		   if(dgCuentaspagar.selectedItem!=null){
+				      		    	
+					      		    
+				      		       if(dgCuentaspagar.selectedItem.idEstadoCuenta!=1){
+				      		       	  
+				      		           CuentasPorPagarMl.getInstance().idCuentaPpagarToModificarEstado = dgCuentaspagar.selectedItem.idCuentaPorPagar;
+					      		       CuentasPorPagarMl.getInstance().idEstadoCuentaPpagarToModificarEstado = 1;	  
+					      		       ev =  new CuentasPorPagarEvent(CuentasPorPagarEvent.MODIFICAR_ESTADO_CUENTA_X_PAGAR,null);
+				      	               CairngormEventDispatcher.getInstance().dispatchEvent(ev);
+					      		       
+				      		       	  
+				      		         }else{
+				      		         	    
+				      		         	     Alert.show("LA CUENTA POR PAGAR YA ESTA EN ESTADO 'PAGADA'","Mensaje de alerta",0,null,null,alerta,0);
+				      		         	    
+				      		              }
+				      		     
+				      		     }else{
+				      		     	
+				      		     	    Alert.show("SELECCIONE UNA CUENTA POR PAGAR PARA REALIZAR ESTA OPERACIÓN","Mensaje de alerta",0,null,null,alerta,0);
+				      		     	 
+				      		          }
+				      		          
+	      		      }else{
+                                   
+                			Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_ESTADO_CUENTAS_POR_PAGAR+ " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            
+              			 }    
+		      		     
+		      		     
+		      		break;
+		      		
+		      		case 2:
+		      		 //pendiente
+		      		 
+		      		  if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_ESTADO_CUENTAS_POR_PAGAR)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1)
+                         {
+		      		 
+				      		 if(dgCuentaspagar.selectedItem!=null){
+				      		    	
+					      		    
+				      		       if(dgCuentaspagar.selectedItem.idEstadoCuenta!=2){
+				      		       	  
+				      		           CuentasPorPagarMl.getInstance().idCuentaPpagarToModificarEstado = dgCuentaspagar.selectedItem.idCuentaPorPagar;
+					      		       CuentasPorPagarMl.getInstance().idEstadoCuentaPpagarToModificarEstado = 2;	  
+					      		       ev =  new CuentasPorPagarEvent(CuentasPorPagarEvent.MODIFICAR_ESTADO_CUENTA_X_PAGAR,null);
+				      	               CairngormEventDispatcher.getInstance().dispatchEvent(ev);
+					      		       
+				      		       	  
+				      		         }else{
+				      		         	    
+				      		         	     Alert.show("LA CUENTA POR PAGAR YA ESTA EN ESTADO 'POR PAGAR'","Mensaje de alerta",0,null,null,alerta,0);
+				      		         	    
+				      		              }
+				      		     
+				      		  }else{
+				      		     	
+			      		     	    Alert.show("SELECCIONE UNA CUENTA POR PAGAR PARA REALIZAR ESTA OPERACIÓN","Mensaje de alerta",0,null,null,alerta,0);
+			      		     	 
+			      		          }
+			      		          
+			      		 }else{
+                                   
+                			     Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_ESTADO_CUENTAS_POR_PAGAR+ " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            
+              			      }      
+		      		 
+		      		break;
+		      		
+		      		case 3:
+		      		
+		      		     //////////////////////IMPRIMIR/////////////////
+		      		     
+		        var printJob:FlexPrintJob = new FlexPrintJob();
+    
+                if(printJob.start()) {
+                    
+                    
+                      var cp:ImprimirDataGridCuentasPpagar = new ImprimirDataGridCuentasPpagar();
+                      addChild(cp);
+                    
+                    
+                      cp.Cpp.text="CUENTAS POR PAGAR SERATIC LTDA";
+                      
+                      cp.dgCpp.dataProvider = dgCuentaspagar.dataProvider;
+                    
+                      printJob.addObject(cp);
+    
+                      printJob.send();
+    
+    
+                      removeChild(cp);
+                }
+
+		      		     
+		      		     ///////////////////////////////////////////////
+		      		
+		      		break;
+		      		
+		      	}
+		    }
+			
+			
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Box width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom">
+	<mx:VRule height="10" visible="false"/>
+	 <mx:HBox width="95%" verticalAlign="middle" horizontalAlign="left">
+	    <mx:HRule width="15" visible="false"/>
+	    <mx:Image buttonMode="true" click="{filtrar()}"  toolTip="REALIZAR FILTRADO"  source="{buscar}"/>
+	    <mx:Label text="DESTINO DE CUENTA" color="#FFFFFF" fontWeight="bold" fontSize="11"/>
+	    <mx:ComboBox change="{cambioEstado()}" maxWidth="140" minWidth="140" selectedIndex="2" dataProvider="{ArrayDestino}" labelField="destino" id="cbxdestinoCuenta"/>
+	    <mx:Label  text="ESTADO" fontSize="11" color="#FFFFFF" fontWeight="bold"/>
+	    <mx:ComboBox selectedIndex="2" maxWidth="100" minWidth="100" id="cbxestado" labelField="estado" dataProvider="{ArrayEstado}" />
+	    <mx:Label text="TIPO CUENTA" color="#FFFFFF" fontWeight="bold" fontSize="11"/>
+	    <mx:ComboBox selectedIndex="5" maxWidth="220" minWidth="220"  dataProvider="{Arraytipo}" labelField="tipo" id="cbxtipocuenta"/>
+	    
+	    <mx:MenuBar id="menuOpcCpp" labelField="@label" itemClick="{menuHandler(event)}" cornerRadius="5">
+      	    	<mx:XMLList>
+      	    	
+			            <menuitem label="OPCIONES">
+			            
+			                <menuitem label="Modificar Estado Cuenta Por Pagar">
+			                   <menuitem  label="Pagada" data="1"/>
+			                   <menuitem  label="Por Pagar" data="2"/>
+			                </menuitem>			                   
+			                
+			                <menuitem label="Imprimir" data="3"/>
+			                
+			            </menuitem>
+			            
+                </mx:XMLList>
+      	</mx:MenuBar>
+	
+	</mx:HBox>
+	
+		<mx:Box width="95%" height="95%" >
+			<mx:DataGrid width="100%" horizontalScrollPolicy="auto" dataProvider="{CuentasPorPagarMl.getInstance().listCuentasPorPagar}" height="100%" id="dgCuentaspagar" themeColor="#307BAB" alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15">
+				<mx:columns>
+				    <mx:DataGridColumn textAlign="center" labelFunction="lblfunctionFechaOrigen"  headerText="Fecha Origen"  width="170"/>
+				    <mx:DataGridColumn textAlign="center" labelFunction="lblfunctionFechaPago"  headerText="Fecha Pago" width="170"/>
+					<mx:DataGridColumn textAlign="center" dataField="nombre" headerText="Nombre"  width="250"/>
+					<mx:DataGridColumn textAlign="center" itemRenderer="VIEW.Items.CuentasPorPagar.ItemConceptoCpp" headerText="Concepto" dataField="concepto" width="250"/>
+					<mx:DataGridColumn textAlign="center" headerText="Banco" dataField="banco" width="200"/>
+					<mx:DataGridColumn textAlign="center" headerText="Tipo Cuenta" dataField="tipoCuenta" width="190"/>
+					<mx:DataGridColumn textAlign="center" headerText="Número de Cuenta" dataField="numeroCuenta" width="220"/>
+					<mx:DataGridColumn textAlign="center" headerText="Estado" dataField="estadoCuenta" width="200"/>
+					<mx:DataGridColumn textAlign="center" headerText="Generador Cuenta" dataField="generadorDeCuenta" width="220"/>
+					<mx:DataGridColumn textAlign="center" labelFunction="lblfunctionValor" headerText="Valor" dataField="valor" width="130"/>
+				</mx:columns>
+			</mx:DataGrid>
+			
+		</mx:Box>
+	</mx:Box>
+	<menu:MenuAbajo />
+	
+	
+	
+	
+</mx:VBox>

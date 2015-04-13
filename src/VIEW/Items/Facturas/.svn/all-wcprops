@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/ATSYS_WEB/!svn/ver/81/ATSYS_WEB/src/VIEW/Items/Facturas
+END
+ItemVerItemsFactura.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/Facturas/ItemVerItemsFactura.mxml
+END
+ItemFactura.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/Facturas/ItemFactura.mxml
+END
+ItemModFactura.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/Facturas/ItemModFactura.mxml
+END
+ItemClFac.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ATSYS_WEB/!svn/ver/47/ATSYS_WEB/src/VIEW/Items/Facturas/ItemClFac.mxml
+END
+ItemTotalFactura.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/Facturas/ItemTotalFactura.mxml
+END
+ItemFechaPactadaFactura.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/Facturas/ItemFechaPactadaFactura.mxml
+END
+ItemFechaAbonoFactura.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/Facturas/ItemFechaAbonoFactura.mxml
+END
+ItemFechaFactura.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/Facturas/ItemFechaFactura.mxml
+END
+ItemFacturaValRetencion.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/ATSYS_WEB/!svn/ver/81/ATSYS_WEB/src/VIEW/Items/Facturas/ItemFacturaValRetencion.mxml
+END
+ItemVerRetcionItem.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/Facturas/ItemVerRetcionItem.mxml
+END
+ItemSubtotalFactura.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/Facturas/ItemSubtotalFactura.mxml
+END

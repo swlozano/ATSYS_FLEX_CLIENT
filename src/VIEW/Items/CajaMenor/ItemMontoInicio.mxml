@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml"  verticalAlign="middle" horizontalAlign="center" color="#0066CC">
+	<mx:Script>
+		<![CDATA[
+			import MODEL.UtilidadesMl;
+		]]>
+	</mx:Script>
+	<mx:Label textAlign="center" id="lbl" text="{UtilidadesMl.getInstance().formaterMoneda(data.montoInicio)}"/>
+</mx:Box>

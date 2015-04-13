@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box verticalAlign="middle" horizontalAlign="center" xmlns:mx="http://www.adobe.com/2006/mxml" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import EVENT.ValorFpagoEvent;
+			import mx.events.CloseEvent;
+			import mx.core.IFlexDisplayObject;
+			import mx.managers.PopUpManager;
+			import MODEL.ContratoMl;
+			import mx.collections.ArrayCollection;
+			
+			private function clickItem():void{
+				
+				ContratoMl.getInstance().ClonGenerarValoresFpago.viewstackVfp.selectedIndex=1;
+				ContratoMl.getInstance().ClonGenerarValoresFpago.height=500;
+				
+				if(ContratoMl.getInstance().banGenerarOListarVFP==false){
+					
+					ContratoMl.getInstance().idVfpToListarFechasPago = ContratoMl.getInstance().ClonGenerarValoresFpago.dgvalorFpago.selectedItem.id;
+					var ev:ValorFpagoEvent = new ValorFpagoEvent(ValorFpagoEvent.LISTAR_FECHAS_PAGO_BY_VFP,null,null);
+				    CairngormEventDispatcher.getInstance().dispatchEvent(ev);
+					
+				}
+				
+			}	
+			
+		]]>
+	</mx:Script>
+  <mx:LinkButton textAlign="center" toolTip="Ver Fechas de Pago" label="Fechas de Pago"
+  	 color="#0006FF" 
+  	textDecoration="underline" fontWeight="normal"
+  	  id="item" click="{clickItem()}
+  	  "/>
+
+</mx:Box>

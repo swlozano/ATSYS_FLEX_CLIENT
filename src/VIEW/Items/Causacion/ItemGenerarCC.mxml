@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box verticalAlign="middle" horizontalAlign="center" xmlns:mx="http://www.adobe.com/2006/mxml" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			import MODEL.ContratoMl;
+		
+			private function linkBtnClick():void{
+				ContratoMl.getInstance().CausacionPpl.viewStackCausaciones.selectedIndex = 1;
+				ContratoMl.getInstance().CausacionPpl.listCausacionEmpresa = ContratoMl.getInstance().CausacionPpl.dgCausaciones.selectedItem.causacionEmpresa;
+			}
+		]]>
+	</mx:Script>
+  <mx:LinkButton textAlign="center" label="Ver" color="#0006FF" textDecoration="underline" fontWeight="normal"
+  	click="{linkBtnClick()}"/>
+</mx:Box>

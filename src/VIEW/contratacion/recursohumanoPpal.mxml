@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox width="100%" height="100%" xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="crearPantalla()"  styleName="glassPods" verticalAlign="middle" horizontalAlign="center" xmlns:menu="VIEW.menu.*">
+	
+	
+	
+	<mx:Script>
+	<![CDATA[
+		import MODEL.UsuariosSysMl;
+		import mx.events.CloseEvent;
+		import mx.events.MenuEvent;
+		import mx.controls.Alert;
+		import com.adobe.cairngorm.control.CairngormEventDispatcher;
+		import EVENT.RecursoHumanoEvent;
+		import MODEL.PantallasMl;
+		import mx.managers.PopUpManager;
+		import MODEL.RecursoHumanoMl;
+        
+             [Bindable]
+			 [Embed(source="/REC/IMAGENES/f.png")]
+		 	 public var buscar:Class;
+		 	 [Embed(source="/REC/IMAGENES/warn2.png")]
+			 public var alerta:Class;
+		 	 [Bindable]
+		     [Embed(source="REC/IMAGENES/trash.png")]
+		      public var erase:Class;
+		 	 [Bindable]
+		     [Embed(source="/REC/IMAGENES/alertopt.png")]
+		     public var alertidea:Class; 
+       
+		     public function crearPantalla():void
+		     {
+		     	
+			
+			 	RecursoHumanoMl.getInstance().RecursoHumanoPpl=this;
+			
+		     }
+		     
+		     public function menuHandler(event:MenuEvent):void{
+		      	
+		      	var op:int =event.item.@data;
+		      	
+		      	switch(op){
+		      		
+		      		case 1:
+		      		    
+		      		    PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_AGREGAR_CUENTA_BANCARIA;
+		      		    
+		      		    var e:RecursoHumanoEvent = new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_BANCOS,null,null);
+		      		    CairngormEventDispatcher.getInstance().dispatchEvent(e);
+		      		    
+		      		  /* var agregarcuenta:AgregarCuentaBancaria = AgregarCuentaBancaria(PopUpManager.createPopUp(PantallasMl.atsys,AgregarCuentaBancaria,true));
+		      		   PopUpManager.centerPopUp(agregarcuenta);*/
+		      		
+		      		break;
+		      		
+		      		case 2:
+		      		
+		      		     if(dgcuentas.selectedItem==null){
+				 	      	 
+				 	      	      Alert.show("SELECCIONE UNA CUENTA PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+				 	      	
+				 	      		}else{
+		      		     
+						      		     Alert.yesLabel="SI";
+                              	         Alert.noLabel="NO";
+                              	         Alert.show("¿Seguro que deseas borrar este Dato?" +"\n"+ "BANCO: "+dgcuentas.selectedItem.nombreBanco +"\n" + "TIPO DE CUENTA: " + dgcuentas.selectedItem.nombreTipoCuentaBancaria +"\n" + "NÚMERO: " + dgcuentas.selectedItem.numero +"\n","Eliminar Cuenta Bancaria",Alert.YES|Alert.NO,this,closeHandlerCuentas,erase,0);
+						      		 
+						      		 }
+		      		
+		      		break;
+		      		
+		      		case 3:
+		      		     
+		      		     if(dgcuentas.selectedItem==null){
+				 	      	 
+				 	      	      Alert.show("SELECCIONE UNA CUENTA PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+				 	      	
+				 	      		}else{
+		      		     
+						      		     PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_MODIFICAR_CUENTA_BANCARIA;
+						      		     var ev:RecursoHumanoEvent = new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_BANCOS,null,null);
+						      		     CairngormEventDispatcher.getInstance().dispatchEvent(ev);
+						      		 
+						      		 }
+		      		
+		      		break;
+		      		
+		      	}
+		      	
+		     
+		     }  
+		     
+		     
+		     private function closeHandlerCuentas(event:CloseEvent):void{
+             
+               switch(event.detail){
+               
+                 case Alert.YES:
+                     
+                     RecursoHumanoMl.getInstance().idCuentaToeliminar = dgcuentas.selectedItem.id;
+                     var evv:RecursoHumanoEvent = new RecursoHumanoEvent(RecursoHumanoEvent.ELIMINAR_CUENTA_BANCARIA,null,null);
+                     CairngormEventDispatcher.getInstance().dispatchEvent(evv);
+                     
+                 break;
+                   
+               
+               }
+             
+             }
+             
+             public function UpercseRecCuenta(item:String):String{
+             	
+             	var s:String;
+             	
+             	s = item.toUpperCase();
+             	
+             	return s;
+             	
+             }
+		       
+		     
+	]]>
+    </mx:Script>
+	<mx:Box width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom">
+	
+	    <mx:VRule height="10" visible="false"/>
+    	<mx:HBox width="95%" horizontalAlign="center" verticalAlign="middle" id="vbxMnu">
+    	    
+    	    <mx:Box  verticalAlign="middle" visible="{viewStckPpl.selectedIndex != 0 ?(true):(false)}" horizontalAlign="left"  borderStyle="solid" cornerRadius="5" borderColor="#7391A6" backgroundColor="#7391A6">
+    	    	<mx:Label text="Cuentas de: {UpercseRecCuenta(dgrecursohumano.selectedItem.nombre)} {UpercseRecCuenta(dgrecursohumano.selectedItem.apellido)}"  color="#FFFFFF" fontWeight="bold" fontSize="9" textAlign="right"/>
+    	        <!--mx:Label color="#FFFFFF" fontWeight="bold" fontSize="9"  text="{UpercseRecCuenta(dgrecursohumano.selectedItem.nombre)} {UpercseRecCuenta(dgrecursohumano.selectedItem.apellido)}" textAlign="left" fontStyle="normal" fontFamily="Verdana"/-->
+    	    </mx:Box>
+    	    
+	     	<mx:HBox width="100%" horizontalAlign="left" verticalAlign="middle">
+	     	   <mx:LinkButton label="Volver a Recurso Humano" 
+		    	click="{viewStckPpl.selectedIndex = 0,UsuariosSysMl.getInstance().mostrarSubMenu=true,mnudown.enabled=true}"
+		    	visible="{viewStckPpl.selectedIndex != 0 ?(true):(false)}" color="#FFFFFF" fontSize="11" textDecoration="underline"/>
+		    	<mx:MenuBar visible="{viewStckPpl.selectedIndex!= 0 ?(true):(false)}" id="menuCuenatasBanco" labelField="@label" itemClick="{menuHandler(event)}" cornerRadius="5">
+	      	    	<mx:XMLList>
+	      	    	
+				            <menuitem label="Opciones de Cuentas Bancarias">
+				            
+				                   <menuitem label="Agregar Cuenta de Banco" data="1"/>
+				                   <menuitem label="Eliminar Cuenta de Banco" data="2"/>
+				                   <menuitem label="Modificar Cuenta de Banco" data="3"/>
+				                   
+				            </menuitem>
+				            
+	                </mx:XMLList>
+	      	    </mx:MenuBar>   	
+	     	</mx:HBox>
+	     	
+      	</mx:HBox>
+      	
+      <mx:ViewStack  width="95%" height="95%" id="viewStckPpl" selectedIndex="0">	
+      	
+			<mx:Box width="95%" height="95%">
+				<mx:DataGrid width="100%" horizontalScrollPolicy="auto" selectable="{RecursoHumanoMl.getInstance().selectableRecursoHumano}" dataProvider="{RecursoHumanoMl.getInstance().listRecursoHumano}" height="100%" fontSize="15" id="dgrecursohumano" >
+					<mx:columns>
+						<mx:DataGridColumn textAlign="center" headerText="Nombres" width="160" dataField="nombre"/>
+						<mx:DataGridColumn textAlign="center" headerText="Apellidos" width="170" dataField="apellido"/>
+						<mx:DataGridColumn textAlign="center" headerText="Cédula" width="110" dataField="cedula"/>
+						<mx:DataGridColumn textAlign="center" headerText="E-mail" dataField="correoElectronico" width="210"/>
+						<mx:DataGridColumn textAlign="center" headerText="Teléfono" width="110" dataField="telefono"/>
+						<mx:DataGridColumn textAlign="center" headerText="Fecha Nacimiento"  width="130" itemRenderer="VIEW.Items.RecHumano.ItemFechaNacimiento" dataField="fechaNacimiento"/>
+						<mx:DataGridColumn textAlign="center" headerText="RUT"  dataField="rut" width="120"/>
+						<mx:DataGridColumn textAlign="center" itemRenderer="VIEW.Items.RecHumano.itemVerCuentaBancaria" headerText="Cuentas Bancarias"  width="150"/>
+					    <mx:DataGridColumn textAlign="center" headerText="Documentos" itemRenderer="VIEW.Items.RecHumano.itemDocumentos"  width="80"/>
+					</mx:columns>
+				</mx:DataGrid>
+			</mx:Box>
+			
+			<mx:Box width="95%" height="95%">
+				<mx:DataGrid width="100%" dataProvider="{RecursoHumanoMl.getInstance().listCuentas}"  height="100%" id="dgcuentas" fontSize="15">
+					<mx:columns>
+					
+						<mx:DataGridColumn textAlign="center" dataField="nombreTipoCuentaBancaria" headerText="Tipo Cuenta" width="120" />
+						<mx:DataGridColumn textAlign="center" dataField="nombreBanco" headerText="Banco" width="120" />
+						<mx:DataGridColumn textAlign="center" dataField="numero" headerText="Número" width="120" />
+						
+					</mx:columns>
+				</mx:DataGrid>
+			</mx:Box>
+	
+	 </mx:ViewStack>
+	
+	</mx:Box>
+	
+	
+	
+	
+	
+	<menu:MenuAbajo id="mnudown"/>
+   
+</mx:VBox>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

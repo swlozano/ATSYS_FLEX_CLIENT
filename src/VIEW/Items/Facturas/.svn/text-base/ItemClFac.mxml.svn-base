@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box verticalAlign="middle" horizontalAlign="center" xmlns:mx="http://www.adobe.com/2006/mxml" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			import VO.ReporteFacturaVO;
+			import MODEL.FacturasMl;
+			import mx.collections.ArrayCollection;
+			
+			
+			
+			public function facturasCliente():void{
+				
+				FacturasMl.getInstance().VerreporteFacturas.vstackResultados.selectedIndex=3;
+				//FacturasMl.getInstance().VerreporteFacturas.cbxBusqueda.selectedIndex=-1;
+				//FacturasMl.getInstance().VerreporteFacturas.cbxBusqueda.prompt="Seleccione";
+				
+				FacturasMl.getInstance().VerreporteFacturas.dpBarras = new ArrayCollection();
+				
+				var reportes:ReporteFacturaVO;
+				
+				for each(var x:* in FacturasMl.getInstance().VerreporteFacturas.dgresultadoPersonas.selectedItem.facturaVOs){
+					
+					   reportes = new ReporteFacturaVO(x.totalApagar,x.numeroFactura);
+					   FacturasMl.getInstance().VerreporteFacturas.dpBarras.addItem(reportes);
+					
+				}
+				
+			}
+			
+		]]>
+	</mx:Script>
+  <mx:LinkButton textAlign="center" click="{facturasCliente()}" toolTip="Facturas de Este Cliente" label="Facturas" color="#0006FF" textDecoration="underline" fontWeight="normal" />
+
+</mx:Box>

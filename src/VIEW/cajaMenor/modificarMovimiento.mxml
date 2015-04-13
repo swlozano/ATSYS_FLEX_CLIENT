@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow  xmlns:mx="http://www.adobe.com/2006/mxml" 
+	initialize="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosModificarMovimientos,0,-1 ,true)}"
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	layout="absolute" width="400" height="410"
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	showCloseButton="false">
+  <mx:Script>
+        <![CDATA[
+        	import mx.core.Application;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.MovimientoEvent;
+        	import VIEW.otros.CbxCoincidencia;
+        	import VO.MovimientoVO;
+        	import MODEL.PersonaMl;
+        	import MODEL.CajaMenorMl;
+        	import MODEL.MovimientoMl;
+        	import MODEL.CentroCostoMl;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import MODEL.UtilidadesMl;
+        	import MODEL.UsuariosSysMl;
+        	import MODEL.PermisosMl;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           
+           
+           [Bindable]
+            public var formIsValid:Boolean=true;
+            [Bindable]
+            public var formIsEmpty:Boolean=true;
+            
+            private var focussedFormControl:DisplayObject;
+            
+            [Bindable]
+            public var idpersona:int;
+            
+            private function actualizarMovimiento():void{
+            	
+            	if(formIsValid){
+            
+                  if(modingreso.selected){
+              	
+	              	  idpersona = cbxmodpersonamov.selectedItem.id
+	              	
+	              }else{
+	              	
+	              	    idpersona = cbxmodpersonamov2.selectedItem.id
+	              	
+	                   }
+            
+            
+		                var datemov:Date= new Date(modfechaMov.text);
+		                modValMov.text = UtilidadesMl.getInstance().combertirDecimalToEntero(modValMov.text);
+		                var movimiento:MovimientoVO = new MovimientoVO(MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.id,gettipoMovimiento(),idpersona,cbxmodCjMenormov.selectedItem.id ,cbxmodCtroCostomov.selectedItem.id,parseFloat(modValMov.text),datemov,modconceptmov.text);
+		                var event:MovimientoEvent = new MovimientoEvent(MovimientoEvent.MODIFICAR_MOVIMIENTO,movimiento);
+		                CairngormEventDispatcher.getInstance().dispatchEvent(event);
+		           	    returnName();
+           	    
+           	    }
+           	    
+            }
+            
+            public function gettipoMovimiento():int{
+            
+              var r:int;
+            
+               if(modingreso.selected){
+                 
+                  r=1;
+               
+               }else if(modeegreso.selected){
+               
+                 r= 2;
+               
+               }  
+            
+              return r;
+            
+            }
+            
+            
+            private function returnName():void {
+                 PopUpManager.removePopUp(this);
+                 PermisosMl.getInstance().CloseMainMenu.enabled=true;
+		         UsuariosSysMl.getInstance().mostrarSubMenu=true;
+		         MovimientoMl.getInstance().selectableMovimento=true;
+            }
+            
+            private function validateForm(event:Event):void{
+         
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(valValidator);
+               validate(conceptValidator);
+               validate(fvalidator);
+                           
+            }
+        
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+               
+            } 
+            
+            private function creationCompleteHandler():void
+            {
+               resetFocus();
+            }
+            
+            
+          
+            /*private function seleccionarModTipoMovimento():void{
+            
+               if(MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.tipoMovimiento==1){
+               
+                 modingreso.selected=true;
+                 cbxmodpersonamov.enabled=false;
+                 txtmodPersonaMov.enabled=false;
+               
+               }else{
+                     modeegreso.selected=true;
+                     cbxmodpersonamov.enabled=true;
+                     txtmodPersonaMov.enabled=true
+                    }
+            
+            }*/
+            
+            public function habilitarPersona():void{
+            
+              if(modingreso.selected){
+               	
+               	 cbxmodpersonamov.visible=true;
+               	 cbxmodpersonamov2.visible=false;
+               	 txtpara1.visible=false;
+               	 txtpara2.visible=true;
+               	 
+               	
+               }else{
+               	
+                      cbxmodpersonamov.visible=false;
+	               	  cbxmodpersonamov2.visible=true;
+	               	  txtpara1.visible=true;
+	               	  txtpara2.visible=false;
+                    
+                    }
+            
+            }
+          
+            private function resetFocus():void
+            {
+                focusManager.setFocus(modValMov);
+            }
+            [Bindable] private var enableTxtCajaMenor:Boolean;
+            
+            
+            private function llamarCbxCmenor():void
+            {
+                txtmodCmenorMov.setVisible(false);
+                cbxmodCjMenormov.setVisible(true);
+            }
+            
+            private function cambiarSelecCbxCmenor():void
+            {
+                cbxmodCjMenormov.setVisible(false);
+                txtmodCmenorMov.setVisible(true);
+                var borrar:Object = cbxmodCjMenormov.selectedItem;
+                MovimientoMl.getInstance().txtmodCajaMenorMovimento = cbxmodCjMenormov.selectedItem.nombre;
+            }
+            
+            private function llamarCbxCcosto():void
+            {
+                txtmodCentroCostoMov.setVisible(false);
+                cbxmodCtroCostomov.setVisible(true);
+            }
+            
+            private function cambiarSelecCbxCcosto():void
+            {
+                cbxmodCtroCostomov.setVisible(false);
+                txtmodCentroCostoMov.setVisible(true);
+                var borrar:Object = cbxmodCtroCostomov.selectedItem;
+                MovimientoMl.getInstance().txtmodcentrocostoMovimento = cbxmodCtroCostomov.selectedItem.nombre;
+            }
+            
+            
+           /* private function llamarCbxpersona():void
+            {
+                txtmodPersonaMov.setVisible(false);
+                cbxmodpersonamov.setVisible(true);
+            }*/
+            
+           /* private function cambiarSelecCbxPersona():void
+            {
+                cbxmodpersonamov.setVisible(false);
+                txtmodPersonaMov.setVisible(true);
+                var borrar:Object = cbxmodpersonamov.selectedItem;
+                MovimientoMl.getInstance().txtmodPersonaMovimento = cbxmodpersonamov.selectedItem.nombreRs;
+            }*/
+            
+            
+        ]]>
+  </mx:Script>
+  
+  <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Valor del movimiento por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 5 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="valValidator"
+        source="{modValMov}" 
+        property="text"
+        minLength="2"
+        maxLength="50"
+    />
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el concepto del movimiento por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="conceptValidator"
+        source="{modconceptmov}" 
+        property="text"
+        minLength="2"
+        maxLength="100"
+    />
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese la fecha del movimiento por favor¡¡"
+        id="fechaValidator"
+        source="{modfechaMov}" 
+        property="text"
+        
+    />
+    <mx:DateValidator
+    	id="fvalidator"
+        requiredFieldError="!!Este campo es Obligatorio. Ingrese la fecha del movimiento por favor¡¡"
+        formatError="!!Formato de fecha incorrecto"
+        invalidCharError="!!Fecha incorrecta"
+        wrongDayError="!!El dia de la fecha ingresada esta incorrecto"
+        wrongMonthError="!!El mes de la fecha ingresada esta incorreco"
+        wrongYearError="!!El año de la fecha ingresada esta incorrecto"
+    	wrongLengthError="!!El formato de fecha es MM/DD/AAAA"
+    	property="text"
+    	source="{modfechaMov}"
+    />
+    <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+    	
+    	<mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+    		<mx:Canvas width="100%" height="100%" id="canvas1" >
+    			<mx:Label  id="lblAddUs" text="{UtilidadesMl.getInstance().tituloPantalla}" color="#FFFFFF" fontWeight="bold" fontSize="13"
+    				x="{(canvas1.width/2)-(lblAddUs.width/2)}" y="12"/>	
+    		</mx:Canvas>
+    	</mx:Box>
+    	
+    	<mx:Box id="box2" height="79%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+    			<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+    					
+    					<mx:Form   verticalScrollPolicy="off"  width="96%" height="70%" >
+    					
+    					  <mx:Spacer height="6" />
+    					<mx:FormItem label="VALOR"  width="100%"  styleName="labelTw"> 	
+    					  	<mx:TextInput text="{parseFloat(MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.valor)>= 0 ?(MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.valor):((parseFloat(MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.valor)*(-1)).toString())}" id="modValMov"  click="{modValMov.text=UtilidadesMl.getInstance().combertirDecimalToEntero(modValMov.text)}"  focusOut="{modValMov.text=UtilidadesMl.getInstance().formaterMoneda(modValMov.text)}" change="validateForm(event)" restrict="0-9" width="75%" />  	  	
+    					</mx:FormItem>
+    						<mx:Spacer height="8" />
+    					<mx:FormItem label="CONCEPTO"   width="100%" styleName="labelTw" >
+    						<mx:TextArea id="modconceptmov" text="{MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.concepto}" change="validateForm(event)" width="75%" height="40" color="#000000" maxChars="100"/>
+    					</mx:FormItem>
+    					
+    					<mx:Spacer height="8" /> 
+    					
+    					<mx:FormItem textAlign="center" label="FECHA MOVIMIENTO (MM/DD/AA)"  width="100%" styleName="labelTw"> 	
+    					    <mx:DateField editable="true" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" text="{UtilidadesMl.getInstance().formatearACampoFecha(MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.fecha as Date)}" change="validateForm(event)" id="modfechaMov" width="75%" color="#000000"/>  	  	
+    					</mx:FormItem>
+    					
+    					<mx:Spacer height="8" /> 
+    					
+    					<mx:FormItem label="TIPO MOVIMIENTO"  width="100%" styleName="labelTw"> 	
+    					    <mx:RadioButtonGroup change="{habilitarPersona()}" id="modtipomovimiento"  />
+    					    <mx:HBox>
+    					    	<mx:RadioButton selected="{MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.tipoMovimiento==1?(true):(false)}" label="ingreso" groupName="modtipomovimiento" id="modingreso"/> 	
+    					   		<mx:RadioButton selected="{MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.tipoMovimiento==1?(false):(true)}" label="egreso" groupName="modtipomovimiento" id="modeegreso"/> 		
+    					    </mx:HBox>
+    					    
+    					</mx:FormItem>
+    					
+    					<mx:Spacer height="8" /> 
+    					
+    					<mx:FormItem label="CAJA MENOR"  width="100%" styleName="labelTw" >
+    					   <mx:Canvas width="100%">
+    					   	  	
+    					   	 <mx:ComboBox toolTip="{cbxmodCjMenormov.selectedItem.nombre}" minWidth="{modValMov.width}" maxWidth="{modValMov.width}" dataProvider="{CajaMenorMl.getInstance().listCajasUsuarioEspecifico}"  labelField="nombre" selectedIndex="{MovimientoMl.getInstance().cbxmodCajaMenorselectedIndex}" id="cbxmodCjMenormov"  
+    					   	  visible="false"  close="{cambiarSelecCbxCmenor()}"/> 
+    					   	  <mx:TextInput width="75%" id="txtmodCmenorMov" editable="false" text="{MovimientoMl.getInstance().txtmodCajaMenorMovimento}" 
+    					   	  	click="{llamarCbxCmenor()}"/>
+    					   	  	
+    					   </mx:Canvas>	  	
+    					</mx:FormItem>
+    					
+    					<mx:Spacer height="8" /> 
+    					
+    					<mx:FormItem label="CENTRO DE COSTO"   width="100%" styleName="labelTw" > 	
+    					   	 
+    					   	<mx:Canvas width="100%">
+    					   	    
+    					   	    <mx:ComboBox toolTip="{cbxmodCtroCostomov.selectedItem.nombre}" selectedIndex="{MovimientoMl.getInstance().cbxmodCentroCostoselectedIndex}" dataProvider="{CentroCostoMl.getInstance().listCentroCosto}"   labelField="nombre" id="cbxmodCtroCostomov" 
+    					   	     maxWidth="{modValMov.width}" minWidth="{modValMov.width}"	visible="false" close="{cambiarSelecCbxCcosto()}"/>
+    					   	    <mx:TextInput width="75%" id="txtmodCentroCostoMov" editable="false" text="{MovimientoMl.getInstance().txtmodcentrocostoMovimento}"
+    					   	    	click="{llamarCbxCcosto()}"/>	 	
+    					   	
+    					   	</mx:Canvas> 
+    					
+    					</mx:FormItem>
+    					
+    					<mx:Spacer height="8" /> 
+    					
+    					<mx:FormItem label="DE"   width="100%" styleName="labelTw"> 	
+    					   
+    					   <mx:Canvas width="100%">
+    					   	  
+    					   	  <mx:ComboBox visible="{MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.tipoMovimiento==1?(true):(false)}"  dataProvider="{PersonaMl.getInstance().listPersonas}" selectedIndex="{MovimientoMl.getInstance().cbxmodPersonaselectedIndex}"  labelField="nombreRs" id="cbxmodpersonamov" 
+    					   	   toolTip="{cbxmodpersonamov.selectedItem.nombreRs}" minWidth="{modValMov.width}" maxWidth="{modValMov.width}"	/> 	
+    					      
+    					      <mx:TextInput visible="{MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.tipoMovimiento==1?(false):(true)}" text="{MovimientoMl.getInstance().NombreResponsablePersona}" editable="false" id="txtpara1" width="75%"  color="#000000" fontWeight="normal" fontSize="10"/> 
+    					   
+    					   </mx:Canvas>
+    					   
+    					</mx:FormItem>
+    					
+    					<mx:FormItem label="PARA"   width="100%" styleName="labelTw"> 	
+    					   
+    					   <mx:Canvas width="100%">
+    					   	  
+    					   	  <mx:ComboBox visible="{MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.tipoMovimiento==1?(false):(true)}" dataProvider="{PersonaMl.getInstance().listPersonas}" selectedIndex="{MovimientoMl.getInstance().cbxmodPersonaselectedIndex}"  labelField="nombreRs" id="cbxmodpersonamov2" 
+    					   	   toolTip="{cbxmodpersonamov.selectedItem.nombreRs}" minWidth="{modValMov.width}" maxWidth="{modValMov.width}"	/> 	
+    					      
+    					      <mx:TextInput visible="{MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.tipoMovimiento==1?(true):(false)}" text="{MovimientoMl.getInstance().NombreResponsablePersona}" editable="false" id="txtpara2" width="75%"  color="#000000" fontWeight="normal" fontSize="10"/>
+    					   
+    					   </mx:Canvas>
+    					   
+    					</mx:FormItem>
+    					   					
+    					</mx:Form>
+    			
+    			</mx:Box>
+    			
+    	</mx:Box>
+    	
+    	<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+    		<mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+    			<mx:HBox height="100%" width="50%" verticalAlign="middle">
+    				<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+    					<mx:Image source="{UtilidadesMl.getInstance().backEnable==true?(UtilidadesMl.getInstance().rutaback):UtilidadesMl.getInstance().rutaback2}"
+    							 toolTip="Atras" />	
+    				</mx:Box>
+    				<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+    					<mx:Image id="ok" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  toolTip="Aceptar" enabled="{formIsValid}" click="{ actualizarMovimiento()}" />	
+    				</mx:Box>
+    			</mx:HBox>
+    			<mx:HBox height="100%" width="50%" verticalAlign="middle">
+    				<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+    					<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar"/>	
+    				</mx:Box>
+    				<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+    					<mx:Image source="{UtilidadesMl.getInstance().nextEnable==true?(UtilidadesMl.getInstance().next):UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" />	
+    				</mx:Box>
+    			</mx:HBox>
+    		</mx:HBox>
+    	</mx:Box>
+    </mx:VBox>
+</mx:TitleWindow>
+
+
+
+
+
+

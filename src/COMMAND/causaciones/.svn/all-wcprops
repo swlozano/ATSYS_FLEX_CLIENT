@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/ATSYS_WEB/!svn/ver/85/ATSYS_WEB/src/COMMAND/causaciones
+END
+CalcularCausacionNominaCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/ATSYS_WEB/!svn/ver/55/ATSYS_WEB/src/COMMAND/causaciones/CalcularCausacionNominaCommand.as
+END
+ListarProvisionesCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/causaciones/ListarProvisionesCommand.as
+END
+CalcularCausacionPsCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/ATSYS_WEB/!svn/ver/32/ATSYS_WEB/src/COMMAND/causaciones/CalcularCausacionPsCommand.as
+END
+ListarCausacionNominaXfechaCorte.as
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/causaciones/ListarCausacionNominaXfechaCorte.as
+END
+ListarCausacionPsXfechaCorteCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/ATSYS_WEB/!svn/ver/38/ATSYS_WEB/src/COMMAND/causaciones/ListarCausacionPsXfechaCorteCommand.as
+END
+CrearCausacionNominaCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/causaciones/CrearCausacionNominaCommand.as
+END
+CrearCausacionPsCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ATSYS_WEB/!svn/ver/20/ATSYS_WEB/src/COMMAND/causaciones/CrearCausacionPsCommand.as
+END
+ListarDesduccionesCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/causaciones/ListarDesduccionesCommand.as
+END
+ListarBonificacionesCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/causaciones/ListarBonificacionesCommand.as
+END
+ConsultarExistenciaCausacionCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/ATSYS_WEB/!svn/ver/85/ATSYS_WEB/src/COMMAND/causaciones/ConsultarExistenciaCausacionCommand.as
+END
+ListarFechasCausadasCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/ATSYS_WEB/!svn/ver/38/ATSYS_WEB/src/COMMAND/causaciones/ListarFechasCausadasCommand.as
+END

@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/ATSYS_WEB/!svn/ver/113/ATSYS_WEB/src/VIEW/facturas
+END
+modificarfactura.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/ATSYS_WEB/!svn/ver/110/ATSYS_WEB/src/VIEW/facturas/modificarfactura.mxml
+END
+facturasPpl.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ATSYS_WEB/!svn/ver/113/ATSYS_WEB/src/VIEW/facturas/facturasPpl.mxml
+END
+agregarAbono.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ATSYS_WEB/!svn/ver/81/ATSYS_WEB/src/VIEW/facturas/agregarAbono.mxml
+END
+agregarItem.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ATSYS_WEB/!svn/ver/113/ATSYS_WEB/src/VIEW/facturas/agregarItem.mxml
+END
+VerReportesFacturas.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/ATSYS_WEB/!svn/ver/48/ATSYS_WEB/src/VIEW/facturas/VerReportesFacturas.mxml
+END
+modificarAbono.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ATSYS_WEB/!svn/ver/81/ATSYS_WEB/src/VIEW/facturas/modificarAbono.mxml
+END
+abonarPpl.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/ATSYS_WEB/!svn/ver/81/ATSYS_WEB/src/VIEW/facturas/abonarPpl.mxml
+END
+agregarfactura.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ATSYS_WEB/!svn/ver/110/ATSYS_WEB/src/VIEW/facturas/agregarfactura.mxml
+END
+busquedaFacturas.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ATSYS_WEB/!svn/ver/81/ATSYS_WEB/src/VIEW/facturas/busquedaFacturas.mxml
+END

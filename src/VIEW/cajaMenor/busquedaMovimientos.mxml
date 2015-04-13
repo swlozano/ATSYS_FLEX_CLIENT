@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow showCloseButton="true" initialize="{BusquedaMovtsMl.getInstance().tabNavigatorIndex=tabNavigPpl.selectedIndex,listarCajaMenorInitialize()}" close="{PopUpManager.removePopUp(this)}" title="BÚSQUEDA DE MOVIMIENTOS" xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="{Application.application.width}" height="{Application.application.height}" backgroundColor="#CAC6C6" xmlns:local="*" xmlns:F2="F1.F2.*" xmlns:cajaMenor="VIEW.cajaMenor.*" borderColor="#000000" cornerRadius="15" color="#FFFFFF">
+	<mx:Script>
+		<![CDATA[
+			import MODEL.CajaMenorMl;
+			import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import EVENT.CajaMenorEvent;
+			import VO.CajaMenorVO;
+			import MODEL.MovimientoMl;
+			import mx.managers.PopUpManager;
+			import MODEL.BusquedaMovtsMl;
+			import mx.formatters.SwitchSymbolFormatter;
+			import mx.controls.Alert;
+			import mx.core.Application;
+			
+	
+			public function listarCajaMenorInitialize():void{
+			
+			  BusquedaMovtsMl.getInstance().OBJETOLISTAR= CajaMenorMl.getInstance().listTodasLasCajas;
+			   
+			
+			}
+			
+			
+			private function cambiarDatosTabs(index:int):void
+			{   
+				BusquedaMovtsMl.getInstance().setEnabledCheckboxTodos=false;
+				BusquedaMovtsMl.getInstance().listarDatosBusqueda(index);
+				
+				MovimientoMl.getInstance().listConsultaMovimientoCajaMenor=null;
+				var cjmenor:CajaMenorVO;
+				
+				BusquedaMovtsMl.getInstance().tabNavigatorIndex= tabNavigPpl.selectedIndex;
+				BusquedaMovtsMl.getInstance().datapParametroBusqueda = null;
+				BusquedaMovtsMl.getInstance().datapResultadoBusqueda = null;
+				BusquedaMovtsMl.getInstance().nomCol1DgParaBusqueda = "";
+				
+				
+				
+				switch(index)
+				{
+					case 0:
+				 	    
+				 	    BusquedaMovtsMl.getInstance().setEnabledCheckboxTodos=false;
+					    BusquedaMovtsMl.getInstance().labelfieldCbxresultado ="cajaMenorVO.nombre";
+						BusquedaMovtsMl.getInstance().nomCol1DgParaBusqueda = "Caja menor";
+						BusquedaMovtsMl.getInstance().nombre="SELECCIONAR TODAS LAS CAJAS MENORES";
+						BusquedaMovtsMl.getInstance().datefieldCajabusqueda ="nombre";
+						
+					break;
+					
+					case 1:
+				 	   
+				 	    BusquedaMovtsMl.getInstance().setEnabledCheckboxTodos=false;
+						BusquedaMovtsMl.getInstance().labelfieldCbxresultado ="cajaMenorVO.nombre";
+						BusquedaMovtsMl.getInstance().nomCol1DgParaBusqueda = "Cuentas de Banco";
+						BusquedaMovtsMl.getInstance().nombre="SELECCIONAR TODOS LAS CUENTAS DE BANCO";
+					    BusquedaMovtsMl.getInstance().datefieldCajabusqueda ="nombre";
+ 					break;
+					
+					case 2:
+					
+					    BusquedaMovtsMl.getInstance().setEnabledCheckboxTodos=false;
+						BusquedaMovtsMl.getInstance().labelfieldCbxresultado ="centroCostoVO.nombre";
+						BusquedaMovtsMl.getInstance().nomCol1DgParaBusqueda = "Centro de costo";
+						BusquedaMovtsMl.getInstance().nombre="SELECCIONAR TODOS LOS CENTROS DE COSTO";
+					    BusquedaMovtsMl.getInstance().datefieldCajabusqueda ="nombre";
+ 					break;
+					case 3:
+					
+					    BusquedaMovtsMl.getInstance().setEnabledCheckboxTodos=false;
+					    BusquedaMovtsMl.getInstance().labelfieldCbxresultado ="persona.nombreRs";
+						BusquedaMovtsMl.getInstance().nomCol1DgParaBusqueda = "Persona";
+						BusquedaMovtsMl.getInstance().nombre="SELECCIONAR TODAS LAS PERSONAS";
+					    BusquedaMovtsMl.getInstance().datefieldCajabusqueda ="nombreRs";
+					break;
+				}
+			}
+		]]>
+	</mx:Script>
+	<mx:WipeUp id="myWU" duration="300"/>
+    <mx:WipeDown id="myWD" duration="300"/>
+    <mx:WipeRight id="myWR" duration="300"/>
+	<mx:Box height="100%" width="100%" verticalAlign="middle" horizontalAlign="center">
+			<mx:TabNavigator width="98%" height="98%" id="tabNavigPpl" change="{cambiarDatosTabs(tabNavigPpl.selectedIndex)}" >
+		
+			<mx:VBox label="Por caja menor" width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" color="#000000">
+		        <cajaMenor:HdivBusquedaMov  color="#000000"/>
+		  	</mx:VBox>
+		  	  
+		  	<mx:VBox label="Por Cuentas Banco" width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" color="#000000">
+		        <cajaMenor:HdivBusquedaMov  color="#000000"/>
+		  	</mx:VBox>
+			
+			<mx:VBox label="Por centro de costo" width="100%" height="100%" color="#000000">
+				<cajaMenor:HdivBusquedaMov />
+			</mx:VBox>
+			
+		    <mx:VBox label="Por personas" width="100%" height="100%" color="#000000">
+		       <cajaMenor:HdivBusquedaMov />
+		    </mx:VBox>   
+		
+		</mx:TabNavigator>	
+	
+	</mx:Box>
+		  	
+</mx:TitleWindow>

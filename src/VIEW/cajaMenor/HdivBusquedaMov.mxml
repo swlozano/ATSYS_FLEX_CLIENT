@@ -1,0 +1,718 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VDividedBox xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="creacionCompleta()" height="100%" width="100%">
+			<mx:Script>
+				<![CDATA[
+					import VIEW.Items.Movimientos.ImprimirDataGridMovimientos;
+					import mx.printing.FlexPrintJob;
+					import mx.controls.dataGridClasses.DataGridColumn;
+					import mx.events.ValidationResultEvent;
+					import mx.validators.Validator;
+					import mx.events.IndexChangedEvent;
+					import MODEL.UtilidadesMl;
+					import COMMAND.Movimientos.ConsultarMovimientosCajaMenorCommand;
+					import mx.controls.Alert;
+					import mx.collections.ArrayCollection;
+					import MODEL.MovimientoMl;
+					import MODEL.PersonaMl;
+					import MODEL.CentroCostoMl;
+					import com.adobe.cairngorm.control.CairngormEventDispatcher;
+					import EVENT.ConsultasMovimientosEvent;
+					import VO.ConsultarMovimientosVO;
+					import MODEL.CajaMenorMl;
+					import MODEL.BusquedaMovtsMl;
+					  
+		            [Bindable]  
+			        [Embed(source="/REC/IMAGENES/go.png")]
+		 	        public var go:Class; 
+				   	
+				   	[Bindable]
+				     [Embed(source="/REC/IMAGENES/warn2.png")]
+					 public var alerta:Class;
+					 
+					 [Bindable]
+                     public var formIsValid:Boolean=false;
+                     
+                      private var focussedFormControl:DisplayObject;
+					 
+					/*public var expenses:ArrayCollection
+					public var expenses:ArrayCollection = new ArrayCollection([
+			            {Month:"Jan", Profit:2000, Expenses:1500},
+			            {Month:"Feb", Profit:1000, Expenses:200},
+			            {Month:"Mar", Profit:1500, Expenses:500}
+			        ]);*/
+			           [Bindable]
+					   public var expenses:ArrayCollection;
+					
+					
+					   [Bindable]
+				        public var expenses2:ArrayCollection;
+				        
+				    
+					
+				   public function creacionCompleta():void{
+				   
+				      BusquedaMovtsMl.getInstance().busquedaMovimientosPpl = this;
+				   
+				   }	
+				   
+				   
+				   public function ChangedataProvTorta():void{
+				   	
+				    
+				   var obje:Object = cbxBusqueda.selectedItem.ingresoEgresoVO;
+				   
+				   	if(MovimientoMl.getInstance().listConsultaMovimientoCajaMenor!=null && MovimientoMl.getInstance().listConsultaMovimientoCajaMenor.length>0) 
+				   	 { 
+				   	    expenses2= new ArrayCollection([{Expense:"Ingreso", Amount:obje.valorIngreso},{Expense:"Egreso", Amount:obje.valorEgreso}]);
+				   	 } 
+				   	
+				   	trace();
+				   	
+				   	
+				   }
+				   
+				   public function Changedatabarr():void{
+				   	
+				    
+				   var obje:Object = cbxBusqueda.selectedItem.ingresoEgresoVO;
+				   
+				   	if(MovimientoMl.getInstance().listConsultaMovimientoCajaMenor!=null && MovimientoMl.getInstance().listConsultaMovimientoCajaMenor.length>0) 
+				   	 { 
+				   	    expenses= new ArrayCollection([{Ingreso:obje.valorIngreso,Egreso:obje.valorEgreso,nada:""}]);
+				   	 } 
+				   	
+				   	trace();
+				   	
+				   	
+				   }
+				   
+					
+					
+			public function getCajasSeleccionados():Array
+            {
+            	
+            	CajaMenorMl.getInstance().idsCajasSeleccionadas = new Array();
+            	
+            	
+            	for each( var x:* in BusquedaMovtsMl.getInstance().OBJETOLISTAR)
+            	{
+            		if(x.asignado)
+            			CajaMenorMl.getInstance().idsCajasSeleccionadas.push(x.id);
+            	}
+            	
+            	return CajaMenorMl.getInstance().idsCajasSeleccionadas;
+            }
+            
+            public function getCuentasSeleccionadas():Array
+            {
+            	
+            	CajaMenorMl.getInstance().idsCuentasSeleccionadas = new Array();
+            	
+            	
+            	for each( var x:* in BusquedaMovtsMl.getInstance().OBJETOLISTAR)
+            	{
+            		if(x.asignado)
+            			CajaMenorMl.getInstance().idsCuentasSeleccionadas.push(x.id);
+            	}
+            	
+            	return CajaMenorMl.getInstance().idsCuentasSeleccionadas;
+            }
+            
+            
+            public function getCCostosSeleccionados():Array
+            {
+            	
+            	CentroCostoMl.getInstance().idsCCostosSeleccionados = new Array();
+            	
+            	for each( var x:* in BusquedaMovtsMl.getInstance().OBJETOLISTAR)
+            	{
+            		if(x.asignado)
+            			CentroCostoMl.getInstance().idsCCostosSeleccionados.push(x.id);
+            	}
+            	
+            	return CentroCostoMl.getInstance().idsCCostosSeleccionados;
+            }
+            
+            public function getPersonasSeleccionados():Array
+            {
+            	
+            	PersonaMl.getInstance().idsPersonasSeleccionadas = new Array();
+            	
+            	for each( var x:* in BusquedaMovtsMl.getInstance().OBJETOLISTAR)
+            	{
+            		if(x.asignado)
+            			PersonaMl.getInstance().idsPersonasSeleccionadas.push(x.id);
+            	}
+            	
+            	return PersonaMl.getInstance().idsPersonasSeleccionadas;
+            }
+            
+            
+					
+					
+			private function Consultar(tipoConsulta:int):void{
+			
+			  var consulta:ConsultarMovimientosVO;
+			  var fechaIn:Date;
+			  var Fechaend:Date;
+			   var arr:Array;
+		      
+		       if(fechainicio.text!="" && fechafin.text==""){
+		       	
+		       	
+		       	 Alert.show("Para Buscar utilizando fechas, debes ingresar Ambos rangos, Fecha Inicio y Fecha Fin","",0,null,null,alerta,0);
+		       	
+		       	
+		       }else if(fechafin.text!="" && fechainicio.text==""){
+		       	         
+		       	          Alert.show("Para Buscar utilizando fechas, debes ingresar Ambos rangos, Fecha Inicio y Fecha Fin","",0,null,null,alerta,0);
+		       	           
+		       	          
+		            } else if(fechainicio.text!="" && fechafin.text!="" && (fechainicio.selectedDate > fechafin.selectedDate)){
+		            
+		                       
+		                            Alert.show("La Fecha Fin no puede ser menor que la Fecha Inicio","",0,null,null,alerta,0);                 
+		                         
+		                         
+		                       	 
+		             
+		                     }else{
+		            	
+		      
+					  switch(tipoConsulta){ 
+					  
+					     case 0:
+					      
+					     if(fechainicio.text=="" || fechafin.text==""){
+					     	
+					       	fechaIn = null;
+					       	Fechaend = null;
+					     	
+					     }else{
+					        
+					         fechaIn = new Date(fechainicio.text);
+					         Fechaend = new Date(fechafin.text);
+					     
+					     }
+					      
+					      consulta=new ConsultarMovimientosVO(getCajasSeleccionados(),fechaIn,Fechaend);
+					      arr = getCajasSeleccionados();
+					      var event0:ConsultasMovimientosEvent= new ConsultasMovimientosEvent(ConsultasMovimientosEvent.CONSULTAR_MOVIMIENTOS_CAJAS_MENORES,consulta);
+					      CairngormEventDispatcher.getInstance().dispatchEvent(event0);  
+					      
+					      
+					     break;
+					     
+					     case 1:
+					      
+					     if(fechainicio.text=="" || fechafin.text==""){
+					     	
+					       	fechaIn = null;
+					       	Fechaend = null;
+					     	
+					     }else{
+					        
+					         fechaIn = new Date(fechainicio.text);
+					         Fechaend = new Date(fechafin.text);
+					     
+					     }
+					      arr=getCuentasSeleccionadas();
+					      consulta=new ConsultarMovimientosVO(getCuentasSeleccionadas(),fechaIn,Fechaend);
+					      var event1:ConsultasMovimientosEvent= new ConsultasMovimientosEvent(ConsultasMovimientosEvent.CONSULTAR_MOVIMIENTOS_CAJAS_MENORES,consulta);
+					      CairngormEventDispatcher.getInstance().dispatchEvent(event1);  
+					      
+					      
+					     break;
+					     
+					     
+					     case 2:
+					     
+					      if(fechainicio.text=="" || fechafin.text==""){
+					     	
+					       	fechaIn = null;
+					       	Fechaend = null;
+					     	
+					     }else{
+					        
+					         fechaIn = new Date(fechainicio.text);
+					         Fechaend = new Date(fechafin.text);
+					     
+					     }
+					     arr=getCCostosSeleccionados();
+					     trace();
+					      consulta=new ConsultarMovimientosVO(getCCostosSeleccionados(),fechaIn,Fechaend);
+					      var event2:ConsultasMovimientosEvent= new ConsultasMovimientosEvent(ConsultasMovimientosEvent.CONSULTAR_MOVIMIENTOS_CENTROS_COSTO,consulta);
+					      CairngormEventDispatcher.getInstance().dispatchEvent(event2);  
+					     
+					     break;
+					     
+					     case 3:
+					     
+					      if(fechainicio.text=="" || fechafin.text==""){
+					     	
+					       	fechaIn = null;
+					       	Fechaend = null;
+					     	
+					     }else{
+					        
+					         fechaIn = new Date(fechainicio.text);
+					         Fechaend = new Date(fechafin.text);
+					     
+					     }
+					     arr = getPersonasSeleccionados();
+					     trace();
+					      consulta=new ConsultarMovimientosVO(getPersonasSeleccionados(),fechaIn,Fechaend);
+					      var event3:ConsultasMovimientosEvent= new ConsultasMovimientosEvent(ConsultasMovimientosEvent.CONSULTAR_MOVIMIENTOS_PERSONAS,consulta);
+					      CairngormEventDispatcher.getInstance().dispatchEvent(event3);  
+					     
+					     break;
+					  
+					  }
+		                 }
+				
+			}		
+		
+		  
+		  public function chekarTodosSegunIndex(index:int):void{
+		  	
+		  	  
+		  	  switch(index){
+		  	  
+		  	     case 0:
+		  	     
+		  	        CajaMenorMl.getInstance().checarallCheckbox();
+                          
+			               var cont:int=0;
+			               var ar:ArrayCollection = new ArrayCollection();
+			               ar=BusquedaMovtsMl.getInstance().OBJETOLISTAR as ArrayCollection;
+			               for each(var x:* in BusquedaMovtsMl.getInstance().OBJETOLISTAR){
+			               
+			                  if(checkbxselecall.selected){
+			                    
+			                    x.asignado=true;
+			                     
+			                  }else{
+			                  
+			                    x.asignado=false;
+			                    
+			                  }
+			                  ar.getItemAt(cont).asignado=x.asignado;
+			               		cont++;
+			               }
+			               BusquedaMovtsMl.getInstance().OBJETOLISTAR=ar;
+		  	       
+		  	     break;
+		  	     
+		  	     case 1:
+		  	     
+		  	           CajaMenorMl.getInstance().checarallCheckboxCuentas();
+                          
+			               var cont1:int=0;
+			               var ar1:ArrayCollection = new ArrayCollection();
+			               ar1=BusquedaMovtsMl.getInstance().OBJETOLISTAR as ArrayCollection;
+			               for each(var y:* in BusquedaMovtsMl.getInstance().OBJETOLISTAR){
+			               
+			                  if(checkbxselecall.selected){
+			                    
+			                    y.asignado=true;
+			                     
+			                  }else{
+			                  
+			                    y.asignado=false;
+			                    
+			                  }
+			                  ar1.getItemAt(cont1).asignado=y.asignado;
+			               		cont1++;
+			               }
+			               BusquedaMovtsMl.getInstance().OBJETOLISTAR=ar1;
+		  	     
+		  	     break;
+		  	     
+		  	     case 2:
+		  	     
+		  	          CentroCostoMl.getInstance().checarallCheckboxCcosto();
+                          
+			               var cont2:int=0;
+			               var ar2:ArrayCollection = new ArrayCollection();
+			               ar2=BusquedaMovtsMl.getInstance().OBJETOLISTAR as ArrayCollection;
+			               for each(var z:* in BusquedaMovtsMl.getInstance().OBJETOLISTAR){
+			               
+			                  if(checkbxselecall.selected){
+			                    
+			                    z.asignado=true;
+			                     
+			                  }else{
+			                  
+			                    z.asignado=false;
+			                    
+			                  }
+			                  ar2.getItemAt(cont2).asignado=z.asignado;
+			               		cont2++;
+			               }
+			               BusquedaMovtsMl.getInstance().OBJETOLISTAR=ar2;
+		  	     
+		  	     break;
+		  	     
+		  	     case 3:
+		  	     
+		  	          PersonaMl.getInstance().checarallCheckboxpersona();
+                          
+			               var cont3:int=0;
+			               var ar3:ArrayCollection = new ArrayCollection();
+			               ar3=BusquedaMovtsMl.getInstance().OBJETOLISTAR as ArrayCollection;
+			               for each(var a:* in BusquedaMovtsMl.getInstance().OBJETOLISTAR){
+			               
+			                  if(checkbxselecall.selected){
+			                    
+			                    a.asignado=true;
+			                     
+			                  }else{
+			                        
+				                      a.asignado=false;
+				                    
+				                   }
+			                  ar3.getItemAt(cont3).asignado=a.asignado;
+			               		cont3++;
+			               }
+			               BusquedaMovtsMl.getInstance().OBJETOLISTAR=ar3;
+		  	     
+		  	     break;
+		  	  
+		  	  }
+		  	
+		  	
+		  }
+		  
+			
+						
+            public function comboBox_labelFunc0(item:Object):String {
+            
+                 var nombre:String;	
+                // if(BusquedaMovtsMl.getInstance().tabNavigatorIndex==0){
+              	 nombre= item.cajaMenorVO.nombre;
+                 //}
+                 return nombre;
+                
+                 
+              
+            }
+            public function comboBox_labelFunc1(item:Object):String {
+            
+                 var nombre:String;	
+                 if(item.centroCostoVO!=null){
+              	 nombre= item.centroCostoVO.nombre;
+                 }
+                 return nombre;
+            }
+            public function comboBox_labelFunc2(item:Object):String {
+            
+                 var nombre:String;	
+                 if(item.persona!=null){
+              	 nombre= item.persona.nombreRs;
+                 }
+                 return nombre;
+                
+                
+            }
+            
+            ///////////////////
+            
+            
+        
+           public function labelFunctipoDe(item:Object,dgcolumn:DataGridColumn):String {
+             if(item.tipoMovimiento	== 1/*Ingreso*/){
+             	return item.persona	+ "";
+             }
+             else{
+             	  
+             	  if(item.personaResponsable!=null){  
+             	     return item.personaResponsable.nombreRs;
+             	  }else{
+             	  	
+             	  	    return "";
+             	  	
+             	       } 
+             }  	
+	         
+               
+        }
+	
+		public function labelFunctipoPara(item:Object,dgcolumn:DataGridColumn):String {
+               	
+	         if(item.tipoMovimiento	== 1/*Ingreso*/){
+	         	
+	              if(item.personaResponsable!=null){  
+             	     return item.personaResponsable.nombreRs;
+             	  }else{
+             	  	
+             	  	    return "";
+             	  	
+             	       } 
+             }
+             else{
+             	 
+				    return item.persona	+ "";
+             	
+             }
+               
+        }
+        
+        public function imprimirMovimientos():void{
+		    	
+		    	var printJob:FlexPrintJob = new FlexPrintJob();
+    
+                if(printJob.start()) {
+                    
+                    
+                      var mov:ImprimirDataGridMovimientos = new ImprimirDataGridMovimientos();
+                      
+                      addChild(mov);
+                    
+                      mov.mov.text="Movimientos SERATIC LTDA";
+                      
+                      mov.dgMov.dataProvider = dgresultado.dataProvider;
+                      
+                      printJob.addObject(mov);
+    
+                      printJob.send();
+    
+    
+                      removeChild(mov);
+                      
+                 }
+		    	
+		    }
+            
+				
+				]]>
+			</mx:Script>
+			
+			<!--mx:DateValidator
+		    	id="fvalidator"
+		        formatError="!!Formato de fecha incorrecto"
+		        invalidCharError="!!Fecha incorrecta"
+		        wrongDayError="!!El dia de la fecha ingresada esta incorrecto"
+		        wrongMonthError="!!El mes de la fecha ingresada esta incorreco"
+		        wrongYearError="!!El año de la fecha ingresada esta incorrecto"
+		    	wrongLengthError="!!El formato de fecha es MM/DD/AAAA"
+		    	property="text"
+		    	source="{fechainicio}"
+		    />
+		    
+		    <mx:DateValidator
+		    	id="finvalidator"
+		        formatError="!!Formato de fecha incorrecto"
+		        invalidCharError="!!Fecha incorrecta"
+		        wrongDayError="!!El dia de la fecha ingresada esta incorrecto"
+		        wrongMonthError="!!El mes de la fecha ingresada esta incorreco"
+		        wrongYearError="!!El año de la fecha ingresada esta incorrecto"
+		    	wrongLengthError="!!El formato de fecha es MM/DD/AAAA"
+		    	property="text"
+		    	source="{fechafin}"
+		    /-->
+			
+            <!--mx:Label text="barras"/-->
+   		   
+   		    <mx:SolidColor id="sc1" color="blue" alpha=".3"/>
+			<mx:SolidColor id="sc2" color="red" alpha=".3"/>
+
+		    <!-- Define custom Strokes for the columns. -->
+		    <mx:Stroke id="s1" color="blue" weight="2"/>
+		    <mx:Stroke id="s2" color="red" weight="2"/>
+		    
+		    <!--mx:Label text="barras"/-->
+		    
+		    <!--mx:Label text="torta"/-->
+		    
+		    <mx:SolidColor id="sc3" color="blue" alpha=".3"/>
+		    <mx:SolidColor id="sc4" color="red" alpha=".3"/>
+		    <mx:SolidColor id="sc5" color="green" alpha=".3"/>
+		    <mx:SolidColor id="sc6" color="gray" alpha=".3"/>
+		    <mx:SolidColor id="sc7" color="black" alpha=".3"/>
+		    <mx:SolidColor id="sc8" color="yellow" alpha=".3"/>
+		    
+		    <!--mx:Label text="torta"/-->
+			
+			<mx:WipeUp id="myWU" duration="300"/>
+			<mx:WipeDown id="myWD" duration="300"/>
+			<mx:WipeRight id="myWR" duration="300"/>
+       		<mx:Box height="100%" width="100%" horizontalAlign="center" verticalAlign="middle">
+       			<mx:Panel title="Parámetros de búsqueda" height="95%" width="98%">
+       			   <mx:Box verticalAlign="middle" horizontalAlign="center" width="100%" fontWeight="bold">
+	  	      	    <mx:HBox>
+	  	      	       <mx:Label text="{BusquedaMovtsMl.getInstance().nombre}" color="#000203" fontSize="10" fontWeight="bold"/>
+	  	      	       <mx:CheckBox selected="{BusquedaMovtsMl.getInstance().tabNavigatorIndex==0?(false):BusquedaMovtsMl.getInstance().tabNavigatorIndex==1?(false):BusquedaMovtsMl.getInstance().tabNavigatorIndex==2?(false):BusquedaMovtsMl.getInstance().tabNavigatorIndex==3?(false):(false)}" id="checkbxselecall" change="{chekarTodosSegunIndex(BusquedaMovtsMl.getInstance().tabNavigatorIndex)}" />	
+	  	      	    </mx:HBox>
+	  	      	  </mx:Box>
+       				<mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+       					<mx:Box height="100%" width="80%" verticalAlign="middle" horizontalAlign="center">
+       						<mx:DataGrid height="98%" width="99%"   dataProvider="{BusquedaMovtsMl.getInstance().OBJETOLISTAR}">
+	       						<mx:columns>
+	       							<mx:DataGridColumn headerText="{BusquedaMovtsMl.getInstance().nomCol1DgParaBusqueda}" dataField="{BusquedaMovtsMl.getInstance().datefieldCajabusqueda}" textAlign="center"/>
+	       							<mx:DataGridColumn headerText="Selección" dataField="id" textAlign="center">
+	       								<mx:itemRenderer >
+						    	           <mx:Component>
+						    	            <mx:CheckBox click="data.asignado=!data.asignado" 
+						    	            	selected="{data.asignado}"  horizontalCenter="true"/>
+						    	           </mx:Component>   
+						    	        </mx:itemRenderer>
+	       							</mx:DataGridColumn>
+	       						</mx:columns>
+	       					</mx:DataGrid>
+       					</mx:Box>
+       					<mx:Box height="100%" width="20%" horizontalAlign="center" verticalScrollPolicy="off" verticalAlign="middle" backgroundColor="#FFFFFF">
+       						<mx:Form  verticalScrollPolicy="off" width="97%" height="40%" backgroundColor="#D8D2D2">
+       							<mx:Label  text="Seleccione rango de fechas" fontSize="12" fontWeight="bold" fontStyle="italic"/>
+       							<mx:FormItem label="Fecha inicio" width="100%"  >
+       								<mx:DateField id="fechainicio" editable="false"  dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" width="100%"/>
+       							</mx:FormItem>
+       							<mx:Spacer height="10"/>
+       							<mx:FormItem label="Fecha fin" width="100%">
+       								<mx:DateField id="fechafin" editable="false"  dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" width="100%"/>
+       							</mx:FormItem>
+       							<mx:Spacer height="5"/>
+       							<mx:FormItem  width="100%" >
+       								<mx:Button label="Consultar" click="{Consultar(BusquedaMovtsMl.getInstance().tabNavigatorIndex)}"/>
+       							</mx:FormItem>
+       						</mx:Form>
+       					</mx:Box>
+       					
+       				</mx:HBox>
+       			</mx:Panel>	
+       		</mx:Box>
+       		
+       		<mx:Box height="100%" width="100%" horizontalAlign="center" verticalAlign="middle">
+       			<mx:Panel height="95%" width="98%" title="Resultados">
+       				<mx:HBox height="10%" width="100%" verticalAlign="middle" horizontalAlign="left">
+       					<mx:LinkBar dataProvider="{vstackResultados}"  borderStyle="solid" backgroundColor="#EEEEFF" width="112"/>	
+       					<mx:FormItem label="{BusquedaMovtsMl.getInstance().nomCol1DgParaBusqueda}">
+       						<mx:ComboBox change="{ChangedataProvTorta(),Changedatabarr()}" prompt="Seleccione" id="cbxBusqueda"   dataProvider="{MovimientoMl.getInstance().listConsultaMovimientoCajaMenor}" 
+       	labelFunction="{BusquedaMovtsMl.getInstance().tabNavigatorIndex==1?(comboBox_labelFunc0):BusquedaMovtsMl.getInstance().tabNavigatorIndex==2?(comboBox_labelFunc1):BusquedaMovtsMl.getInstance().tabNavigatorIndex==0?(comboBox_labelFunc0):BusquedaMovtsMl.getInstance().tabNavigatorIndex==3?(comboBox_labelFunc2):(null)}"
+       	 labelField="{BusquedaMovtsMl.getInstance().labelfieldCbxresultado}"/>
+       					</mx:FormItem>
+       					<mx:Image buttonMode="true" click="{imprimirMovimientos()}" toolTip="Imprimir Movimientos" source="@Embed(source='REC/IMAGENES/printt.png')"/>	
+       				</mx:HBox>
+       				
+       				<mx:ViewStack height="100%" width="100%" id="vstackResultados" creationCompleteEffect="{myWR}">
+       					<mx:Box width="100%" height="100%" label="Tabla" hideEffect="{myWD}"  showEffect="{myWU}" verticalAlign="middle" horizontalAlign="center">
+       						<mx:DataGrid id="dgresultado"  dataProvider="{cbxBusqueda.selectedItem.movimientoVOs}"  height="99%" width="99%" >
+								<mx:columns>
+									<!--mx:DataGridColumn headerText="Fecha Movimiento" itemRenderer="VIEW.Items.Movimientos.ItemFechaMovimiento" dataField="fecha" />
+									<mx:DataGridColumn headerText="Concepto" dataField="concepto" itemRenderer="VIEW.Items.Movimientos.ItemConcepto" />
+									<mx:DataGridColumn headerText="Persona" dataField="persona" />
+                                    <mx:DataGridColumn headerText="Centro costo" dataField="centroCosto" />
+									<mx:DataGridColumn headerText="Valor" dataField="valor" itemRenderer="VIEW.Items.Movimientos.ItemValorMovimiento" />
+									<mx:DataGridColumn headerText="Saldo" dataField="saldo" itemRenderer="VIEW.Items.Movimientos.ItemSaldoMovimiento" /-->
+									<mx:DataGridColumn headerText="Fecha Movimiento" dataField="fecha" width="170" itemRenderer="VIEW.Items.Movimientos.ItemFechaMovimiento"/>
+								    <mx:DataGridColumn headerText="Concepto"  dataField="concepto"  width="250" itemRenderer="VIEW.Items.Movimientos.ItemConcepto"/>
+									<mx:DataGridColumn headerText="De"  width="150" textAlign="center" labelFunction="labelFunctipoDe"/>
+									<mx:DataGridColumn headerText="Para" labelFunction="labelFunctipoPara" width="150" textAlign="center"/>
+									<mx:DataGridColumn headerText="Centro de Costo" dataField="centroCosto" width="150" textAlign="center"/>
+									<mx:DataGridColumn headerText="Valor" dataField="valor" width="150" itemRenderer="VIEW.Items.Movimientos.ItemValorMovimiento"/>
+									<mx:DataGridColumn headerText="Saldo" dataField="saldo" width="150" itemRenderer="VIEW.Items.Movimientos.ItemSaldoMovimiento"/>
+								</mx:columns>
+							</mx:DataGrid>
+       					</mx:Box>
+       					
+       					<mx:Box width="100%" height="100%" label="Gráficos" hideEffect="{myWD}" showEffect="{myWU}" verticalAlign="middle" horizontalAlign="center">
+       						<mx:HDividedBox width="99%" height="99%">
+       						
+       						<!--mx:Label text="Espacio reservado para la barra"/-->
+       						  
+       							<mx:Box height="100%" width="100%" horizontalAlign="center" verticalAlign="middle">
+       							
+								    <mx:Panel title="Gráfico Columnas" width="100%" height="100%">
+								        <mx:ColumnChart id="myChart" width="95%" height="95%" dataProvider="{expenses}" showDataTips="true">
+								            <mx:horizontalAxis>
+								                <mx:CategoryAxis 
+								                    dataProvider="{expenses}" 
+								                    categoryField="nada"
+								                />
+								            </mx:horizontalAxis>
+								            <mx:series>
+								                <mx:ColumnSeries 
+								                    yField="Ingreso"
+								                    displayName="Ingreso"
+								                    fill="{sc1}"
+								                    stroke="{s2}"
+								                />
+								                <mx:ColumnSeries 
+								                    yField="Egreso"
+								                    displayName="Egreso"
+								                    fill="{sc2}"
+								                    stroke="{s1}"
+								                />
+								            </mx:series>
+								        </mx:ColumnChart>
+								        <mx:Legend dataProvider="{myChart}"/>
+								    </mx:Panel>
+								</mx:Box>
+       							<!--mx:Label text="Espacio reservado para la barra"/-->
+       								
+       							<!--mx:Label text="Espacio reservado para el pie"/-->	
+       								
+       							
+       							<mx:Box height="100%" width="100%" verticalAlign="middle" horizontalAlign="center">
+       								
+       								  <mx:Panel title="Gráfico Pie" width="100%" height="100%">
+									     <mx:PieChart id="myChart2" 
+									        dataProvider="{expenses2}" 
+									        showDataTips="true"
+									        height="95%" width="95%">
+									        <mx:series>
+									           <mx:PieSeries 
+									                field="Amount" 
+									                nameField="Expense" 
+									                labelPosition="callout"
+									           />
+									        </mx:series>
+									     </mx:PieChart>
+									     <mx:Legend dataProvider="{myChart2}"/>
+									  </mx:Panel>
+       								
+       							</mx:Box>
+       							  
+       							<!--mx:Label text="Espacio reservado para el pie"/-->	
+       							
+       						</mx:HDividedBox>
+       					</mx:Box>
+       				</mx:ViewStack>
+       				
+       			</mx:Panel>	
+       		</mx:Box>
+</mx:VDividedBox>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

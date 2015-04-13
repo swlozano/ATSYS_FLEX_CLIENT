@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow  xmlns:mx="http://www.adobe.com/2006/mxml" 
+	initialize="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosAgregarMovimientos,0,-1 ,true)}"
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	layout="absolute" width="440" height="420"
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	showCloseButton="false">
+  <mx:Script>
+        <![CDATA[
+        	import mx.core.Application;
+        	import mx.controls.Alert;
+        	import MODEL.UsuariosSysMl;
+        	import MODEL.PermisosMl;
+        	import mx.managers.CursorManager;
+        	import MODEL.MovimientoMl;
+        	import MODEL.UtilidadesMl;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.MovimientoEvent;
+        	import VO.MovimientoVO;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import MODEL.PersonaMl;
+        	import MODEL.CentroCostoMl;
+        	import MODEL.CajaMenorMl;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           
+           
+            // A reference to the TextInput control in which to put the result.
+            
+            // Event handler for the OK button.
+            
+            [Bindable]
+            public var formIsValid:Boolean=false;
+            
+            [Bindable]
+            public var idpersona:int;
+            
+            [Bindable]
+            public var formIsEmpty:Boolean=true;
+            
+            private var focussedFormControl:DisplayObject;
+            
+            
+            
+            
+            
+            private function returnName():void {
+                 PopUpManager.removePopUp(this);
+                 PermisosMl.getInstance().CloseMainMenu.enabled=true;
+		         UsuariosSysMl.getInstance().mostrarSubMenu=true;
+            }
+            
+            
+            
+            public function addMovimiento():void{
+             
+             if(formIsValid){	
+            
+             var idpersonatoAdd:int;
+             
+             
+              var datemov:Date= new Date(addfechaMov.text);
+              
+            
+              
+              if(addingreso.selected){
+              	
+              	  idpersona = cbxaddpersonamov.selectedItem.id
+              	
+              }else{
+              	
+              	    idpersona = cbxaddpersonamov2.selectedItem.id
+              	
+                   }
+              
+             
+              addValMov.text = UtilidadesMl.getInstance().combertirDecimalToEntero(addValMov.text); 
+              var movimiento:MovimientoVO = new MovimientoVO(0,gettipoMovimiento(),idpersona,getcajamenor(),cbxaddCtroCostomov.selectedItem.id,parseFloat(addValMov.text),datemov,addconceptmov.text);
+              var event:MovimientoEvent= new MovimientoEvent(MovimientoEvent.ADICIONAR_MOVIMIENTO,movimiento);
+              CairngormEventDispatcher.getInstance().dispatchEvent(event);
+              returnName();
+              
+              }
+            }
+            
+            public function gettipoMovimiento():int{
+            
+              var r:int;
+            
+               if(addingreso.selected){
+                 
+                  r=1;
+               
+               }else if(addeegreso.selected){
+               
+                 r= 2;
+               
+               }  
+            
+              return r;
+            
+            }
+            
+            public function getcajamenor():int{
+            
+              var r:int;
+           
+              r=MovimientoMl.getInstance().idCajaMenorToBuscarMov;
+              
+              return r;
+            
+            }
+            
+            
+            
+            private function validateForm(event:Event):void{
+         
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               formIsEmpty = (addValMov.text=="" && addconceptmov.text == "" && addfechaMov.text =="" );
+               
+               validate(valValidator);
+               validate(conceptValidator);
+               validate(fvalidator);
+                           
+            }
+        
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+               
+            } 
+            
+            private function creationCompleteHandler():void
+            {
+               resetFocus();
+            }   
+            
+           	public function activarPrompt():void{
+            
+              if(CajaMenorMl.getInstance().listCajasUsuarioEspecifico.length==0){
+              
+                 //cbxaddCjMenormov.prompt="no tienes caja menor";
+              
+              }
+            
+            }
+            
+            private function clearFormHandler():void
+            {
+               addValMov.text="";
+               addconceptmov.text="";
+               addfechaMov.text="";
+               
+               
+               addValMov.errorString="";
+               addconceptmov.errorString="";
+               addfechaMov.errorString="";
+               
+               
+               formIsEmpty=true;
+               resetFocus();
+            }
+            
+            public function habilitarPersona():void{
+            
+               if(addingreso.selected){
+               	
+               	 cbxaddpersonamov.visible=true;
+               	 cbxaddpersonamov2.visible=false;
+               	 txtpara1.visible=false;
+               	 txtpara2.visible=true;
+               	 
+               	
+               }else{
+               	
+                      cbxaddpersonamov.visible=false;
+	               	  cbxaddpersonamov2.visible=true;
+	               	  txtpara1.visible=true;
+	               	  txtpara2.visible=false;
+                    
+                    }
+            
+            }
+          
+            private function resetFocus():void
+            {
+                focusManager.setFocus(addValMov);
+            }
+            [Bindable] private var enableTxtCajaMenor:Boolean;
+        ]]>
+  </mx:Script>
+  
+  <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Valor del movimiento por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 5 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="valValidator"
+        source="{addValMov}" 
+        property="text"
+        minLength="2"
+        maxLength="50"
+    />
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el concepto del movimiento por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="conceptValidator"
+        source="{addconceptmov}" 
+        property="text"
+        minLength="2"
+        maxLength="100"
+    />
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese la fecha del movimiento por favor¡¡"
+        id="fechaValidator"
+        source="{addfechaMov}" 
+        property="text"
+        
+    />
+    <mx:DateValidator
+    	id="fvalidator"
+        requiredFieldError="!!Este campo es Obligatorio. Ingrese la fecha del movimiento por favor¡¡"
+        formatError="!!Formato de fecha incorrecto"
+        invalidCharError="!!Fecha incorrecta"
+        wrongDayError="!!El dia de la fecha ingresada esta incorrecto"
+        wrongMonthError="!!El mes de la fecha ingresada esta incorreco"
+        wrongYearError="!!El año de la fecha ingresada esta incorrecto"
+    	wrongLengthError="!!El formato de fecha es MM/DD/AAAA"
+    	property="text"
+    	source="{addfechaMov}"
+    />
+    <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+    	
+    	<mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+    		<mx:Canvas width="100%" height="100%" id="canvas1" >
+    			<mx:Label  id="lblAddUs" text="{UtilidadesMl.getInstance().tituloPantalla}" color="#FFFFFF" fontWeight="bold" fontSize="13"
+    				x="{(canvas1.width/2)-(lblAddUs.width/2)}" y="12"/>	
+    		</mx:Canvas>
+    	</mx:Box>
+    	
+    	<mx:Box id="box2" height="79%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+    		
+    			<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+    			  
+    			  <mx:Form   verticalScrollPolicy="off"  width="96%" height="70%" >
+    			
+						    			    		      
+			    <mx:FormItem label="VALOR"   width="100%"  styleName="labelTw" > 	
+    			    <mx:TextInput id="addValMov" click="{addValMov.text=UtilidadesMl.getInstance().combertirDecimalToEntero(addValMov.text)}"  focusOut="{addValMov.text=UtilidadesMl.getInstance().formaterMoneda(addValMov.text)}" change="validateForm(event)" restrict="0-9" width="75%" />  	  	
+			    </mx:FormItem>
+    			  <mx:Spacer height="10"/>
+    			  <mx:FormItem label="CONCEPTO" styleName="labelTw" width="100%" >
+    			  	<mx:TextArea id="addconceptmov" change="validateForm(event)" width="75%" height="40" color="#000000" maxChars="100"/>
+    			  </mx:FormItem>
+    			  
+    			  <mx:Spacer height="10"/> 
+    			  
+    			  <mx:FormItem label="            FECHA MOVIMIENTO (MM/DD/AA)"   width="100%" styleName="labelTw"> 	
+    			      <mx:DateField editable="true" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" change="validateForm(event)" id="addfechaMov" width="75%" color="#000000"/>  	  	
+    			  </mx:FormItem>
+    			  
+    			  <mx:Spacer height="10"/> 
+    			  
+    			  <mx:FormItem label="TIPO MOVIMIENTO"   width="100%" styleName="labelTw" > 	
+    			      <mx:RadioButtonGroup change="{habilitarPersona()}" id="addtipomovimiento"  />
+    			      <mx:HBox >
+    			      	<mx:RadioButton  selected="true" label="ingreso" groupName="addtipomovimiento" id="addingreso"/> 	
+    			     	<mx:RadioButton label="egreso" groupName="addtipomovimiento" id="addeegreso"/> 		
+    			      </mx:HBox>
+    			      
+    			  </mx:FormItem>
+    			  
+    			  <mx:Spacer height="10"/> 
+    			  
+    			  <mx:FormItem label="CAJA MENOR"   width="100%" styleName="labelTw" > 	
+    			  	<mx:TextInput width="75%" text="{MovimientoMl.getInstance().nombreCajaMenorSelecEnMovimientosPpl}" editable="false" />
+    			  </mx:FormItem>
+    			  
+    			  <mx:Spacer height="10"/> 
+    			    
+    			    <mx:FormItem label="CENTRO DE COSTO"  width="100%" styleName="labelTw"> 	
+    			    	 <mx:ComboBox maxWidth="{addValMov.width}" minWidth="{addValMov.width}" toolTip="{cbxaddCtroCostomov.selectedItem.nombre}" dataProvider="{CentroCostoMl.getInstance().listCentroCosto}" labelField="nombre" id="cbxaddCtroCostomov" /> 	
+    			    </mx:FormItem>
+    			  
+    			  <mx:Spacer height="10"/> 
+    			  
+    			  <mx:FormItem label="DE"   width="100%" styleName="labelTw"> 	
+    			      
+    			       <mx:Canvas width="100%">
+                         
+                           <mx:ComboBox visible="true" maxWidth="{addValMov.width}" minWidth="{addValMov.width}" toolTip="{cbxaddpersonamov.selectedItem.nombreRs}" selectedIndex="{MovimientoMl.getInstance().PersonaIndexIngreso}" dataProvider="{PersonaMl.getInstance().listPersonas}" labelField="nombreRs" id="cbxaddpersonamov" />
+                           <mx:TextInput text="{MovimientoMl.getInstance().NombreResponsablePersona}" editable="false" id="txtpara1" width="75%" visible="false" color="#000000" fontWeight="normal" fontSize="10"/>    			       	
+                             			       	
+    			       </mx:Canvas>  	 
+    			     	  	
+    			  </mx:FormItem>
+    			    
+    			   <mx:Spacer height="10"/> 
+    			  
+    			  <mx:FormItem label="PARA"   width="100%" styleName="labelTw"> 	
+    			   
+    			      <mx:Canvas width="100%">
+    			  
+    			     	 <mx:ComboBox visible="false" maxWidth="{addValMov.width}" minWidth="{addValMov.width}" toolTip="{cbxaddpersonamov.selectedItem.nombreRs}" selectedIndex="{MovimientoMl.getInstance().PersonaIndexIngreso}" dataProvider="{PersonaMl.getInstance().listPersonas}" labelField="nombreRs" id="cbxaddpersonamov2" /> 	
+    			         <mx:TextInput text="{MovimientoMl.getInstance().NombreResponsablePersona}" editable="false" id="txtpara2" width="75%" visible="true" color="#000000" fontWeight="normal" fontSize="10"/>
+    			         
+    			      </mx:Canvas> 
+    			  
+    			  </mx:FormItem> 
+    			    
+    			  </mx:Form>
+    			</mx:Box>
+    			
+    			
+    					
+    	</mx:Box>
+    	
+    	<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+    		<mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+    			<mx:HBox height="100%" width="50%" verticalAlign="middle">
+    				<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+    					<mx:Image source="{UtilidadesMl.getInstance().backEnable==true?(UtilidadesMl.getInstance().rutaback):UtilidadesMl.getInstance().rutaback2}"
+    							 toolTip="Atras" />	
+    				</mx:Box>
+    				<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+    					<mx:Image id="ok" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  toolTip="Aceptar" enabled="{formIsValid}" click="{addMovimiento()}" />	
+    				</mx:Box>
+    			</mx:HBox>
+    			<mx:HBox height="100%" width="50%" verticalAlign="middle">
+    				<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+    					<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar"/>	
+    				</mx:Box>
+    				<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+    					<mx:Image source="{UtilidadesMl.getInstance().nextEnable==true?(UtilidadesMl.getInstance().next):UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" />	
+    				</mx:Box>
+    			</mx:HBox>
+    		</mx:HBox>
+    	</mx:Box>
+    </mx:VBox>
+  
+</mx:TitleWindow>
+
+
+
+
+
+

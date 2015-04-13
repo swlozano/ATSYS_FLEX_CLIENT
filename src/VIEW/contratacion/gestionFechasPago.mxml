@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	showCloseButton="false" close="returnName()" 
+	layout="absolute" 
+	creationComplete="ContratoMl.getInstance().Clonfechaspago=this"
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	width="355" height="220" 
+	borderSkin="CSS.SKIN.PopUpSkin" 
+    fontFamily="Verdana" fontSize="12" fontWeight="bold" 
+    color="#FFFFFF" >
+	<mx:Script>
+        <![CDATA[
+        	import VO.FechaPagoVO;
+        	import mx.collections.ArrayCollection;
+        	import MODEL.ContratoMl;
+        	import VO.FechasPagoVO;
+        	import MODEL.ValorFormaPagoMl;
+        	import MODEL.UtilidadesMl;
+        	import mx.core.Application;
+        	import MODEL.UsuariosSysMl;
+        	import MODEL.PermisosMl;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.CentroCostoEvent;
+        	import VO.CentroCostroVO;
+        	import mx.controls.Alert;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           
+            [Bindable]
+            public var formIsValid:Boolean;
+            [Bindable]
+            public var formIsEmpty:Boolean=true;
+            
+            private var focussedFormControl:DisplayObject;
+           
+            private function returnName():void {
+                 PopUpManager.removePopUp(this);
+            }
+            
+            public function addfecha():void{
+            
+            
+               
+               
+             if(formIsValid){ 
+              
+              var fec:FechaPagoVO = new FechaPagoVO().FechaPagoVOConstructor
+              (new Date(txtfp.text),
+               new Date(txtfi.text),
+               new Date(txtff.text));
+           	   
+           	   if(ContratoMl.getInstance().banGestionFechasPago){
+           	   	
+           	   	    
+          	   	    var araux:Array = new Array();//ContratoMl.getInstance().Arrayfechas.getItemAt(ContratoMl.getInstance().ClonGenerarValoresFpago.dgvalorFpago.selectedIndex) as Array;
+           	   	    
+           	   	    for each(var x:* in ContratoMl.getInstance().Arrayfechas.getItemAt(ContratoMl.getInstance().ClonGenerarValoresFpago.dgvalorFpago.selectedIndex)){
+           	   	    	
+           	   	    	araux.push(x);
+           	   	    	
+           	   	    }
+           	   	    
+           	   	    araux.push(fec);
+           	   	    
+           	   	    ContratoMl.getInstance().Arrayfechas.setItemAt(araux,ContratoMl.getInstance().ClonGenerarValoresFpago.dgvalorFpago.selectedIndex);
+           	   	    
+           	   	    PopUpManager.removePopUp(this);
+           	   	    
+           	   	 
+           	   }else{
+           	   	
+           	          var araux2:Array = new Array();//ContratoMl.getInstance().Arrayfechas.getItemAt(ContratoMl.getInstance().ClonGenerarValoresFpago.dgvalorFpago.selectedIndex) as Array;
+           	   	    
+	           	   	    for each(var y:* in ContratoMl.getInstance().Arrayfechas.getItemAt(ContratoMl.getInstance().ClonGenerarValoresFpago.dgvalorFpago.selectedIndex)){
+	           	   	    	
+	           	   	    	araux2.push(y);
+	           	   	    	
+	           	   	    }
+           	         
+           	         
+           	          
+           	          araux2[ContratoMl.getInstance().ClonGenerarValoresFpago.dgFechaspago.selectedIndex]=fec;
+           	          
+           	          ContratoMl.getInstance().Arrayfechas.setItemAt(araux2,ContratoMl.getInstance().ClonGenerarValoresFpago.dgvalorFpago.selectedIndex);
+           	   	    
+           	   	      PopUpManager.removePopUp(this);
+           	          
+           	        
+           	        }
+           	   
+              
+             }
+            
+            }
+            
+            private function validateForm(event:Event):void{
+            
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(fpValidator);
+               validate(fivalidator);
+               validate(ffValidator);
+            }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+           
+            
+        ]]>
+    </mx:Script>
+    
+    
+    
+    <mx:DateValidator
+     
+        requiredFieldError="!!Este campo es Obligatorio. Ingrese la Fecha  por favor¡¡"
+        formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+     	id="fpValidator"
+        source="{txtfp}" 
+     	property="text"
+     	
+    />
+    
+    <mx:DateValidator
+     
+        requiredFieldError="!!Este campo es Obligatorio. Ingrese la Fecha  por favor¡¡"
+        formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+     	id="fivalidator"
+        source="{txtfi}" 
+     	property="text"
+     	
+    />
+    
+    <mx:DateValidator
+     
+        requiredFieldError="!!Este campo es Obligatorio. Ingrese la Fecha  por favor¡¡"
+        formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+     	id="ffValidator"
+     	source="{txtff}" 
+     	property="text"
+     	
+    />
+    
+    <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >      
+    
+           <mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+		 		<mx:Canvas width="100%" height="100%" id="canvas1"  fontSize="13">
+		 			<mx:Label  id="lblAddCmenor" text="AGREGAR FECHAS DE PAGO" color="#FFFFFF" fontWeight="bold" fontSize="13"
+		 	     	x="{(canvas1.width/2)-(lblAddCmenor.width/2)}" y="12"/>	
+		 		</mx:Canvas>
+		   </mx:Box>
+    
+    
+        <mx:Box id="box2" height="59%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+			    
+			    <mx:Form width="96%" height="50%">
+			    	
+				  	<mx:FormItem label="FECHA DE PAGO (MM/DD/AA)"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11"> 	
+				    	 <mx:DateField editable="true" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" change="validateForm(event)" id="txtfp" width="75%" color="#000000" fontWeight="normal" fontSize="10"/>  	  	
+				    </mx:FormItem>
+				    
+				  	<mx:Spacer height="10"/>
+				  	
+				  	<mx:FormItem label="FECHA DE INICIO (MM/DD/AA)"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11" > 	
+				    	<mx:DateField editable="true" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" id="txtfi" change="validateForm(event)" width="75%" color="#000000" fontWeight="normal" fontSize="10"/>  	  	
+				    </mx:FormItem>
+				  	
+				  	
+				  	<mx:Spacer height="10"/>
+				  	
+				  	<mx:FormItem label="FECHA FIN (MM/DD/AA)"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11" > 	
+				    	 <mx:DateField editable="true" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" id="txtff" change="validateForm(event)" width="75%" color="#000000" fontWeight="normal" fontSize="10"/>  	  	
+				    </mx:FormItem>
+				  	
+			    </mx:Form>
+        
+        </mx:Box>
+        
+        <mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+		    <mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+		      
+		      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+		      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+		      		<mx:Image source="{UtilidadesMl.getInstance().rutaback2}"/>	
+		      	</mx:Box>
+		      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+		      		<mx:Image id="ok" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  toolTip="Aceptar" enabled="{formIsValid}" click="{addfecha()}" />	
+		      	</mx:Box>
+		      	
+		      </mx:HBox>
+		      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+		      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+		      			<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar" 
+		      				/>	
+		      		</mx:Box>
+		      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+		      			<mx:Image source="{UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" />	
+		      		</mx:Box>
+		      		
+		    	</mx:HBox>
+		    </mx:HBox>
+				 	
+	 </mx:Box>	
+        	
+        	
+    </mx:VBox>
+</mx:TitleWindow>

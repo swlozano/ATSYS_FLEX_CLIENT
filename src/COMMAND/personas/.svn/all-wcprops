@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/ATSYS_WEB/!svn/ver/110/ATSYS_WEB/src/COMMAND/personas
+END
+AddPersonasCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/personas/AddPersonasCommand.as
+END
+ModificarPersonasCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/personas/ModificarPersonasCommand.as
+END
+ListarPersonasCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ATSYS_WEB/!svn/ver/110/ATSYS_WEB/src/COMMAND/personas/ListarPersonasCommand.as
+END
+EliminarPersonasCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/personas/EliminarPersonasCommand.as
+END
+ComprobarExistenciaPersonasCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/personas/ComprobarExistenciaPersonasCommand.as
+END

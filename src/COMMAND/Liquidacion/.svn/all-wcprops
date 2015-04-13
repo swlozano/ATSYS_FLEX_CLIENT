@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/ATSYS_WEB/!svn/ver/107/ATSYS_WEB/src/COMMAND/Liquidacion
+END
+CrearLiquidacionCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ATSYS_WEB/!svn/ver/62/ATSYS_WEB/src/COMMAND/Liquidacion/CrearLiquidacionCommand.as
+END
+ListarLiquidacionCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/ATSYS_WEB/!svn/ver/107/ATSYS_WEB/src/COMMAND/Liquidacion/ListarLiquidacionCommand.as
+END
+EliminarLiquidacionCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Liquidacion/EliminarLiquidacionCommand.as
+END
+ListarFormulaCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Liquidacion/ListarFormulaCommand.as
+END
+GenerarLiquidacionCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Liquidacion/GenerarLiquidacionCommand.as
+END
+ObtenerDiasTrabajadosCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Liquidacion/ObtenerDiasTrabajadosCommand.as
+END

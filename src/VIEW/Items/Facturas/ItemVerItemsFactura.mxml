@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box verticalAlign="middle" horizontalAlign="center" xmlns:mx="http://www.adobe.com/2006/mxml" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			import MODEL.FacturasMl;
+			import mx.collections.ArrayCollection;
+			
+			private function clickItem():void{
+				var ob:Object = data.detalleFacturaVOs;
+				FacturasMl.getInstance().FacturasPpl.viewStckPpl.selectedIndex = 1;
+			}	
+			
+		]]>
+	</mx:Script>
+  <mx:LinkButton textAlign="center" toolTip="Ver Items de esta factura" label="{(data.detalleFacturaVOs as ArrayCollection).length}"
+  	 color="#0006FF" 
+  	textDecoration="underline" fontWeight="normal"
+  	  id="item" click="{clickItem()}
+  	  "/>
+
+</mx:Box>

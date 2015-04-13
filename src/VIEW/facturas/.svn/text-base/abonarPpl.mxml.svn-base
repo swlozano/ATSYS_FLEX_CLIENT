@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	creationComplete="{crearPantalla()}"  
+	close="returnName()" 
+	showCloseButton="false" layout="absolute" 
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	  x="{(Application.application.width/2)-(this.width/2)}"
+	  y = "{(Application.application.height/2)-(this.height/2)}"  
+	  initialize="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosAgregarAbonoFac,0,-1 ,true)}" 
+	width="500" 
+	height="425"
+	fontSize="12" color="#FFFFFF">
+	<mx:Script>
+        <![CDATA[
+        	import COMMAND.Factura.AddAbonoFacturaCommand;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.AbonoFacturaEvent;
+        	import MODEL.UtilidadesMl;
+        	import mx.controls.Alert;
+        	import MODEL.FacturasMl;
+        	import mx.core.Application;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           
+            
+             [Bindable]
+		     [Embed(source="REC/IMAGENES/sumar.png")]
+		     public var agregar:Class;
+		     [Embed(source="/REC/IMAGENES/warn2.png")]
+			 public var alerta:Class;
+		     [Bindable]
+			 [Embed(source="REC/IMAGENES/restar.png")]
+			 public var quitar:Class;
+			 [Bindable]
+			 [Embed(source="REC/IMAGENES/update.png")]
+			 public var actualizar:Class;
+			 [Bindable]
+		   [Embed(source="REC/IMAGENES/trash.png")]
+		    public var erase:Class;
+            
+            public function crearPantalla():void
+		    {
+			  FacturasMl.getInstance().abonoFacturasPpl = this;
+		    }
+            
+            private function returnName():void {
+                 PopUpManager.removePopUp(this);
+                 FacturasMl.getInstance().banderaPantallaabonosPpl = true;
+            }
+            
+            private function PantallaAgregarAbono():void{
+            	
+            	var addabono:agregarAbono=agregarAbono(PopUpManager.createPopUp(this,agregarAbono,true));
+            	PopUpManager.centerPopUp(addabono);
+            	
+            }
+            
+            private function pantallaeliminarAbono():void{
+            	
+            	if(FacturasMl.getInstance().listabonofacturas.length==0){
+             	
+             	    Alert.show("No hay datos que eliminar, Agregue Abonos para poder hacer esta operación","",0,null,null,alerta,0);
+             	
+                }else if(FacturasMl.getInstance().abonoFacturasPpl.dgabonos.selectedItem==null){
+                              	      	    
+                             Alert.show("SELECCIONE UN ABONO DE LA LISTA PARA ELIMINARLO","",0,null,null,alerta,0);
+                              	        
+                }else{
+                
+                      Alert.yesLabel="SI";
+                      Alert.noLabel="NO";
+                      Alert.show("¿Seguro que deseas borrar este Dato?" +"\n"+ "FECHA DE ABONO: "+UtilidadesMl.getInstance().formaterFechas(FacturasMl.getInstance().abonoFacturasPpl.dgabonos.selectedItem.fechaAbono) +"\n" + "VALOR: " + FacturasMl.getInstance().abonoFacturasPpl.dgabonos.selectedItem.valor + "\n","Eliminar Abono" ,Alert.YES|Alert.NO,this,closeHandlerabonoFacturas,erase,0);
+                
+                     }
+            	
+            }
+            
+            private function closeHandlerabonoFacturas(event:CloseEvent):void{
+             
+               switch(event.detail){
+               
+                 case Alert.YES:
+                   
+                   var i:int = FacturasMl.getInstance().abonoFacturasPpl.dgabonos.selectedItem.id;
+                   
+                   FacturasMl.getInstance().idAbonoFacturaToEliminar = FacturasMl.getInstance().abonoFacturasPpl.dgabonos.selectedItem.id;
+                   
+                   var evento:AbonoFacturaEvent = new AbonoFacturaEvent(AbonoFacturaEvent.ELIMINAR_ABONO_FACTURA,null);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(evento);
+                   
+                 break;
+               
+               }
+             
+             }  
+            
+            private function Pantallamodificarabono():void{
+            	
+            	if(FacturasMl.getInstance().listabonofacturas.length==0){
+             	
+             	Alert.show("No hay datos que mostrar, Agregue Abonos para poder hacer esta operación","",0,null,null,alerta,0);
+             	
+             }else if(FacturasMl.getInstance().abonoFacturasPpl.dgabonos.selectedItem==null){
+                              	      	    
+                             Alert.show("SELECCIONE UN ABONO DE LA LISTA PARA MODIFICARLO","",0,null,null,alerta,0);
+                              	        
+                }else{	
+            	
+            	var modabono:modificarAbono=modificarAbono(PopUpManager.createPopUp(this,modificarAbono,true));
+            	PopUpManager.centerPopUp(modabono);
+                }
+            	
+            }
+            
+        ]]>
+    </mx:Script>
+    
+      
+    <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+     
+		  <mx:Box  width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+			  <mx:Canvas width="100%" height="100%" id="canvas1"  fontSize="13">
+			  <mx:Label  id="lblAddCmenor" text="ABONOS FACTURA" color="#FFFFFF" fontWeight="bold" fontSize="13"
+			  x="{(canvas1.width/2)-(lblAddCmenor.width/2)}" y="12"/>	
+			  </mx:Canvas>
+		  </mx:Box>  
+      
+        
+        <mx:Box id="box2" height="79%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center"> 
+        
+		       <mx:Form width="95%" height="95%" >
+		    	
+			  	 <mx:Box width="100%"  verticalAlign="middle" horizontalAlign="center" fontSize="11" color="#FFFFFF" fontWeight="bold">
+			  	    <mx:Label toolTip="Fecha de Facturación = {UtilidadesMl.getInstance().formaterFechas(FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.fechaFacturacion)}
+			  	    {'\n\n'} Fecha Pactada para Pago = {UtilidadesMl.getInstance().formaterFechas(FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.fechaPactadaPago)}
+			  	    {'\n\n'} Persona = {FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.persona.nombreRs}
+			  	    {'\n\n'} Número de Items = {FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.detalleFacturaVOs.length}
+			  	    {'\n\n'} Subtotal = {UtilidadesMl.getInstance().formaterMoneda(FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.subtutal)}
+			  	    {'\n\n'} Total = {UtilidadesMl.getInstance().formaterMoneda(FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.total)}" 
+			  	    text="INFORMACIÓN DE LA FACTURA No : {FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.numeroFactura}" fontWeight="bold" fontSize="11" />
+			     </mx:Box>
+			     
+			  	 <mx:Spacer height="6"/>
+			  	 
+			  	
+			  	<mx:Box width="100%" height="100%">
+			  	      	  	<mx:DataGrid id="dgabonos" dataProvider="{FacturasMl.getInstance().listabonofacturas}" width="100%" height="100%" textAlign="center"  fontFamily="Verdana" fontWeight="bold" fontSize="10">
+								<mx:columns>
+								   <mx:DataGridColumn headerText="Fecha de abono" dataField="fechaAbono" itemRenderer="VIEW.Items.Facturas.ItemFechaAbonoFactura" textAlign="center" />
+								   <mx:DataGridColumn headerText="Valor de este abono" dataField="valor"  textAlign="center"/>
+					  	 		</mx:columns>	  	      	  		
+			  	      	  	</mx:DataGrid>
+			  	   </mx:Box>
+			  	   
+			  	    <mx:Spacer height="10"/>
+			  	    
+			  	        <mx:HBox width="100%"  verticalAlign="middle" horizontalAlign="center">
+					  	    <mx:Button upSkin="@Embed(source='REC/IMAGENES/add_item.png')" downSkin="@Embed(source='REC/IMAGENES/add_item_down.png')" overSkin="@Embed(source='REC/IMAGENES/add_item.png')" click="{PantallaAgregarAbono()}" toolTip="agregar Abono"    width="20" height="20"/>
+					  	   	<mx:Button upSkin="@Embed(source='REC/IMAGENES/removeItem.png')" downSkin="@Embed(source='REC/IMAGENES/removeItemDown.png')" overSkin="@Embed(source='REC/IMAGENES/removeItem.png')" click="{pantallaeliminarAbono()}" toolTip="eliminar Abono"   width="20" height="20"/>
+					  	   	<mx:Button upSkin="@Embed(source='REC/IMAGENES/actualize.png')" downSkin="@Embed(source='REC/IMAGENES/actctualizeDown.png')" overSkin="@Embed(source='REC/IMAGENES/actualize.png')" click="{Pantallamodificarabono()}" toolTip="actualizar Abono"  width="20" height="20"/>
+					  	</mx:HBox>
+			    
+		    </mx:Form>
+		    
+		</mx:Box>  
+		
+	<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+	    
+	    <mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+	      
+		      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+		      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+		      		<mx:Image source="{UtilidadesMl.getInstance().backEnable==true?(UtilidadesMl.getInstance().rutaback):UtilidadesMl.getInstance().rutaback2}"
+		      	    mouseOver="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosAgregarAbonoFac,0,-1,false)}" toolTip="Atras" />	
+		      	</mx:Box>
+		      </mx:HBox>
+		      
+		      <mx:Box verticalAlign="middle" horizontalAlign="left" >
+		      	  <mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar" />	
+		       </mx:Box>
+		       
+		      <mx:HBox height="100%" width="50%" verticalAlign="middle" horizontalAlign="right">
+		      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+		      			<mx:Image source="{UtilidadesMl.getInstance().nextEnable==true?(UtilidadesMl.getInstance().next):UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" mouseOver="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosAgregarAbonoFac,0,-1,true)}"/>	
+		      		</mx:Box>
+		      </mx:HBox>
+	    	
+	    </mx:HBox>
+				 	
+	 </mx:Box>  
+    
+   </mx:VBox> 
+    
+</mx:TitleWindow>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

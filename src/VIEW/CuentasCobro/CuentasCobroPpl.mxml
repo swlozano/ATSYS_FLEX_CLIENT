@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox width="100%"  creationComplete="{CuentasCobroMl.getInstance().CuentasCobroPpl = this}" height="100%" xmlns:mx="http://www.adobe.com/2006/mxml"   styleName="glassPods" verticalAlign="middle" horizontalAlign="center" xmlns:menu="VIEW.menu.*">
+	
+	<mx:Script>
+		<![CDATA[
+			import MODEL.UtilidadesMl;
+			import mx.managers.ToolTipManager;
+			import EVENT.CuentasCobroEvent;
+			import mx.controls.Alert;
+			import EVENT.RecursoHumanoEvent;
+			import mx.managers.PopUpManager;
+			import mx.controls.Menu;
+			import MODEL.CuentasCobroMl;
+			import MODEL.ContratoMl;
+			import MODEL.PantallasMl;
+			import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import EVENT.ContratoEvent;
+		   
+		   [Embed(source="/REC/IMAGENES/warn2.png")]
+		    public var alerta:Class;
+		   
+		   [Bindable]  
+	        [Embed(source="/REC/IMAGENES/f.png")]
+		    public var buscar:Class;
+		   
+		   [Bindable]
+			 private var Arrayestado:Array = [{estado:'Devuelta', num:1},{estado:'Corregida', num:2},{estado:'Validación', num:3},{estado:'Agendamiento', num:4},{estado:'Pagada', num:5},{estado:'Todas', num:6}];
+			
+		   [Bindable]
+			 private var ArrayFiltro:Array = [{filtro:'Contrato', num:1},{filtro:'Fechas', num:2},{filtro:'Recurso Humano', num:3},{filtro:'Todas', num:4}];
+		    
+		    
+		    public function filtrarCuentasCobro():void{
+		    	
+		    	if(ppfiltro.selectedItem.num==1){
+		    		
+		    		if(cbxestado.selectedIndex!=-1){
+		    		
+		    			CuentasCobroMl.getInstance().idtipoEstado =  cbxestado.selectedItem.num;
+                  		var e:CuentasCobroEvent = new CuentasCobroEvent(CuentasCobroEvent.FILTRAR_POR_CONTRATO);
+                    	CairngormEventDispatcher.getInstance().dispatchEvent(e)
+		    		
+		    		}else
+		    		
+		    		{
+		    			
+		    			   Alert.show("Selecciona Un Estado de la cuenta de cobro " ,"Mensaje de alerta",0,null,null,alerta,0);
+		    			
+		    		     }
+		    		
+		    		
+		    	}else if(ppfiltro.selectedItem.num==2){
+		    		
+		    	          if(cbxestado.selectedIndex!=-1){
+		    		
+				    			
+				    		     CuentasCobroMl.getInstance().idtipoEstado =  cbxestado.selectedItem.num;
+		                  	     var evf:CuentasCobroEvent = new CuentasCobroEvent(CuentasCobroEvent.FILTRAR_POR_FECHAS);
+		                         CairngormEventDispatcher.getInstance().dispatchEvent(evf);
+				    		   
+				    		
+				    		
+				    		}else{
+				    			
+				    			   Alert.show("Selecciona Un Estado de la cuenta de cobro " ,"Mensaje de alerta",0,null,null,alerta,0);
+				    			
+				    		     }
+		    	          
+		    	        }else if(ppfiltro.selectedItem.num==3){
+		    		
+				    	          if(cbxestado.selectedIndex!=-1){
+				    		
+						    			
+						    		     CuentasCobroMl.getInstance().idtipoEstado =  cbxestado.selectedItem.num;
+				                  	    
+				                  	     var evr:CuentasCobroEvent = new CuentasCobroEvent(CuentasCobroEvent.FILTRAR_POR_REC_HUMANO);
+                                         CairngormEventDispatcher.getInstance().dispatchEvent(evr);
+						    		   
+						    		
+						    		
+						    		}else{
+						    			
+						    			   Alert.show("Selecciona Un Estado de la cuenta de cobro " ,"Mensaje de alerta",0,null,null,alerta,0);
+						    			
+						    		     }
+				    	          
+				    	        }else if(ppfiltro.selectedItem.num==4){
+		    		
+						    	          if(cbxestado.selectedIndex!=-1){
+						    		
+								    			
+								    		     CuentasCobroMl.getInstance().idtipoEstado =  cbxestado.selectedItem.num;
+						                  	    
+						                  	     var es:CuentasCobroEvent = new CuentasCobroEvent(CuentasCobroEvent.LISTAR_TODO);
+								                 CairngormEventDispatcher.getInstance().dispatchEvent(es);
+								    		   
+								    		
+								    		
+								    		}else{
+								    			
+								    			   Alert.show("Selecciona Un Estado de la cuenta de cobro " ,"Mensaje de alerta",0,null,null,alerta,0);
+								    			
+								    		     }
+						    	          
+						    	        }
+		    	
+		    }
+		    
+		    public function showWindow(index:int):void{
+		    	
+		    	if(index==1){
+		    		
+		    		CuentasCobroMl.getInstance().indicePopUp =1;
+		    		ContratoMl.getInstance().banEstadoContrato = 3;
+		    		PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_FILTRO_CONTRATO_CUENTA_COBRO;
+		    		var e:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_CONTRATO,null,null,null);
+		    		CairngormEventDispatcher.getInstance().dispatchEvent(e);
+		    		
+		    	}else if(index==2){
+		    		      
+		    		      CuentasCobroMl.getInstance().indicePopUp =2;
+		    	          var Ffechas:FiltroxFechas = FiltroxFechas(PopUpManager.createPopUp(PantallasMl.atsys,FiltroxFechas,true));
+		    	          PopUpManager.centerPopUp(Ffechas);
+		    	        
+		    	        }else if(index==3){
+		    	        	           
+		    	         			 CuentasCobroMl.getInstance().indicePopUp =3;	           
+		    	        	         PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_FILTRO_RECURSO_HUMANO_CUENTA_COBRO;
+		    	        	         var ev:RecursoHumanoEvent = new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_RECURSO_HUMANO,null,null);
+		    	        	         CairngormEventDispatcher.getInstance().dispatchEvent(ev);      
+		    	        	 
+		    	                  
+		    	                  }else if(index==4){
+	
+	 										 
+	 										   
+	 										 /*if(cbxestado.selectedIndex==-1){
+                  	                                
+								                  	Alert.show("Selecciona Un Estado de la cuenta de cobro " ,"Mensaje de alerta",0,null,null,alerta,0);
+								                  	
+								                  }else{*/
+								                  	     
+								                  	     CuentasCobroMl.getInstance().indicePopUp =4;
+								                  	     CuentasCobroMl.getInstance().idtipoEstado = cbxestado.selectedItem.num;
+								                  	     /*var es:CuentasCobroEvent = new CuentasCobroEvent(CuentasCobroEvent.LISTAR_TODO);
+								                         CairngormEventDispatcher.getInstance().dispatchEvent(es);
+								                         */
+								                  	     
+								                       //}
+		    	                  	
+		    	                         }
+		    	
+		    }
+		 
+		      public function dg_labelFuncValor(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var retorno:String;
+                  
+                 retorno = UtilidadesMl.getInstance().formaterMoneda(item.valor); 
+              	
+                 return retorno;
+               
+              }
+              
+              public function dg_labelFuncFechaFin(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var retorno:String;
+                 
+                 if(item.fechaFin!=null){ 
+                  
+                   retorno = UtilidadesMl.getInstance().formaterFechas(item.fechaFin);
+                 
+                 }else{
+                 	
+                       retorno="";
+                      
+                      }
+                 return retorno;
+               
+              }
+              
+              public function dg_labelFuncestado(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var retorno:String;
+                 
+                 if(item.estado!=null){ 
+                  
+                   retorno = item.estado.nombre;
+                 
+                 }else{
+                 	
+                       retorno="";
+                      
+                      }
+                 return retorno;
+               
+              }
+		 
+			 
+		]]>
+	</mx:Script>
+	    
+	
+	  
+	<!--mx:Fade id="fadeIn" alphaFrom="0" alphaTo="1" duration="1000"/-->
+	<mx:Box width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom">
+	<mx:VRule height="10" visible="false"/>
+	 <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	 
+	 
+	    <mx:Image buttonMode="true"  toolTip="REALIZAR FILTRADO"  click="{filtrarCuentasCobro()}" source="{buscar}"/>
+	 
+	 	<mx:Label  text="FILTRAR POR" fontWeight="bold" color="#FFFFFF" fontSize="15"/>
+	    
+	    <mx:ComboBox selectedIndex="3" id="ppfiltro" change="{showWindow(ppfiltro.selectedItem.num)}" labelField="filtro" dataProvider="{ArrayFiltro}" borderColor="#FFFFFF" fillAlphas="[1.0, 1.0]" fillColors="[#FFFFFF, #FFFFFF]" color="#000000" fontSize="10" />
+	    
+	    <mx:Spacer width="4"/>
+	    
+	    
+	    <mx:Label  text="ESTADO" fontWeight="bold" color="#FFFFFF" fontSize="15"/>
+	    <mx:ComboBox selectedIndex="5" prompt="seleccione" id="cbxestado" labelField="estado"  dataProvider="{Arrayestado}"/>
+	    
+	
+	</mx:HBox> 
+		<mx:Box width="95%" height="95%" >
+			<mx:DataGrid width="100%" dataProvider="{CuentasCobroMl.getInstance().listCuentasCobro}" height="95%" id="dgcuentasCobro" themeColor="#307BAB" alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15">
+				<mx:columns>
+					<mx:DataGridColumn headerText="Fecha Solicitud" textAlign="center" itemRenderer="VIEW.Items.CuentasCobro.ItemFechaSolicitud" width="100"/>
+					<mx:DataGridColumn textAlign="center" headerText="Fecha Inicio" itemRenderer="VIEW.Items.CuentasCobro.ItemFechaIn" />
+					<mx:DataGridColumn textAlign="center" headerText="Fecha Fin" labelFunction="dg_labelFuncFechaFin"/>
+					<mx:DataGridColumn textAlign="center" headerText="Cobrador" dataField="cobrador" width="180"/>
+					<mx:DataGridColumn textAlign="center" headerText="Concepto" itemRenderer="VIEW.Items.CuentasCobro.ItemConcepto"/>
+					<mx:DataGridColumn textAlign="center" headerText="Valor" labelFunction="dg_labelFuncValor" width="90"/>
+					<mx:DataGridColumn textAlign="center" labelFunction="dg_labelFuncestado" headerText="Estado" />
+					<mx:DataGridColumn textAlign="center" itemRenderer="VIEW.Items.CuentasCobro.ItemCambiarEstado" />
+					
+					
+				</mx:columns>
+			</mx:DataGrid>
+			
+		</mx:Box>
+	</mx:Box>
+	<!--menu:MenuAbajo /-->
+	
+</mx:VBox>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

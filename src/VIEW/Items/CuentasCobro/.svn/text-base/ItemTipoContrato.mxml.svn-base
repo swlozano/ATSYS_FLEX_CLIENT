@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml" verticalAlign="middle" horizontalAlign="center" width="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off" color="#0066CC">
+	<mx:Label  text="{data.tipoContrato}"  width="100%" toolTip="{data.tiposContrato.tipoContrato}" textAlign="center" color="#0066CC"/>
+</mx:Box>

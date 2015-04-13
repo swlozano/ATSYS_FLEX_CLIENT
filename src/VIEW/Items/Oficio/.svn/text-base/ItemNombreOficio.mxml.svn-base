@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml" horizontalAlign="center" verticalAlign="middle" width="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Label  text="{data.nombre}"  width="100%" toolTip="{data.nombre}" textAlign="center"/>
+</mx:Box>

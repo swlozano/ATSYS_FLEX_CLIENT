@@ -1,0 +1,756 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+	 close="returnName()" showCloseButton="false" 
+	 layout="absolute" width="592" height="500"
+	 creationComplete="crearPantalla()"
+	 initialize="{initializes(),UtilidadesMl.getInstance().backEnable = false,UtilidadesMl.getInstance().nextEnable=false}"
+	 borderSkin="CSS.SKIN.PopUpSkin" 
+	  x="{(Application.application.width/2)-(this.width/2)}"
+	  y = "{(Application.application.height/2)-(this.height/2)}" 
+	  >
+	<mx:Script>
+        <![CDATA[
+        	import MODEL.ContratoMl;
+        	import MODEL.UsuariosSysMl;
+        	import MODEL.PermisosMl;
+        	import mx.controls.Alert;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.SolicitudesServiciosEvent;
+        	import MODEL.SolicitudesServiciosMl;
+        	import flash.profiler.showRedrawRegions;
+        	import MODEL.UtilidadesMl;
+        	import mx.core.Application;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           
+            
+            public function initializes():void{
+            	
+            	SolicitudesServiciosMl.getInstance().listFichaIncapacidad = null;
+            	SolicitudesServiciosMl.getInstance().listFichaPermiso = null;
+            	SolicitudesServiciosMl.getInstance().listFichaPrestamo = null;
+            	SolicitudesServiciosMl.getInstance().listObservacionesMemos = null;
+            	
+            	var e:SolicitudesServiciosEvent= new SolicitudesServiciosEvent(SolicitudesServiciosEvent.LISTAR_FICHA_PERMISO,null);
+			    CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            	
+            }
+            
+            public function crearPantalla():void{
+            	
+            	SolicitudesServiciosMl.getInstance().SolicitudesServiciosPpl = this;
+            	
+            }
+            
+            
+            [Bindable]
+			[Embed(source="/REC/IMAGENES/solicitud.png")]
+		 	 public var found:Class;
+		 	 [Embed(source="/REC/IMAGENES/warn2.png")]
+			public var alerta:Class;
+			
+			[Embed(source="/REC/IMAGENES/alertopt.png")]
+			public var alertidea:Class;
+			
+			[Bindable]
+		   [Embed(source="REC/IMAGENES/trash.png")]
+		    public var erase:Class;
+            
+            public function showWindow3(opc:int):void {
+            	
+            	if(opc==1){
+            		
+            		
+            		if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_FICHA_PERMISO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1) 
+            	 	{
+            		
+	                    var fichapermiso:fichaPermisos=fichaPermisos(PopUpManager.createPopUp(this,fichaPermisos,true));
+	                    PopUpManager.centerPopUp(fichapermiso);
+	                    
+	                }else{
+	                	
+	                	   Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_FICHA_PERMISO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+	                	
+	                     }   
+	                    
+            	}else if(opc==2){
+            		
+            		       if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_FICHA_INCAPACIDAD) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1) 
+            	 	        {
+            		
+            		         var fichaincapacidad:fichaIncapacidad=fichaIncapacidad(PopUpManager.createPopUp(this,fichaIncapacidad,true));
+            		         PopUpManager.centerPopUp(fichaincapacidad);
+            		         
+            		         }else{
+	                	
+	                	           Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_FICHA_INCAPACIDAD + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+	                	
+	                               }   
+            		         
+            	        }else if(opc==3){
+            	        	
+            	        	         if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_FICHA_PRESTAMO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1) 
+            	 	                  {
+            	        	
+		            	        	      var fichaprestamo:fichaPrestamos=fichaPrestamos(PopUpManager.createPopUp(this,fichaPrestamos,true));
+		            	        	      PopUpManager.centerPopUp(fichaprestamo);
+            	                      
+            	                      }else{
+	                	
+			                	           Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_FICHA_PRESTAMO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+			                	
+			                               }
+            	                      
+            	                
+            	                }else if(opc==4){
+            	                	
+            	                	          if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_MEMORANDOS) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1) 
+            	 	                            {
+            	                	
+	            	                	         var memo:Memorandos=Memorandos(PopUpManager.createPopUp(this,Memorandos,true));
+	            	        	                 PopUpManager.centerPopUp(memo);
+            	        	                     
+            	        	                     }else{
+	                	
+						                	           Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_FICHA_MEMORANDO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+						                	
+						                               }
+            	        	                 
+            	        	                 
+            	                        }else if(opc==5){
+            	                        	
+            	                        	 
+            	                        	         if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_FICHA_PERMISO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1) 
+            	 	                                   {
+            	                        	
+            	                        	 
+			            	                        	  if(SolicitudesServiciosMl.getInstance().listFichaPermiso!=null && SolicitudesServiciosMl.getInstance().listFichaPermiso.length > 0){
+			            	                        	  	
+			            	                        	  	  if(dgFichasPermiso.selectedItem!=null){
+			            	                        	  	  	
+			            	                        	  	      var modFichaPermiso:modificarFichaPermisos = modificarFichaPermisos(PopUpManager.createPopUp(this,modificarFichaPermisos,true));
+					            	        	                  PopUpManager.centerPopUp(modFichaPermiso);  	 
+			            	                        	  	  	
+			            	                        	  	  }else{
+			            	                        	  	  	
+			            	                        	  	         Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+			            	                        	  	       
+			            	                        	  	       }
+			            	                        	  	
+			            	                        	  }else{
+			            	                        	  	
+			            	                        	         Alert.show("No hay datos que modificar, Agregue Fichas de Permiso para poder hacer esta operación","",0,null,null,alerta,0);
+			            	                        	       
+			            	                        	       }
+            	                        	  
+		            	                	           }else{
+	                	
+								                	           Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_FICHA_PERMISO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+								                	
+								                              }
+		            	                        
+		            	                        
+		            	                        
+		            	                        }
+		            	                        else if(opc==6){
+		            	                        	
+		            	                        	      if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_FICHA_INCAPACIDAD) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1) 
+            	 	                                       {
+		            	                        	         
+		            	                        	
+				            	                        	     if(SolicitudesServiciosMl.getInstance().listFichaIncapacidad!=null && SolicitudesServiciosMl.getInstance().listFichaIncapacidad.length > 0){
+		            	                        	  	
+					            	                        	  	  if(dgFichasIncapacidad.selectedItem!=null){
+					            	                        	  	  	
+					            	                        	  	      var modFichaincapacidad:modificarFichaIncapacidad = modificarFichaIncapacidad(PopUpManager.createPopUp(this,modificarFichaIncapacidad,true));
+						            	        	                      PopUpManager.centerPopUp(modFichaincapacidad); 
+					            	                        	  	  	
+					            	                        	  	  }else{
+					            	                        	  	  	
+					            	                        	  	         Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+					            	                        	  	       
+					            	                        	  	       }
+					            	                        	  	
+					            	                        	  }else{
+					            	                        	  	
+					            	                        	         Alert.show("No hay datos que modificar, Agregue Fichas de Incapacidad para poder hacer esta operación","",0,null,null,alerta,0);
+					            	                        	       
+					            	                        	       }
+		            	                        	         
+		            	                        	         }else{
+	                	
+									                	           Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_FICHA_INCAPACIDAD + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+									                	
+									                              }
+		            	                        	
+				            	                	         
+				            	                        }else if(opc==7){
+				            	                        	 
+				            	                        	           if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_FICHA_PRESTAMO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1) 
+            	 	                                                   {
+				            	                        	
+				            	                        	
+						            	                        	         if(SolicitudesServiciosMl.getInstance().listFichaPrestamo!=null && SolicitudesServiciosMl.getInstance().listFichaPrestamo.length > 0){
+		            	                        	  	
+									            	                        	  	  if(dgfichaprestamo.selectedItem!=null){
+									            	                        	  	  	
+									            	                        	  	      var modFichaprestamo:modificarFichaPrestamos = modificarFichaPrestamos(PopUpManager.createPopUp(this,modificarFichaPrestamos,true));
+								            	        	                              PopUpManager.centerPopUp(modFichaprestamo);
+									            	                        	  	  	
+									            	                        	  	  }else{
+									            	                        	  	  	
+									            	                        	  	         Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+									            	                        	  	       
+									            	                        	  	       }
+									            	                        	  	
+									            	                        	  }else{
+									            	                        	  	
+									            	                        	         Alert.show("No hay datos que modificar, Agregue Fichas de Prèstamo para poder hacer esta operación","",0,null,null,alerta,0);
+									            	                        	       
+									            	                        	       }
+				            	                        	
+						            	                	            }else{
+	                	
+												                	           Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_FICHA_PRESTAMO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+												                	
+												                              }
+						            	                	         
+						            	                	         
+						            	                        }else if(opc==8){
+								            	                	         
+								            	                	         
+								            	                	           if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_MEMORANDOS) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1) 
+            	 	                                                            {
+								            	                	         
+								            	                	         
+								            	                	                 if(SolicitudesServiciosMl.getInstance().listObservacionesMemos!=null && SolicitudesServiciosMl.getInstance().listObservacionesMemos.length > 0){
+            	                        	  	
+										            	                        	  	  if(dgmemorando.selectedItem!=null){
+										            	                        	  	  	
+										            	                        	  	      var modMemos:modificarMemorandos = modificarMemorandos(PopUpManager.createPopUp(this,modificarMemorandos,true));
+								            	        	                 				  PopUpManager.centerPopUp(modMemos);
+										            	                        	  	  	
+										            	                        	  	  }else{
+										            	                        	  	  	
+										            	                        	  	         Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+										            	                        	  	       
+										            	                        	  	       }
+										            	                        	  	
+										            	                        	  }else{
+										            	                        	  	
+										            	                        	         Alert.show("No hay datos que modificar, Agregue Observaciones Memorandos para poder hacer esta operación","",0,null,null,alerta,0);
+										            	                        	       
+										            	                        	       }
+								            	                	            }else{
+	                	
+														                	           Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_FICHA_MEMORANDO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+														                	
+														                              }
+								            	                	         
+								            	                	         
+								            	                        }
+            	
+            }
+            
+            public function PantallasEliminar(index:int):void{
+            	
+            	switch(index){
+            		
+            		case 1:
+            		
+            		      if(PermisosMl.getInstance().permitirPantalla(PermisosMl.ELIMINAR_FICHA_PERMISO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1) 
+            	 	       {
+            		
+		            		    if(SolicitudesServiciosMl.getInstance().listFichaPermiso!=null)
+		            		    {
+		            		    	
+		            		    	 if(SolicitudesServiciosMl.getInstance().SolicitudesServiciosPpl.dgFichasPermiso.selectedItem!=null){
+		            		    		    
+		            		    		    SolicitudesServiciosMl.getInstance().idFichaPermisoToEliminar = dgFichasPermiso.selectedItem.id;
+		            		    		    
+		            		    		    Alert.yesLabel="SI";
+		            	             		Alert.noLabel="NO";
+		            	            		Alert.show("¿Seguro que deseas borrar este Dato?\n" +"\n"+ "CONCEPTO: "+ SolicitudesServiciosMl.getInstance().SolicitudesServiciosPpl.dgFichasPermiso.selectedItem.concepto + "\n"+"FECHA INICIO: "+ UtilidadesMl.getInstance().formatearACampoFecha(SolicitudesServiciosMl.getInstance().SolicitudesServiciosPpl.dgFichasPermiso.selectedItem.fechaInicio) +"\n"+"FECHA FIN: "+ UtilidadesMl.getInstance().formatearACampoFecha(SolicitudesServiciosMl.getInstance().SolicitudesServiciosPpl.dgFichasPermiso.selectedItem.fechaFin)+"\n","Eliminar Ficha de prestamo" ,Alert.YES|Alert.NO,this,closeHandlerfichaPrestamo,erase,0);
+		            		    		
+		            		    	   }else{
+		            		    	   	
+		            		    	   	      Alert.show("SELECCIONE UNA FICHA PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+		            		    	   	
+		            		    	        }
+		            		    	
+		            		    }
+		            		    else{
+					            		    	
+					            	   Alert.show("No hay datos que eliminar, Agregue Fichas para poder hacer esta operación","",0,null,null,alerta,0);
+					            		         
+					                }
+		            		
+		            	    }else{
+	                	
+								    Alert.show(PermisosMl.MSG_PERMISO_ELIMINAR_FICHA_PERMISO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+														                	
+						         }	    
+		            		    
+            		
+            		break;
+            		
+            		case 2:
+            		
+            		    if(PermisosMl.getInstance().permitirPantalla(PermisosMl.ELIMINAR_FICHA_INCAPACIDAD) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1) 
+            	 	       {
+            		
+			            		    if(SolicitudesServiciosMl.getInstance().listFichaIncapacidad!=null )
+			            		    {
+			            		    	
+			            		    	 if(SolicitudesServiciosMl.getInstance().SolicitudesServiciosPpl.dgFichasIncapacidad.selectedItem!=null){
+			            		    		    
+			            		    		    SolicitudesServiciosMl.getInstance().idFichaPermisoToEliminar = dgFichasIncapacidad.selectedItem.id;
+			            		    		    
+			            		    		    Alert.yesLabel="SI";
+			            	             		Alert.noLabel="NO";
+			            	            		Alert.show("¿Seguro que deseas borrar este Dato?\n" +"\n"+ "CONCEPTO: "+ SolicitudesServiciosMl.getInstance().SolicitudesServiciosPpl.dgFichasIncapacidad.selectedItem.concepto + "\n"+"FECHA INICIO: "+ UtilidadesMl.getInstance().formatearACampoFecha(SolicitudesServiciosMl.getInstance().SolicitudesServiciosPpl.dgFichasIncapacidad.selectedItem.fechaInicio) +"\n"+"FECHA FIN: "+ UtilidadesMl.getInstance().formatearACampoFecha(SolicitudesServiciosMl.getInstance().SolicitudesServiciosPpl.dgFichasIncapacidad.selectedItem.fechaFin)+"\n","Eliminar Ficha de Incapacidad" ,Alert.YES|Alert.NO,this,closeHandlerfichaPrestamo,erase,0);
+			            		    		
+			            		    	   }else{
+			            		    	   	
+			            		    	   	      Alert.show("SELECCIONE UNA FICHA PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+			            		    	   	
+			            		    	        }
+			            		    	
+			            		    }else{
+					            		    	
+					            	      Alert.show("No hay datos que eliminar, Agregue Fichas para poder hacer esta operación","",0,null,null,alerta,0);
+					            		         
+					                    }
+			            		    
+			            	}else{
+	                	
+								    Alert.show(PermisosMl.MSG_PERMISO_ELIMINAR_FICHA_INCAPACIDAD + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+														                	
+						         }	    
+			            		    
+            		
+            		break;
+            		
+            		case 3:
+            		    
+            		       if(PermisosMl.getInstance().permitirPantalla(PermisosMl.ELIMINAR_FICHA_PRESTAMO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1) 
+            	 	       {
+            		    
+            		    
+				            		    var tipoprestamo:String;
+				            		   
+				            		    if(SolicitudesServiciosMl.getInstance().listFichaPrestamo!=null )
+				            		    {
+				            		    	
+				            		    	 if(dgfichaprestamo.selectedItem!=null){
+				            		    		
+				            		    		    Alert.yesLabel="SI";
+				            	             		Alert.noLabel="NO";
+				            	             		if(dgfichaprestamo.selectedItem.tipoPrestamo==0){
+				            	             		
+				            	             		    tipoprestamo="EFECTIVO";
+				            	             			
+				            	             		}else{
+				            	             			  
+				            	             			   tipoprestamo="BIEN";
+				            	             			   
+				            	             		     }
+				            	             		  
+				            	             		 SolicitudesServiciosMl.getInstance().idFichaPermisoToEliminar = dgfichaprestamo.selectedItem.id;    
+				            	             		     
+				            	            		Alert.show("¿Seguro que deseas borrar este Dato?\n" +"\n"+ "CONCEPTO: "+ SolicitudesServiciosMl.getInstance().SolicitudesServiciosPpl.dgfichaprestamo.selectedItem.concepto + "\n"+"TIPO DE PRÈSTAMO: "+ tipoprestamo +"\n"+"VALOR DEL PRÉSTAMO: "+ UtilidadesMl.getInstance().formaterMoneda(dgfichaprestamo.selectedItem.valorPrestamo) +"\n" +"FECHA DEL PAGO:" + UtilidadesMl.getInstance().formatearACampoFecha(dgfichaprestamo.selectedItem.fechaDelPago)+"\n","Eliminar Ficha de Prestamo" ,Alert.YES|Alert.NO,this,closeHandlerfichaPrestamo,erase,0);
+				            		    		
+				            		    	   }else{
+				            		    	   	
+				            		    	   	      Alert.show("SELECCIONE UNA FICHA PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+				            		    	   	
+				            		    	        }
+				            		    	
+				            		    }else{
+					            		    	
+					            	   			Alert.show("No hay datos que eliminar, Agregue Fichas para poder hacer esta operación","",0,null,null,alerta,0);
+					            		         
+					                		}
+				            		    
+				            		    
+			            	}else{
+                	
+							       Alert.show(PermisosMl.MSG_PERMISO_ELIMINAR_FICHA_PRESTAMO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+													                	
+					             }		    
+				            		    
+            		
+            		break;
+            		
+            		case 4:
+            		    
+            		    
+            		         if(PermisosMl.getInstance().permitirPantalla(PermisosMl.ELIMINAR_MEMORANDOS) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1) 
+            	 	          {
+            		    
+					            		    var tipoprestamos:String;
+					            		   
+					            		    if(SolicitudesServiciosMl.getInstance().listObservacionesMemos!=null )
+					            		    {
+					            		    	
+					            		    	 if(dgmemorando.selectedItem!=null){
+					            		    		
+					            		    		    Alert.yesLabel="SI";
+					            	             		Alert.noLabel="NO";
+					            	             		if(dgmemorando.selectedItem.llamadoAtencion==0 && dgmemorando.selectedItem.buenComportamiento==1){
+					            	             		
+					            	             		    tipoprestamos="BUEN COMPORTAMIENTO";
+					            	             			
+					            	             		}else{
+					            	             			  
+					            	             			   tipoprestamos="LLAMADO DE ATENCIÓN";
+					            	             			   
+					            	             		     }
+					            	             		  
+					            	             		 SolicitudesServiciosMl.getInstance().idFichaPermisoToEliminar = dgmemorando.selectedItem.id;    
+					            	             		     
+					            	            		Alert.show("¿Seguro que deseas borrar este Dato?\n" +"\n"+ "CONCEPTO: "+ dgmemorando.selectedItem.concepto + "\n"+"RAZÓN MEMORANDO: "+ tipoprestamos +"\n","Eliminar Observaciones Memorandos" ,Alert.YES|Alert.NO,this,closeHandlerfichaPrestamo,erase,0);
+					            		    		
+					            		    	   }else{
+					            		    	   	
+					            		    	   	      Alert.show("SELECCIONE UNA FICHA PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+					            		    	   	
+					            		    	        }
+					            		    	
+					            		    }else{
+					            		    	
+					            		           Alert.show("No hay datos que eliminar, Agregue Memos para poder hacer esta operación","",0,null,null,alerta,0);
+					            		         
+					            		         }
+					            		    
+					            }else{
+                	
+							       Alert.show(PermisosMl.MSG_PERMISO_ELIMINAR_FICHA_MEMORANDO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+													                	
+					             }		    
+					            		    
+					            		    
+            		
+            		break;
+            		
+            	}
+            	
+            }
+            
+            private function closeHandlerfichaPrestamo(event:CloseEvent):void{
+             
+               switch(event.detail){
+               
+                 case Alert.YES:
+                 
+                   
+                   var even:SolicitudesServiciosEvent = new SolicitudesServiciosEvent(SolicitudesServiciosEvent.ELIMINAR_FICHA_PERMISO,null);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(even);
+                   
+                 break;
+               
+               }
+             
+             }
+            
+            private function returnName():void {
+                 PopUpManager.removePopUp(this);
+                 ContratoMl.getInstance().selectableContrato=true;
+			 	 PermisosMl.getInstance().habilitarMenus();
+            }
+            
+            
+            public function direccionarAtras(index:int):void{
+              
+              var retorno:int;
+            
+               if(index==0){
+               	
+                  Vstackfichas.selectedIndex=0; 
+                  UtilidadesMl.getInstance().backEnable=false; 
+                  UtilidadesMl.getInstance().nextEnable=true;
+                  
+               	
+               }else if(index==1){
+               	
+               	        Vstackfichas.selectedIndex=0;
+               	        UtilidadesMl.getInstance().backEnable=false;
+               	        UtilidadesMl.getInstance().nextEnable=true;
+               	
+               	       }else if(index==2){
+               	       	
+               	       	       Vstackfichas.selectedIndex=1;
+               	       	       UtilidadesMl.getInstance().backEnable=true;
+               	       	       UtilidadesMl.getInstance().nextEnable=true;
+               	       	
+               	              }else if(index==3){
+               	              
+               	                       Vstackfichas.selectedIndex=2;
+               	                       UtilidadesMl.getInstance().backEnable=true;
+               	       	               UtilidadesMl.getInstance().nextEnable=true;
+               	                       
+               	                     }
+               	              
+            
+            }
+            
+            public function direccionarAdelante(index:int):void{
+              
+              var retorno:int;
+            
+               if(index==0){
+               	
+                  Vstackfichas.selectedIndex=1;  
+                  UtilidadesMl.getInstance().backEnable=true;
+                  UtilidadesMl.getInstance().nextEnable=true;
+               	
+               }else if(index==1){
+               	
+               	       Vstackfichas.selectedIndex=2;
+               	       UtilidadesMl.getInstance().backEnable=true;
+               	       UtilidadesMl.getInstance().nextEnable=true;
+               	
+               	       }else if(index==2){
+               	       	
+               	       	       Vstackfichas.selectedIndex=3;
+               	       	       UtilidadesMl.getInstance().backEnable=true;
+               	               UtilidadesMl.getInstance().nextEnable=false;	
+               	              }else if(index==3){
+               	              	
+               	                         Vstackfichas.selectedIndex=3;
+               	                         UtilidadesMl.getInstance().backEnable=true;
+               	                         UtilidadesMl.getInstance().nextEnable=false;
+               	                      
+               	                      }
+               	              
+            
+            }
+            
+            
+            public function dg_labelFunctipoPrestamo(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var retorno:String;
+                  
+                  if(parseFloat(item.tipoPrestamo)==1){
+                  
+                   retorno = "BIEN"; 
+                  
+                  }else if(parseFloat(item.tipoPrestamo)==0){
+                  	
+                            retorno = "EFECTIVO"; 
+                           
+                          }
+                   
+              	
+                 return retorno;
+               
+              }
+              
+              public function dg_labelFuncMemorando(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var retorno:String;
+                  
+                  if(parseFloat(item.llamadoAtencion)==1 && parseFloat(item.buenComportamiento)==0){
+                  
+                   retorno = "LLAMADO DE ATENCIÓN"; 
+                  
+                  }else if(parseFloat(item.llamadoAtencion)==0 && parseFloat(item.buenComportamiento)==1){
+                  	
+                            retorno = "BUEN COMPORTAMIENTO"; 
+                           
+                          }
+                   
+              	
+                 return retorno;
+               
+              }
+            
+            
+        ]]>
+    </mx:Script>
+    
+    
+	
+    <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+    
+       
+         <mx:Box  width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+		 	 <mx:Canvas width="100%" height="100%" id="canvas1"  fontSize="13">
+		 		<mx:Label  id="lblAddCmenor" text="{SolicitudesServiciosMl.getInstance().SolicitudIndice==3?('OBSERVACIONES'):('SOLICITUDES DE SERVICIOS')}" color="#FFFFFF" fontWeight="bold" fontSize="13"
+		 	     x="{(canvas1.width/2)-(lblAddCmenor.width/2)}" y="12"/>	
+		 	 </mx:Canvas>
+		 </mx:Box>
+          
+       
+       <mx:Box id="box2" height="82%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center"> 
+      
+				<mx:ViewStack id="Vstackfichas"  selectedIndex="{SolicitudesServiciosMl.getInstance().SolicitudIndice}" width="100%" height="100%" >
+					
+					
+					<mx:Box  width="100%" height="100%" label="aj" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+					         
+					        <mx:Spacer height="10"/> 
+					        <mx:Box verticalAlign="middle" horizontalAlign="center" width="100%">
+					        	  
+					        	  <mx:Label text="FICHAS DE PERMISO" fontSize="11" color="#FFFFFF" fontWeight="bold"/>
+					        	
+					        </mx:Box>
+					        
+					         <mx:Spacer height="5"/>
+					         
+						   	 <mx:DataGrid id="dgFichasPermiso" width="97%" height="100%" dataProvider="{SolicitudesServiciosMl.getInstance().listFichaPermiso}">
+						   	 	<mx:columns>
+						           <mx:DataGridColumn textAlign="center" headerText="Ficha No" dataField="id" width="80"/> 
+						           <mx:DataGridColumn width="300" itemRenderer="VIEW.Items.SolicitudesServicios.ItemConceptoFichaPermiso" textAlign="center" headerText="Concepto" dataField="concepto"/> 
+						           <mx:DataGridColumn itemRenderer="VIEW.Items.SolicitudesServicios.ItemFechaInicioFichaPermiso" textAlign="center" headerText="Fecha inicio" />
+						           <mx:DataGridColumn itemRenderer="VIEW.Items.SolicitudesServicios.ItemFechaFinFichaPermiso" textAlign="center" headerText="Fecha fin" />
+						   	 	</mx:columns>
+						   	 </mx:DataGrid>
+					   	     
+					   	     <mx:Spacer height="5"/> 
+					   	     
+						     <mx:HBox width="100%"  verticalAlign="middle" horizontalAlign="center">
+						  	    <mx:Button click="{showWindow3(1)}" upSkin="@Embed(source='REC/IMAGENES/add_item.png')" downSkin="@Embed(source='REC/IMAGENES/add_item_down.png')" overSkin="@Embed(source='REC/IMAGENES/add_item.png')" toolTip="agregar ficha de permisos"    width="20" height="20"/>
+						  	   	<mx:Button click="{PantallasEliminar(1)}" upSkin="@Embed(source='REC/IMAGENES/removeItem.png')" downSkin="@Embed(source='REC/IMAGENES/removeItemDown.png')" overSkin="@Embed(source='REC/IMAGENES/removeItem.png')" toolTip="eliminar ficha de permisos"   width="20" height="20"/>
+						  	   	<mx:Button click="{showWindow3(5)}" upSkin="@Embed(source='REC/IMAGENES/actualize.png')" downSkin="@Embed(source='REC/IMAGENES/actctualizeDown.png')" overSkin="@Embed(source='REC/IMAGENES/actualize.png')"  toolTip="actualizar ficha de permisos"  width="20" height="20"/>
+					  	     </mx:HBox>
+				  	    
+				  	         <mx:Spacer height="10"/>
+				  	    
+					</mx:Box>
+					
+					
+					
+					 <mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_2">
+					    
+					    <mx:Spacer height="10"/> 
+					        
+					        <mx:Box verticalAlign="middle" horizontalAlign="center" width="100%">
+					        	  
+					        	  <mx:Label text="FICHAS DE INCAPACIDAD" fontSize="11" color="#FFFFFF" fontWeight="bold"/>
+					        	
+					        </mx:Box>
+					        
+					    <mx:Spacer height="5"/>
+					 
+						<mx:DataGrid id="dgFichasIncapacidad" dataProvider="{SolicitudesServiciosMl.getInstance().listFichaIncapacidad}" width="97%" height="100%">
+					   	 	<mx:columns>
+					               <mx:DataGridColumn textAlign="center" headerText="Ficha No" dataField="id" width="80"/> 
+						           <mx:DataGridColumn width="300" itemRenderer="VIEW.Items.SolicitudesServicios.ItemConceptoFichaPermiso" textAlign="center" headerText="Concepto" dataField="concepto"/> 
+						           <mx:DataGridColumn itemRenderer="VIEW.Items.SolicitudesServicios.ItemFechaInicioFichaPermiso" textAlign="center" headerText="Fecha inicio" />
+						           <mx:DataGridColumn itemRenderer="VIEW.Items.SolicitudesServicios.ItemFechaFinFichaPermiso" textAlign="center" headerText="Fecha fin" />
+					   	 	</mx:columns>
+					   	 </mx:DataGrid>
+					   	 
+					   	 <mx:Spacer height="5"/>
+					   	 
+					     <mx:HBox width="100%"  verticalAlign="middle" horizontalAlign="center">
+						  	    <mx:Button click="{showWindow3(2)}" upSkin="@Embed(source='REC/IMAGENES/add_item.png')" downSkin="@Embed(source='REC/IMAGENES/add_item_down.png')" overSkin="@Embed(source='REC/IMAGENES/add_item.png')" toolTip="agregar ficha de incapacidad"    width="20" height="20"/>
+						  	   	<mx:Button click="{PantallasEliminar(2)}" upSkin="@Embed(source='REC/IMAGENES/removeItem.png')" downSkin="@Embed(source='REC/IMAGENES/removeItemDown.png')" overSkin="@Embed(source='REC/IMAGENES/removeItem.png')" toolTip="eliminar ficha de incapacidad"   width="20" height="20"/>
+						  	   	<mx:Button click="{showWindow3(6)}" upSkin="@Embed(source='REC/IMAGENES/actualize.png')" downSkin="@Embed(source='REC/IMAGENES/actctualizeDown.png')" overSkin="@Embed(source='REC/IMAGENES/actualize.png')"  toolTip="actualizar ficha de incapacidad"  width="20" height="20"/>
+					  	  </mx:HBox>
+				  	     
+				  	     <mx:Spacer height="10"/>
+				  	     
+					</mx:Box>
+					
+					<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_3">
+					    
+					    <mx:Spacer height="10"/> 
+					        
+					        <mx:Box verticalAlign="middle" horizontalAlign="center" width="100%">
+					        	  
+					        	  <mx:Label text="FICHAS DE PRESTAMO" fontSize="11" color="#FFFFFF" fontWeight="bold"/>
+					        	
+					        </mx:Box>
+					        
+					    <mx:Spacer height="5"/>
+					    
+						<mx:DataGrid id="dgfichaprestamo" dataProvider="{SolicitudesServiciosMl.getInstance().listFichaPrestamo}" width="97%" height="100%">
+					   	 	<mx:columns>
+					           <mx:DataGridColumn textAlign="center" headerText="Ficha No" dataField="id" width="70"/> 
+					           <mx:DataGridColumn textAlign="center" headerText="Tipo prestamo" labelFunction="dg_labelFunctipoPrestamo" width="110"/> 
+					           <mx:DataGridColumn textAlign="center" headerText="Concepto" itemRenderer="VIEW.Items.SolicitudesServicios.ItemConceptoFichaPermiso" />
+					           <mx:DataGridColumn textAlign="center" headerText="Valor" width="80" itemRenderer="VIEW.Items.SolicitudesServicios.ItemValorPrestamoFichaPrestamo"/>
+					           <mx:DataGridColumn textAlign="center" headerText="Fecha acordada pago" width="150" itemRenderer="VIEW.Items.SolicitudesServicios.ItemFechaPagoFichaPrestamo"/>
+					   	 	</mx:columns>
+					   	 </mx:DataGrid>
+					   	 
+					   	 <mx:Spacer height="5"/>
+					   	 
+					     <mx:HBox width="100%"  verticalAlign="middle" horizontalAlign="center">
+						  	    <mx:Button click="{showWindow3(3)}" upSkin="@Embed(source='REC/IMAGENES/add_item.png')" downSkin="@Embed(source='REC/IMAGENES/add_item_down.png')" overSkin="@Embed(source='REC/IMAGENES/add_item.png')" toolTip="agregar Abono"    width="20" height="20"/>
+						  	   	<mx:Button click="{PantallasEliminar(3)}" upSkin="@Embed(source='REC/IMAGENES/removeItem.png')" downSkin="@Embed(source='REC/IMAGENES/removeItemDown.png')" overSkin="@Embed(source='REC/IMAGENES/removeItem.png')" toolTip="eliminar Abono"   width="20" height="20"/>
+						  	   	<mx:Button click="{showWindow3(7)}" upSkin="@Embed(source='REC/IMAGENES/actualize.png')" downSkin="@Embed(source='REC/IMAGENES/actctualizeDown.png')" overSkin="@Embed(source='REC/IMAGENES/actualize.png')"  toolTip="actualizar Abono"  width="20" height="20"/>
+					  	  </mx:HBox>
+				  	     
+				  	     <mx:Spacer height="10"/>
+				  	     
+					</mx:Box>
+					
+					<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_4">
+					
+					   <mx:Spacer height="10"/> 
+					        
+					        <mx:Box verticalAlign="middle" horizontalAlign="center" width="100%">
+					        	  
+					        	  <mx:Label text="OBSERVACIONES - MEMORANDOS" fontSize="11" color="#FFFFFF" fontWeight="bold"/>
+					        	
+					        </mx:Box>
+					        
+					    <mx:Spacer height="5"/>
+					
+						<mx:DataGrid id="dgmemorando" dataProvider="{SolicitudesServiciosMl.getInstance().listObservacionesMemos}" width="97%" height="100%">
+					   	 	<mx:columns>
+					           <mx:DataGridColumn textAlign="center" headerText="Ficha No" dataField="id" width="70"/> 
+					           <mx:DataGridColumn textAlign="center" headerText="Concepto" itemRenderer="VIEW.Items.SolicitudesServicios.ItemConceptoFichaPermiso"  width="310"/> 
+					           <mx:DataGridColumn textAlign="center" headerText="Razón Memorando" labelFunction="dg_labelFuncMemorando"/>
+					   	 	</mx:columns>
+					   	 </mx:DataGrid>
+					   	 
+					   	 <mx:Spacer height="5"/>
+					   	 
+					     <mx:HBox width="100%"  verticalAlign="middle" horizontalAlign="center">
+						  	    <mx:Button click="{showWindow3(4)}" upSkin="@Embed(source='REC/IMAGENES/add_item.png')" downSkin="@Embed(source='REC/IMAGENES/add_item_down.png')" overSkin="@Embed(source='REC/IMAGENES/add_item.png')" toolTip="agregar ficha de préstamo"    width="20" height="20"/>
+						  	   	<mx:Button click="{PantallasEliminar(4)}" upSkin="@Embed(source='REC/IMAGENES/removeItem.png')" downSkin="@Embed(source='REC/IMAGENES/removeItemDown.png')" overSkin="@Embed(source='REC/IMAGENES/removeItem.png')" toolTip="eliminar ficha de préstamo"   width="20" height="20"/>
+						  	   	<mx:Button click="{showWindow3(8)}" upSkin="@Embed(source='REC/IMAGENES/actualize.png')" downSkin="@Embed(source='REC/IMAGENES/actctualizeDown.png')" overSkin="@Embed(source='REC/IMAGENES/actualize.png')"  toolTip="actualizar ficha de préstamo"  width="20" height="20"/>
+					  	  </mx:HBox>
+				  	     
+				  	     <mx:Spacer height="10"/>
+				  	     
+					</mx:Box>
+					
+				</mx:ViewStack>
+				
+			</mx:Box>	
+			
+			<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+	    
+			    <mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+			      
+				      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+				      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+				      		<mx:Image source="{UtilidadesMl.getInstance().rutaback2}"
+				      	    toolTip="Atras" />	
+				      	</mx:Box>
+				      </mx:HBox>
+				      
+				      <mx:Box verticalAlign="middle" horizontalAlign="left" >
+				      	  <mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar" />	
+				       </mx:Box>
+				       
+				      <mx:HBox height="100%" width="50%" verticalAlign="middle" horizontalAlign="right">
+				      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				      			<mx:Image source="{UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" />	
+				      		</mx:Box>
+				      </mx:HBox>
+			    	
+			    </mx:HBox>
+				 	
+	       </mx:Box>  
+    
+     </mx:VBox>
+
+    
+</mx:TitleWindow>

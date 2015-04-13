@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/ATSYS_WEB/!svn/ver/101/ATSYS_WEB/src/VIEW/Items/Movimientos
+END
+ItemSaldoMovimiento.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/Movimientos/ItemSaldoMovimiento.mxml
+END
+ItemConcepto.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/Movimientos/ItemConcepto.mxml
+END
+ItemValorMovimiento.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/Movimientos/ItemValorMovimiento.mxml
+END
+ItemFechaMovimiento.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/Movimientos/ItemFechaMovimiento.mxml
+END
+ImprimirDataGridMovimientos.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/ATSYS_WEB/!svn/ver/101/ATSYS_WEB/src/VIEW/Items/Movimientos/ImprimirDataGridMovimientos.mxml
+END

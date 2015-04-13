@@ -1,0 +1,1216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+	 close="returnName()" showCloseButton="true" layout="absolute" 
+	 width="600" height="600" borderColor="#006699"  backgroundAlpha="1.0" borderAlpha="50" backgroundColor="#FFFFFF" cornerRadius="15" color="#FFFFFF">
+	
+<mx:Script>
+        <![CDATA[
+        	import COMMAND.roles.AsignarRolesToUsusCommand;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.FacturaEvent;
+        	import MODEL.FacturasMl;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import mx.controls.Alert;
+        	import mx.controls.dataGridClasses.DataGridColumn;
+        	import mx.collections.ArrayCollection;
+        	import MODEL.PersonaMl;
+        	import MODEL.UtilidadesMl;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           
+            
+            [Bindable]
+			[Embed(source="/REC/IMAGENES/CostCenter.png")]
+		 	 public var ccosto:Class;
+            
+            [Bindable]
+            [Embed(source="/REC/IMAGENES/warn2.png")]
+			 public var alerta:Class;
+            
+            [Bindable]
+			[Embed(source="/REC/IMAGENES/chart.png")]
+		 	 public var found:Class;
+             
+            [Bindable]
+			[Embed(source="/REC/IMAGENES/go.png")]
+		 	 public var go:Class; 
+           
+            [Bindable]	 
+             public var arrEstado:Array = [{estado:'Pagadas', id:1},{estado:'No Pagadas', id:2},{estado:'Todas', id:3}];
+           
+             [Bindable]	 
+             public var arrtipofecha:Array = [{tfecha:'Fecha facturación', id:1},{tfecha:'Fecha pactada pago', id:2},{tfecha:'Todas', id:3}];
+            
+           
+           [Bindable]
+			public var ArrayPeriodos:Array = [
+			{periodo:'Anual', id:1},
+			{periodo:'Semestral', id:2},
+			{periodo:'Bimensual', id:3},
+			{periodo:'Mensual', id:4},
+			{periodo:'Rango de Fechas', id:5}
+			];	 
+            
+            [Bindable]
+			public var ArraySemestrePeriodos:Array = [{periodo:'1', id:1},{periodo:'2', id:2}];
+            
+            [Bindable]
+			public var ArrayBimensualPeriodos:Array = [{periodo:'1', id:1},{periodo:'2', id:2},{periodo:'3', id:3},{periodo:'4', id:4},{periodo:'5', id:5},{periodo:'6', id:6}];
+            
+            [Bindable]
+			public var ArrayMensualPeriodos:Array = [
+			{mes:'Enero', id:1},
+			{mes:'Febrero', id:2},
+			{mes:'Marzo', id:3},
+			{mes:'Abril', id:4},
+			{mes:'Mayo', id:5},
+			{mes:'Junio', id:6},
+			{mes:'Julio', id:7},
+			{mes:'Agosto', id:8},
+			{mes:'Septiembre', id:9},
+			{mes:'Octubre', id:10},
+			{mes:'Noviembre', id:11},
+			{mes:'Diciembre', id:12},
+			];
+            
+            
+            
+            private function returnName():void {
+                 PopUpManager.removePopUp(this);  
+                 resetSeleccionClientes();
+            }
+            
+            
+            
+            public function GenerarReporte():void {
+            
+                  if(getClientesSeleccionados()!=null){
+                  
+                    if(getClientesSeleccionados().length>0){
+                    	
+                    	FacturasMl.getInstance().tipoPeriodoR = cbxperiodo.selectedItem.id;
+			            FacturasMl.getInstance().tipoFechaR = cbxtipofecha.selectedItem.id;
+			            FacturasMl.getInstance().tipoEstadoR = cbxestado.selectedItem.id;
+			            FacturasMl.getInstance().arrClientesR = getClientesSeleccionados();
+			            
+			            if(viewStackPeriodos.selectedIndex==0){
+			            	
+			            	FacturasMl.getInstance().fechaInicioR = ObtenerFechasPeriodoAnual(1,parseInt(txtyearInicio.text));
+			            	FacturasMl.getInstance().fechaFinR = ObtenerFechasPeriodoAnual(2,parseInt(txtyearFin.text));
+			            	
+			              }else if(viewStackPeriodos.selectedIndex==1){
+			              	
+			                        FacturasMl.getInstance().fechaInicioR = ObtenerFechasPeriodoSemestral(1,parseInt(txtyearFechaInicioSemestre.text),cbxPeriodoSemestreFechaInicio.selectedItem.id);
+			                        FacturasMl.getInstance().fechaFinR = ObtenerFechasPeriodoSemestral(2,parseInt(txtyearFechaFinSemestre.text),cbxPeriodoSemestreFechaFin.selectedItem.id);
+			                      
+			                      }else if(viewStackPeriodos.selectedIndex==2){
+			                      	
+			                      	       FacturasMl.getInstance().fechaInicioR = ObtenerFechasPeriodoBimensual(1,parseInt(txtyearFechaInicioBimensual.text),cbxPeriodoBimensualFechaInicio.selectedItem.id);
+			                      	       FacturasMl.getInstance().fechaFinR = ObtenerFechasPeriodoBimensual(2,parseInt(txtyearFechaFinBimensual.text),cbxPeriodoBimensualFechaFin.selectedItem.id);
+			                      	       
+			                      	
+			                             }else if(viewStackPeriodos.selectedIndex==3){
+			                             	
+			                                      FacturasMl.getInstance().fechaInicioR = ObtenerFechasPeriodoMensual(1,parseInt(txtyearFechaInicioMensual.text),cbxPeriodoMensualFechaInicio.selectedItem.id);
+			                                      FacturasMl.getInstance().fechaFinR = ObtenerFechasPeriodoMensual(2,parseInt(txtyearFechaFinMensual.text),cbxPeriodoMensualFechaFin.selectedItem.id);
+			                                     
+			                                     }else if(viewStackPeriodos.selectedIndex==4){
+			                                     	
+			                                     	      FacturasMl.getInstance().fechaInicioR = dfFechaInicioRf.selectedDate;
+			                                     	      FacturasMl.getInstance().fechaFinR = dfFechaFinRf.selectedDate;
+			                                     	
+			                                             }
+			             
+			            var e:FacturaEvent = new FacturaEvent(FacturaEvent.REPORTES_FACTURAS,null);
+			            CairngormEventDispatcher.getInstance().dispatchEvent(e);
+			            
+			              
+                    	
+                    }else{
+                    	
+                          Alert.show("Seleccione al menos Un CLIENTE POR FAVOR","Mensaje de alerta",0,null,null,alerta,0);
+                         
+                         }
+                  	
+                  }else{
+                  	
+                         Alert.show("Seleccione al menos Un CLIENTE POR FAVOR","Mensaje de alerta",0,null,null,alerta,0);
+                       
+                       }
+            
+	              
+              /*FacturasMl.getInstance().arrClientesR = new Array();
+              
+              for(var x:int=0;x< getClientesSeleccionados().length ; x++){
+              	
+                  FacturasMl.getInstance().arrClientesR.push(x);	  
+              	
+              }*/
+              
+              
+            
+            }
+            
+     ///////////////////VALIDAR CAMPOS//////////////////////////////       
+            
+            [Bindable]
+            public var formIsValid:Boolean=false;
+            
+            private var focussedFormControl:DisplayObject;
+            
+            private function validateForm(event:Event):void{
+            
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               
+               if(viewStackPeriodos.selectedIndex==0){
+               
+	               validate(yearInicioAnualValidator);
+	               validate(yearFinAnualValidator);
+               
+               }else if(viewStackPeriodos.selectedIndex==1){
+               	
+               	        validate(yearInicioSemestralValidator);
+	                    validate(yearFinSemestralValidator);
+                	
+                       }else if(viewStackPeriodos.selectedIndex==2){
+               	
+		               	        validate(yearInicioBimensualValidator);
+			                    validate(yearFinBimensualValidator);
+		                	
+		                       }else if(viewStackPeriodos.selectedIndex==3){
+               	
+				               	         validate(yearInicioMensualValidator);
+					                     validate(yearFinMensualValidator);
+		                	
+		                               }else if(viewStackPeriodos.selectedIndex==4){
+               	
+						               	         validate(fechaInicioValidator);
+							                     validate(fechaFinValidator);
+				                	
+				                               }
+               
+            }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            }
+            
+     //////////////////////////////////////////////////////       
+           
+           public function checkall():void{
+            
+               PersonaMl.getInstance().checarallCheckboxPersonaFac();             
+               var cont:int=0;
+               var ar:ArrayCollection = new ArrayCollection();
+               ar=PersonaMl.getInstance().listPersonasToReportesFacturas as ArrayCollection;
+               for each(var x:* in PersonaMl.getInstance().listPersonasToReportesFacturas){
+               
+                  if(checkallPersonas.selected){
+                    
+                    x.asignado=true;
+                     
+                  }else{
+                  
+                    x.asignado=false;
+                    
+                  }
+                  ar.getItemAt(cont).asignado=x.asignado;
+               		cont++;
+               }
+               PersonaMl.getInstance().listPersonasToReportesFacturas=ar;
+               
+              
+            }
+            
+            public function dg_labelFuncCedula(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var retorno:String;
+                  
+                  if(item.cedula!="")
+                   {
+                     retorno = item.cedula;
+                   }else{
+                   	     retorno="";    
+                        }
+                 return retorno;
+            }
+            
+           
+           private function resetSeleccionClientes():void{
+           	
+           	  for each( var x:* in PersonaMl.getInstance().listPersonasToReportesFacturas)
+            	{
+            		if(x.asignado==true)
+            		    
+            		    x.asignado=false;
+            		    
+            	}
+           	
+           }
+           
+           public function getClientesSeleccionados():Array
+            {
+            	var arr:Array = new Array();
+            	
+            	for each( var x:* in PersonaMl.getInstance().listPersonasToReportesFacturas)
+            	{
+            		if(x.asignado)
+            		    arr.push(x.id);
+            	}
+            	
+            	return arr;
+            }
+           
+           public function ObtenerFechasPeriodoAnual(tipoyear:int,year:int):Date{
+           	
+           	 var retorno:Date;
+           	 var dia:int;
+           	 var mes:int; 
+           	
+           	
+           	  if(tipoyear==1){
+           	  	
+           	  	mes=1;
+           	  	dia=1;
+           	  	
+           	  	retorno = new Date(mes+"/"+dia+"/"+year);
+           	  	
+           	  }else{
+           	  	
+           	  	     mes=12;
+           	  	     dia=31;
+           	  	     
+           	  	     retorno = new Date(mes+"/"+dia+"/"+year);
+           	  	
+           	       } 
+           	       
+           	       return retorno;
+           	
+           } 
+            
+            public function ObtenerFechasPeriodoBimensual(tipofecha:int,year:int,periodo:int):Date{
+            	
+            	
+            	var retorno:Date;
+            	var mes:int;
+            	var dia:int;
+            	
+            	
+            	if(tipofecha==1){
+            	
+            	   switch(periodo){
+            	   	
+            	   	  case 1:
+            	   	  
+            	   	     mes=1;
+            	   	     dia=1;
+            	   	     retorno = new Date(mes+"/"+dia+"/"+year);
+            	   	  
+            	   	  break;
+            	   	  
+            	   	  case 2:
+            	   	  
+            	   	     mes=3;
+            	   	     dia=1;
+            	   	     retorno = new Date(mes+"/"+dia+"/"+year);
+            	   	  
+            	   	  break;
+            	   	  
+            	   	  case 3:
+            	   	   
+            	   	     mes=5;
+            	   	     dia=1;
+            	   	     retorno = new Date(mes+"/"+dia+"/"+year);
+            	   	    
+            	   	  break;
+            	   	  
+            	   	  case 4:
+            	   	  
+            	   	     mes=7;
+            	   	     dia=1;
+            	   	     retorno = new Date(mes+"/"+dia+"/"+year);
+            	   	  
+            	   	  break;
+            	   	  
+            	   	  case 5:
+            	   	  
+            	   	     mes=9;
+            	   	     dia=1;
+            	   	     retorno = new Date(mes+"/"+dia+"/"+year);
+            	   	      
+            	   	  break;
+            	   	  
+            	   	  case 6:
+            	   	  
+            	   	     mes=11;
+            	   	     dia=1;
+            	   	     retorno = new Date(mes+"/"+dia+"/"+year);
+            	   	  
+            	   	  break;
+            	   	  
+            	   	
+            	   }	
+            		
+            	}else if(tipofecha==2){
+            		
+            		     switch(periodo){
+            	   	
+			            	   	  case 1:
+			            	   	  
+			            	   	     mes=2;
+			            	   	     
+			            	   	     if(year%4==0){
+			            	   	     	
+			            	   	     	dia=29;
+			            	   	     	
+			            	   	     }else{
+			            	   	     	
+			            	   	     	   dia=28;
+			            	   	     	
+			            	   	          }
+			            	   	     
+			            	   	     retorno = new Date(mes+"/"+dia+"/"+year);
+			            	   	  
+			            	   	  break;
+			            	   	  
+			            	   	  case 2:
+			            	   	  
+			            	   	     mes=4;
+			            	   	     dia=30;
+			            	   	     retorno = new Date(mes+"/"+dia+"/"+year);
+			            	   	  
+			            	   	  break;
+			            	   	  
+			            	   	  case 3:
+			            	   	   
+			            	   	     mes=6;
+			            	   	     dia=30;
+			            	   	     retorno = new Date(mes+"/"+dia+"/"+year);
+			            	   	    
+			            	   	  break;
+			            	   	  
+			            	   	  case 4:
+			            	   	  
+			            	   	     mes=8;
+			            	   	     dia=30;
+			            	   	     retorno = new Date(mes+"/"+dia+"/"+year);
+			            	   	  
+			            	   	  break;
+			            	   	  
+			            	   	  case 5:
+			            	   	  
+			            	   	     mes=10;
+			            	   	     dia=31;
+			            	   	     retorno = new Date(mes+"/"+dia+"/"+year);
+			            	   	      
+			            	   	  break;
+			            	   	  
+			            	   	  case 6:
+			            	   	  
+			            	   	     mes=12;
+			            	   	     dia=31;
+			            	   	     retorno = new Date(mes+"/"+dia+"/"+year);
+			            	   	  
+			            	   	  break;
+			            	   	  
+			            	   	
+			            	   }
+            		
+            	        }
+            	        
+            	        return retorno;
+            	
+            }
+            
+            
+            public function ObtenerFechasPeriodoMensual(tipofecha:int,year:int,mes:int):Date{
+            	
+            	var retorno:Date;
+            	var dia:int;
+            	
+            	if(tipofecha==1){
+            		
+            		  dia=1;
+            		  
+            		  retorno = new Date(mes+"/"+dia+"/"+year);
+            		   
+            		
+            	  }else if(tipofecha==2){
+            		
+                                    	
+                             if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12){
+                             	
+                             	dia=31;
+                             	
+                             }else if(mes == 4 || mes == 6 || mes == 9 || mes == 11){
+                             	
+                                      dia=30;
+                                     
+                                     }else if(mes==2){
+                                     	
+                                               if(year %4==0){
+                                               	
+                                                    dia=29;
+                                                 
+                                                 }else{
+                                                 	   
+                                                 	   dia=28;
+                                                 	   
+                                                      }
+                                             
+                                             }
+                                                    	
+                               retorno = new Date(mes+"/"+dia+"/"+year);		
+            		
+            	           }
+            	
+            	return retorno;
+            	
+            }
+            
+            public function ObtenerFechasPeriodoSemestral(tipofecha:int,year:int,periodo:int):Date{
+            	
+            	var retorno:Date;
+            	var mes:int;
+            	var dia:int;
+            	            	
+            	if(tipofecha==1){
+            		
+            		if(periodo==1){
+            			
+            			mes=1;
+            			dia=1;
+            			retorno = new Date(mes+"/"+dia+"/"+year);
+            			
+            		}else{
+            			
+            		       mes=7;
+            			   dia=1;
+            			   retorno = new Date(mes+"/"+dia+"/"+year);
+            		     
+            		     }
+            		
+            	}else{
+            		
+            	        if(periodo==1){
+            			
+            			  mes=6;
+            			  dia=30;
+            			  var str:String =6+"/"+dia+"/"+year;
+            			  retorno = new Date(str);
+            			
+	            		}else{
+	            			
+	            		       mes=12;
+	            			   dia=31;
+	            			   retorno = new Date(mes+"/"+dia+"/"+year);
+	            		     
+	            		     }
+            	       
+            	     }
+            	     
+            	     
+            	     return retorno;
+            	
+            }
+            
+            
+            private function validarCalendarioFechaInFechaFin(dfInicio:DateField,dfFin:DateField):void{
+            
+            	
+             if(dfInicio.text!="" && dfFin.text!=""){	
+            	
+            	if(dfFin.selectedDate < dfInicio.selectedDate){
+            		
+            		dfFin.text ="";
+            		
+            		Alert.show("La fecha Fin NO puede ser menor que la fecha de Inicio" ,"Mensaje de alerta",0,null,null,alerta,0);
+            		
+            	}
+              }
+              
+            }
+            
+            public function sacudirViewsTack():void{
+            	
+            	if(viewStackPeriodos.selectedIndex==0){
+            		
+            		if(txtyearInicio.text=="" || txtyearFin.text==""){
+            			
+            			formIsValid=false;
+            			
+            		}else{
+            			   
+            			   formIsValid=true;
+            			   
+            		     }
+            		
+            	}else if(viewStackPeriodos.selectedIndex==1){
+            		
+            	          if(txtyearFechaInicioSemestre.text=="" || txtyearFechaFinSemestre.text==""){
+            	          	
+            	          	formIsValid=false;
+            	          	
+            	          }else{
+            	          	
+            	                 formIsValid=true;
+            	                
+            	               }
+            	        
+            	        }else if(viewStackPeriodos.selectedIndex==2){
+            	        	
+            	                  if(txtyearFechaInicioBimensual.text=="" || txtyearFechaFinBimensual.text==""){
+            	                  	
+            	                  	formIsValid = false;
+            	                  	
+            	                  }else{
+            	                  	
+            	                        formIsValid = true;
+            	                       
+            	                       }
+            	                
+            	                }else if(viewStackPeriodos.selectedIndex==3){
+            	                	
+            	                          if(txtyearFechaInicioMensual.text=="" || txtyearFechaFinMensual.text==""){
+            	                  	
+		            	                  	formIsValid = false;
+		            	                  	
+		            	                  }else{
+		            	                  	
+		            	                        formIsValid = true;
+		            	                       
+		            	                       }
+            	                        
+            	                        }else if(viewStackPeriodos.selectedIndex==4){
+            	                	
+		            	                          if(dfFechaInicioRf.text=="" || dfFechaFinRf.text==""){
+		            	                  	
+				            	                  	formIsValid = false;
+				            	                  	
+				            	                  }else{
+				            	                  	
+				            	                        formIsValid = true;
+				            	                       
+				            	                       }
+		            	                        
+		            	                        }
+            	
+            }
+            
+            private function validarYearInicioYearFin(txtYearInicio:TextInput,txtYearFin:TextInput):void{
+            
+            	
+             if(txtYearInicio.text!="" && txtYearFin.text!=""){	
+            	
+            	if(txtYearFin.length==4){
+            	
+	            	if(parseInt(txtYearFin.text) < parseInt(txtYearInicio.text)){
+	            		
+	            		txtYearFin.text ="";
+	            		
+	            		Alert.show("El Año Fin NO puede ser menor que el Año de Inicio" ,"Mensaje de alerta",0,null,null,alerta,0);
+	            		
+	            	}
+	           
+	           }
+	            	
+	            	
+              }
+              
+            }
+            
+            public function probar():void{
+            	
+            	Alert.show("Fecha Inicio = "+ UtilidadesMl.getInstance().formaterFechas(ObtenerFechasPeriodoMensual(1,parseInt(txtyearFechaInicioMensual.text),cbxPeriodoMensualFechaInicio.selectedItem.id)) + "\n" + "Fecha Fin = " +
+            	UtilidadesMl.getInstance().formaterFechas(ObtenerFechasPeriodoMensual(2,parseInt(txtyearFechaFinMensual.text),cbxPeriodoMensualFechaFin.selectedItem.id)));
+            	
+            }
+            
+        ]]>
+    </mx:Script>
+  
+      <mx:Style>
+        .myHeaderStyle{
+            color:#000000; 
+            font-family:Times New Roman, Times, serif;
+            font-size:20px; font-weight:bold;}
+        .myTodayStyle{
+            color:#CC6633; 
+            font-family:Times New Roman, Times, serif;
+            font-size:12px; font-weight:bold;}
+        .myDayStyle{
+            color:#006600; 
+            font-family:Courier New, Courier, mono;
+            font-size:15px; font-style:italic; font-weight:bold;}
+    </mx:Style>
+
+      <!--VALIDATORS-->
+      
+        <!--Año inicio y año fin anual-->
+      
+		      <mx:NumberValidator
+		       	
+		      	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Año Inicio Periodo Anual por favor¡¡"
+		      	exceedsMaxError="!!Desborde..Año muy Alto"
+		      	maxValue="2100"
+		      	minValue="1900"
+		      	lowerThanMinError="!!Desborde..Año muy bajo"
+		      	id="yearInicioAnualValidator"
+		      	source="{txtyearInicio}"
+		      	property="text"
+		      	
+		      />
+		      
+		      <mx:NumberValidator
+		       	
+		      	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Año Fin Periodo Anual por favor¡¡"
+		      	exceedsMaxError="!!Desborde..Año muy Alto"
+		      	maxValue="2100"
+		      	minValue="1900"
+		      	lowerThanMinError="!!Desborde..Año muy bajo"
+		      	id="yearFinAnualValidator"
+		      	source="{txtyearFin}"
+		      	property="text"
+		      	
+		      />
+      
+       <!--Año inicio y año fin semestral-->
+       
+		       <mx:NumberValidator
+				       	
+		      	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Año Inicio Periodo Semestral por favor¡¡"
+		      	exceedsMaxError="!!Desborde..Año muy Alto"
+		      	maxValue="2100"
+		      	minValue="1900"
+		      	lowerThanMinError="!!Desborde..Año muy bajo"
+		      	id="yearInicioSemestralValidator"
+		      	source="{txtyearFechaInicioSemestre}"
+		      	property="text"
+		      	
+		      />
+		      
+		      <mx:NumberValidator
+		       	
+		      	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Año Fin Periodo Semestral por favor¡¡"
+		      	exceedsMaxError="!!Desborde..Año muy Alto"
+		      	maxValue="2100"
+		      	minValue="1900"
+		      	lowerThanMinError="!!Desborde..Año muy bajo"
+		      	id="yearFinSemestralValidator"
+		      	source="{txtyearFechaFinSemestre}"
+		      	property="text"
+		      	
+		      />
+		      
+	<!--Año inicio y año fin Bimensual-->
+	            
+	            <mx:NumberValidator
+				       	
+		      	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Año Inicio Periodo Bimensual por favor¡¡"
+		      	exceedsMaxError="!!Desborde..Año muy Alto"
+		      	maxValue="2100"
+		      	minValue="1900"
+		      	lowerThanMinError="!!Desborde..Año muy bajo"
+		      	id="yearInicioBimensualValidator"
+		      	source="{txtyearFechaInicioBimensual}"
+		      	property="text"
+		      	
+		      />
+		      
+		      <mx:NumberValidator
+		       	
+		      	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Año Fin Periodo Bimensual por favor¡¡"
+		      	exceedsMaxError="!!Desborde..Año muy Alto"
+		      	maxValue="2100"
+		      	minValue="1900"
+		      	lowerThanMinError="!!Desborde..Año muy bajo"
+		      	id="yearFinBimensualValidator"
+		      	source="{txtyearFechaFinBimensual}"
+		      	property="text"
+		      	
+		      />
+            
+   <!--Año inicio y año fin Mensual-->
+             
+               <mx:NumberValidator
+				       	
+		      	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Año Inicio Periodo Mensual por favor¡¡"
+		      	exceedsMaxError="!!Desborde..Año muy Alto"
+		      	maxValue="2100"
+		      	minValue="1900"
+		      	lowerThanMinError="!!Desborde..Año muy bajo"
+		      	id="yearInicioMensualValidator"
+		      	source="{txtyearFechaInicioMensual}"
+		      	property="text"
+		      	
+		      />
+		      
+		      <mx:NumberValidator
+		       	
+		      	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Año Fin Periodo Mensual por favor¡¡"
+		      	exceedsMaxError="!!Desborde..Año muy Alto"
+		      	maxValue="2100"
+		      	minValue="1900"
+		      	lowerThanMinError="!!Desborde..Año muy bajo"
+		      	id="yearFinMensualValidator"
+		      	source="{txtyearFechaFinMensual}"
+		      	property="text"
+		      	
+		      />
+         <!--Año inicio y año fin range-->
+         
+             <!--mx:StringValidator 
+		    	
+		    	requiredFieldError="!!Este campo es Obligatorio. Ingrese la Fecha de Inicio por favor¡¡"
+		    	id="fechaInicioValidator"
+		        source="{dfFechaInicioRf}" 
+		        property="text"
+		        
+		    /-->    
+              
+             <!--mx:StringValidator 
+		    	
+		    	requiredFieldError="!!Este campo es Obligatorio. Ingrese la Fecha Fin por favor¡¡"
+		    	id="fechaFinValidator"
+		        source="{dfFechaFinRf}" 
+		        property="text"
+		        
+		     /--> 
+              
+            <mx:DateValidator
+    
+			    requiredFieldError="!!Este campo es Obligatorio. Ingrese la Fecha de Inicio por favor¡¡"
+			    formatError="!!Error en el Formato de la fecha"
+		        wrongLengthError="!!Fecha Inválida"
+		        
+		        invalidCharError="!!La fecha contiene caracteres Inválidos"
+		        wrongDayError="!!El dia de la Fecha es Inválido"
+		        wrongMonthError="!!El mes de la Fecha es Inválido"
+		     	wrongYearError="!!El año de la Fecha es Inválido"
+		     	
+			    id="fechaInicioValidator"
+		        source="{dfFechaInicioRf}" 
+		        property="text"
+		    	
+		    />  
+		    
+		    <mx:DateValidator
+    
+			    requiredFieldError="!!Este campo es Obligatorio. Ingrese la Fecha Fin por favor¡¡"
+			    formatError="!!Error en el Formato de la fecha"
+		        wrongLengthError="!!Fecha Inválida"
+		        
+		        invalidCharError="!!La fecha contiene caracteres Inválidos"
+		        wrongDayError="!!El dia de la Fecha es Inválido"
+		        wrongMonthError="!!El mes de la Fecha es Inválido"
+		     	wrongYearError="!!El año de la Fecha es Inválido"
+		     	
+			    id="fechaFinValidator"
+		        source="{dfFechaFinRf}" 
+		        property="text"
+		    	
+		    />
+              
+     <!--VALIDATORS-->
+ 
+      <mx:Box id="bxPpl" width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+      	
+         <mx:Box width="99%" height="99%" verticalAlign="middle" horizontalAlign="center">
+         	
+          
+           <!--Box titulo--> 
+            
+		   <mx:HBox id="boxtop" width="100%" height="5%" backgroundColor="#006699" verticalAlign="middle" horizontalAlign="center">
+			  	 <mx:Image source="{found}" width="18" height="18" />	
+			  	 <mx:Label text="REPORTES DE FACTURAS" click="{probar()}" fontWeight="bold" fontSize="12" color="#FBFBFB"/>
+			</mx:HBox>
+		   
+		   <!--Box Medio-->
+		   
+		   <mx:Box id="boxCentro" verticalAlign="middle" horizontalAlign="center" width="100%" height="85%" backgroundColor="#006699">
+		   	        
+		   	       <mx:Spacer height="1%" /> 
+		   	        
+			   	   <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center" height="9%">
+			   	   	
+			   	   	   <mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+			   	   	   	  
+			   	   	   	   <mx:Label id="lblPeriodo" text="PERIODO" fontWeight="bold" fontSize="12"/>
+			   	   	   	
+			   	   	   </mx:Box>
+			   	   	   
+			   	   	   <mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+			   	   	   	  
+			   	   	   	   <mx:ComboBox labelField="periodo" change="{viewStackPeriodos.selectedIndex=cbxperiodo.selectedIndex}" dataProvider="{ArrayPeriodos}" id="cbxperiodo" maxWidth="150" minWidth="150" fontSize="10" color="#000000"/>
+			   	   	   	
+			   	   	   </mx:Box>
+			   	   	
+			   	   </mx:HBox>
+			   	   
+			   	   <mx:Box width="98%" height="30%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="7" backgroundColor="#144057">
+			   	   	   
+			   	   	   <mx:ViewStack change="{sacudirViewsTack()}" selectedIndex="0" id="viewStackPeriodos" width="100%" height="100%" cornerRadius="7" borderStyle="solid">
+			   	   	   	   
+			   	   	   	   <!--Vista Anual-->
+			   	   	   	   
+			   	   	   	    <mx:VBox id="Anual" width="95%" verticalAlign="middle" horizontalAlign="center" backgroundColor="#006699">
+			   	   	   	    	
+			   	   	   	    	<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			   	   	   	    		
+			   	   	   	    		 <mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+			   	   	   	    		 	
+			   	   	   	    		 	<mx:Label text="AÑO INICIO" fontWeight="bold" fontSize="12"/>
+			   	   	   	    		 	
+			   	   	   	    		 </mx:Box>
+			   	   	   	    		 
+			   	   	   	    		 <mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+			   	   	   	    		 	
+			   	   	   	    		 	<mx:TextInput id="txtyearInicio" change="{validarYearInicioYearFin(txtyearInicio,txtyearFin),validateForm(event)}" textAlign="center" maxChars="4" restrict="0-9" width="20%" color="#000000" fontSize="10"/>
+			   	   	   	    		 	
+			   	   	   	    		 </mx:Box>
+			   	   	   	    		
+			   	   	   	    	</mx:HBox>
+			   	   	   	    	
+			   	   	   	    	<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			   	   	   	    		
+			   	   	   	    		 <mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+			   	   	   	    		 	
+			   	   	   	    		 	<mx:Label text="AÑO FIN" fontWeight="bold" fontSize="12"/>
+			   	   	   	    		 	
+			   	   	   	    		 </mx:Box>
+			   	   	   	    		 
+			   	   	   	    		 <mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+			   	   	   	    		 	
+			   	   	   	    		 	<mx:TextInput id="txtyearFin" change="{validarYearInicioYearFin(txtyearInicio,txtyearFin),validateForm(event)}" maxChars="4" restrict="0-9" width="20%" textAlign="center" color="#000000" fontSize="10"/>
+			   	   	   	    		 	
+			   	   	   	    		 </mx:Box>
+			   	   	   	    		
+			   	   	   	    	</mx:HBox>
+			   	   	   	    	
+			   	   	   	    </mx:VBox>
+			   	   	   	    
+			   	   	   	    <!--Vista Semestral--> 
+			   	   	   	    
+			   	   	   	    <mx:VBox id="Semestral" width="95%" verticalAlign="middle" horizontalAlign="center" backgroundColor="#006699">
+			   	   	   	       
+			   	   	   	        <mx:HBox width="100%" verticalAlign="middle" height="50%" horizontalAlign="center" borderStyle="none">
+			   	   	   	        	
+			   	   	   	        	<mx:Box width="20%" verticalAlign="middle" horizontalAlign="right">
+			   	   	   	        	  
+			   	   	   	        	   <mx:Label text="FECHA INICIO" fontWeight="bold" fontSize="12"/>
+			   	   	   	        	  	
+			   	   	   	        	</mx:Box>
+			   	   	   	        	
+			   	   	   	        	<mx:VBox width="40%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="5">
+			   	   	   	        		
+			   	   	   	        		<mx:Label text="AÑO" fontWeight="bold" fontSize="12"/>
+			   	   	   	        		<mx:TextInput change="{validarYearInicioYearFin(txtyearFechaInicioSemestre,txtyearFechaFinSemestre),validateForm(event)}" restrict="0-9" textAlign="center" id="txtyearFechaInicioSemestre" width="30%" fontSize="10" color="#000000" maxChars="4"/>
+			   	   	   	        		
+			   	   	   	        	</mx:VBox>
+			   	   	   	        	
+			   	   	   	        	<mx:VBox width="40%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="5">
+			   	   	   	        		
+			   	   	   	        		<mx:Label text="PERIODO" fontWeight="bold" fontSize="12"/>
+			   	   	   	        		<mx:ComboBox dataProvider="{ArraySemestrePeriodos}" labelField="periodo" id="cbxPeriodoSemestreFechaInicio"  fontSize="10" color="#000000" width="50"/>
+			   	   	   	        	
+			   	   	   	        	</mx:VBox>
+			   	   	   	        	
+			   	   	   	        </mx:HBox>
+			   	   	   	        
+			   	   	   	        <mx:HBox width="100%" verticalAlign="middle" height="50%" horizontalAlign="center" borderStyle="none">
+			   	   	   	        	
+			   	   	   	        	<mx:Box width="20%" verticalAlign="middle" horizontalAlign="right">
+			   	   	   	        	  
+			   	   	   	        	   <mx:Label text="FECHA FIN" fontWeight="bold" fontSize="12"/>
+			   	   	   	        	  	
+			   	   	   	        	</mx:Box>
+			   	   	   	        	
+			   	   	   	        	<mx:VBox width="40%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="5">
+			   	   	   	        		
+			   	   	   	        		<mx:Label text="AÑO" fontWeight="bold" fontSize="12"/>
+			   	   	   	        		<mx:TextInput change="{validarYearInicioYearFin(txtyearFechaInicioSemestre,txtyearFechaFinSemestre),validateForm(event)}" textAlign="center" restrict="0-9" id="txtyearFechaFinSemestre" width="30%" color="#000000" fontSize="10" maxChars="4"/>
+			   	   	   	        		
+			   	   	   	        	</mx:VBox>
+			   	   	   	        	
+			   	   	   	        	<mx:VBox width="40%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="5">
+			   	   	   	        		
+			   	   	   	        		<mx:Label text="PERIODO" fontWeight="bold" fontSize="12"/>
+			   	   	   	        		<mx:ComboBox dataProvider="{ArraySemestrePeriodos}" labelField="periodo" id="cbxPeriodoSemestreFechaFin"  fontSize="10" color="#000000" width="50"/>
+			   	   	   	        	
+			   	   	   	        	</mx:VBox>
+			   	   	   	        	
+			   	   	   	        </mx:HBox>
+			   	   	   	       	
+			   	   	   	    </mx:VBox>
+			   	   	   	    
+			   	   	   	    <!--Vista Bimensual-->
+			   	   	   	    
+			   	   	   	    <mx:VBox id="Bimensual" width="95%" verticalAlign="middle" horizontalAlign="center" backgroundColor="#006699">
+			   	   	   	       
+			   	   	   	        <mx:HBox width="100%" verticalAlign="middle" height="50%" horizontalAlign="center" borderStyle="none">
+			   	   	   	        	
+			   	   	   	        	<mx:Box width="20%" verticalAlign="middle" horizontalAlign="right">
+			   	   	   	        	  
+			   	   	   	        	   <mx:Label text="FECHA INICIO" fontWeight="bold" fontSize="12"/>
+			   	   	   	        	  	
+			   	   	   	        	</mx:Box>
+			   	   	   	        	
+			   	   	   	        	<mx:VBox width="40%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="5">
+			   	   	   	        		
+			   	   	   	        		<mx:Label text="AÑO" fontWeight="bold" fontSize="12"/>
+			   	   	   	        		<mx:TextInput change="{validarYearInicioYearFin(txtyearFechaInicioBimensual,txtyearFechaFinBimensual),validateForm(event)}" textAlign="center" restrict="0-9" id="txtyearFechaInicioBimensual" width="30%" color="#000000" fontSize="10" maxChars="4"/>
+			   	   	   	        		
+			   	   	   	        	</mx:VBox>
+			   	   	   	        	
+			   	   	   	        	<mx:VBox width="40%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="5">
+			   	   	   	        		
+			   	   	   	        		<mx:Label text="PERIODO" fontWeight="bold" fontSize="12"/>
+			   	   	   	        		<mx:ComboBox dataProvider="{ArrayBimensualPeriodos}" labelField="periodo" id="cbxPeriodoBimensualFechaInicio"  fontSize="10" color="#000000" width="50"/>
+			   	   	   	        	
+			   	   	   	        	</mx:VBox>
+			   	   	   	        	
+			   	   	   	        </mx:HBox>
+			   	   	   	        
+			   	   	   	        <mx:HBox width="100%" verticalAlign="middle" height="50%" horizontalAlign="center" borderStyle="none">
+			   	   	   	        	
+			   	   	   	        	<mx:Box width="20%" verticalAlign="middle" horizontalAlign="right">
+			   	   	   	        	  
+			   	   	   	        	   <mx:Label text="FECHA FIN" fontWeight="bold" fontSize="12"/>
+			   	   	   	        	  	
+			   	   	   	        	</mx:Box>
+			   	   	   	        	
+			   	   	   	        	<mx:VBox width="40%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="5">
+			   	   	   	        		
+			   	   	   	        		<mx:Label text="AÑO" fontWeight="bold" fontSize="12"/>
+			   	   	   	        		<mx:TextInput change="{validarYearInicioYearFin(txtyearFechaInicioBimensual,txtyearFechaFinBimensual),validateForm(event)}" textAlign="center" restrict="0-9" id="txtyearFechaFinBimensual" width="30%" color="#000000" fontSize="10" maxChars="4"/>
+			   	   	   	        		
+			   	   	   	        	</mx:VBox>
+			   	   	   	        	
+			   	   	   	        	<mx:VBox width="40%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="5">
+			   	   	   	        		
+			   	   	   	        		<mx:Label text="PERIODO" fontWeight="bold" fontSize="12"/>
+			   	   	   	        		<mx:ComboBox dataProvider="{ArrayBimensualPeriodos}" labelField="periodo" id="cbxPeriodoBimensualFechaFin"  fontSize="10" color="#000000" width="50"/>
+			   	   	   	        	
+			   	   	   	        	</mx:VBox>
+			   	   	   	        	
+			   	   	   	        </mx:HBox>
+			   	   	   	       	
+			   	   	   	    </mx:VBox>
+			   	   	   	    
+			   	   	   	    <!--Vista Mensual-->
+			   	   	   	    
+			   	   	   	    <mx:VBox id="Mensual" width="95%" verticalAlign="middle" horizontalAlign="center" backgroundColor="#006699">
+			   	   	   	       
+			   	   	   	        <mx:HBox width="100%" verticalAlign="middle" height="50%" horizontalAlign="center" borderStyle="none">
+			   	   	   	        	
+			   	   	   	        	<mx:Box width="20%" verticalAlign="middle" horizontalAlign="right">
+			   	   	   	        	  
+			   	   	   	        	   <mx:Label text="FECHA INICIO" fontWeight="bold" fontSize="12"/>
+			   	   	   	        	  	
+			   	   	   	        	</mx:Box>
+			   	   	   	        	
+			   	   	   	        	<mx:VBox width="40%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="5">
+			   	   	   	        		
+			   	   	   	        		<mx:Label text="AÑO" fontWeight="bold" fontSize="12"/>
+			   	   	   	        		<mx:TextInput change="{validarYearInicioYearFin(txtyearFechaInicioMensual,txtyearFechaFinMensual),validateForm(event)}" textAlign="center"  restrict="0-9" id="txtyearFechaInicioMensual" width="30%" color="#000000" fontSize="10" maxChars="4"/>
+			   	   	   	        		
+			   	   	   	        	</mx:VBox>
+			   	   	   	        	
+			   	   	   	        	<mx:VBox width="40%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="5">
+			   	   	   	        		
+			   	   	   	        		<mx:Label text="MES" fontWeight="bold" fontSize="12"/>
+			   	   	   	        		<mx:ComboBox dataProvider="{ArrayMensualPeriodos}" labelField="mes" id="cbxPeriodoMensualFechaInicio"  fontSize="10" color="#000000" width="150"/>
+			   	   	   	        	
+			   	   	   	        	</mx:VBox>
+			   	   	   	        	
+			   	   	   	        </mx:HBox>
+			   	   	   	        
+			   	   	   	        <mx:HBox width="100%" verticalAlign="middle" height="50%" horizontalAlign="center" borderStyle="none">
+			   	   	   	        	
+			   	   	   	        	<mx:Box width="20%" verticalAlign="middle" horizontalAlign="right">
+			   	   	   	        	  
+			   	   	   	        	   <mx:Label text="FECHA FIN" fontWeight="bold" fontSize="12"/>
+			   	   	   	        	  	
+			   	   	   	        	</mx:Box>
+			   	   	   	        	
+			   	   	   	        	<mx:VBox width="40%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="5">
+			   	   	   	        		
+			   	   	   	        		<mx:Label text="AÑO" fontWeight="bold" fontSize="12"/>
+			   	   	   	        		<mx:TextInput change="{validarYearInicioYearFin(txtyearFechaInicioMensual,txtyearFechaFinMensual),validateForm(event)}" textAlign="center" restrict="0-9" id="txtyearFechaFinMensual" width="30%" color="#000000" fontSize="10" maxChars="4"/>
+			   	   	   	        		
+			   	   	   	        	</mx:VBox>
+			   	   	   	        	
+			   	   	   	        	<mx:VBox width="40%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="5">
+			   	   	   	        		
+			   	   	   	        		<mx:Label text="MES" fontWeight="bold" fontSize="12"/>
+			   	   	   	        		<mx:ComboBox dataProvider="{ArrayMensualPeriodos}" labelField="mes" id="cbxPeriodoMensualFechaFin"  fontSize="10" color="#000000" width="150"/>
+			   	   	   	        	
+			   	   	   	        	</mx:VBox>
+			   	   	   	        	
+			   	   	   	        </mx:HBox>
+			   	   	   	       	
+			   	   	   	    </mx:VBox>
+			   	   	   	    
+			   	   	   	    <!--Vista Rango Fechas-->
+			   	   	   	
+			   	   	   	    <mx:VBox id="RangoFecha" width="95%" verticalAlign="middle" horizontalAlign="center" backgroundColor="#006699">
+			   	   	   	    	
+			   	   	   	    	<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			   	   	   	    		
+			   	   	   	    		 <mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+			   	   	   	    		 	
+			   	   	   	    		 	<mx:Label text="FECHA INICIO" fontWeight="bold" fontSize="12"/>
+			   	   	   	    		 	
+			   	   	   	    		 </mx:Box>
+			   	   	   	    		 
+			   	   	   	    		 <mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+			   	   	   	    		 	
+			   	   	   	    		 	<mx:DateField  editable="true" id="dfFechaInicioRf" change="{validarCalendarioFechaInFechaFin(dfFechaInicioRf,dfFechaFinRf),validateForm(event)}" width="50%" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" fontWeight="normal" fontSize="10" color="#000000" textAlign="center"/>
+			   	   	   	    		 	
+			   	   	   	    		 </mx:Box>
+			   	   	   	    		
+			   	   	   	    	</mx:HBox>
+			   	   	   	    	
+			   	   	   	    	<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			   	   	   	    		
+			   	   	   	    		 <mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+			   	   	   	    		 	
+			   	   	   	    		 	<mx:Label text="FECHA FIN" fontWeight="bold" fontSize="12"/>
+			   	   	   	    		 	
+			   	   	   	    		 </mx:Box>
+			   	   	   	    		 
+			   	   	   	    		 <mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+			   	   	   	    		 	
+			   	   	   	    		 	<mx:DateField editable="true" id="dfFechaFinRf" change="{validarCalendarioFechaInFechaFin(dfFechaInicioRf,dfFechaFinRf),validateForm(event)}" width="50%" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" fontWeight="normal" fontSize="10" color="#000000" textAlign="center"/>
+			   	   	   	    		 	
+			   	   	   	    		 </mx:Box>
+			   	   	   	    		
+			   	   	   	    	</mx:HBox>
+			   	   	   	    	
+			   	   	   	    </mx:VBox>
+			   	   	   	
+			   	   	   </mx:ViewStack>
+			   	   	   
+			   	   </mx:Box>
+			   	   
+			   	   <!--mx:Spacer height="1%"/>
+			   	   
+			   	   <mx:HRule width="98%" strokeColor="#FFFFFF"/>
+			   	   
+			   	   <mx:Spacer height="1%"/-->
+			   	   
+			   	   
+			   	   <mx:VBox width="98%" verticalAlign="middle" horizontalAlign="center" height="18%" borderStyle="solid" cornerRadius="7" backgroundColor="#006699">
+			   	   	
+			   	   	   <mx:HBox width="100%" height="50%" verticalAlign="middle" horizontalAlign="center" cornerRadius="7" borderStyle="solid">
+			   	   	   	
+			   	   	   	  <mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+			   	   	   	  	
+			   	   	   	  	  <mx:Label text="TIPO DE FECHA" fontWeight="bold" fontSize="12"/>
+			   	   	   	  	
+			   	   	   	  </mx:Box>
+			   	   	   	  
+			   	   	   	  <mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+			   	   	   	  	
+			   	   	   	      <mx:ComboBox labelField="tfecha" dataProvider="{arrtipofecha}" id="cbxtipofecha"  fontSize="10" color="#000000" width="150"/>
+			   	   	   	  	
+			   	   	   	  </mx:Box>
+			   	   	   	
+			   	   	   </mx:HBox>
+			   	   	
+			   	   	
+			   	   	   <mx:HBox width="100%" height="50%" verticalAlign="middle" horizontalAlign="center" cornerRadius="7" borderStyle="solid">
+			   	   	   	
+			   	   	   	  <mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+			   	   	   	  	
+			   	   	   	  	  <mx:Label text="ESTADO" fontWeight="bold" fontSize="12"/>
+			   	   	   	  	
+			   	   	   	  </mx:Box>
+			   	   	   	  
+			   	   	   	  <mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+			   	   	   	  	
+			   	   	   	      <mx:ComboBox labelField="estado"  dataProvider="{arrEstado}" id="cbxestado"  fontSize="10" color="#000000" width="150"/>
+			   	   	   	  	
+			   	   	   	  </mx:Box>
+			   	   	   	
+			   	   	   </mx:HBox>
+			   	   	
+			   	   </mx:VBox>
+			   	   
+			   	   <mx:VBox width="100%" height="4%" verticalAlign="middle" horizontalAlign="center">
+			   	   
+			   	   	    <mx:Box width="100%" verticalAlign="middle" horizontalAlign="center" height="50%">
+			   	   	    
+			   	   	        <mx:Label  text="CLIENTES"  fontWeight="bold" fontSize="12"/>
+			   	   	     
+			   	   	    </mx:Box>
+			   	   	    
+			   	   	    <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center" height="50%" backgroundColor="#388CB8">
+			   	   	    
+			   	   	        <mx:Label text="SELECCIONAR TODOS" fontWeight="bold" fontSize="10"/>
+			   	   	        <mx:CheckBox selected="false" change="{checkall()}" id="checkallPersonas"/>
+			   	   	     
+			   	   	    </mx:HBox>
+			   	   	    
+			   	   </mx:VBox>
+			   	   
+			   	   <mx:Box width="100%" height="38%" verticalAlign="middle" horizontalAlign="center">
+			   	   	
+			   	   	   <mx:DataGrid id="dgClientes" dataProvider="{PersonaMl.getInstance().listPersonasToReportesFacturas}" width="97%" height="97%" >
+				        	  <mx:columns>
+				        	  	 <mx:DataGridColumn headerText="Nombre Cliente" dataField="nombreRs" textAlign="center" width="200"/>
+				        	  	 <mx:DataGridColumn headerText="Cédula" labelFunction="dg_labelFuncCedula" dataField="cedula" textAlign="center" width="150" />
+				        	     <mx:DataGridColumn headerText="Asignado" dataField="id"  textAlign="center" width="100">
+				        	       <mx:itemRenderer >
+									   <mx:Component>
+									      <mx:CheckBox  click="data.asignado=!data.asignado"  
+									      selected="{data.asignado}"  horizontalCenter="true"/>
+									   </mx:Component>   
+							       </mx:itemRenderer>
+				        	     </mx:DataGridColumn>
+				        	  </mx:columns>
+				        </mx:DataGrid>
+			   	   	
+			   	   </mx:Box>
+			   	   
+		   	
+		   </mx:Box>
+		   
+		   <!--Box Parte Baja-->
+		   
+		   <mx:Box id="boxbottom" verticalAlign="middle" horizontalAlign="center" width="100%" height="10%" backgroundColor="#006699">
+		   	
+		   	 <mx:Button click="{GenerarReporte()}" enabled="{formIsValid}" label="GENERAR REPORTE" fontSize="12" color="#030000" fillAlphas="[1.0, 1.0]" fillColors="[#F3F3F3, #F3F3F3]"/>
+		   	
+		   </mx:Box>
+		 
+		 
+		 
+		 </mx:Box>
+		   
+     </mx:Box>		   
+ 
+</mx:TitleWindow>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

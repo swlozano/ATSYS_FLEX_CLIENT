@@ -1,0 +1,469 @@
+Application {
+	paddingRight: 25;
+	paddingLeft: 25;
+	paddingTop: 25;
+	paddingBottom: 25;
+	
+	backgroundColor: #ffffff;
+   backgroundGradientColors: #006699, #cccccc;
+   backgroundGradientAlphas: 1, 0.42;
+   themeColor: #00ccff;
+   color: #000000;
+	   	
+}
+
+
+
+.glassPanel {
+	backgroundSize: "100%";
+	
+	paddingTop: 7;
+	paddingLeft: 10;
+}
+
+.DropDownStyles {
+	dropShadowEnabled: true;
+	cornerRadius: 0;
+}
+
+ComboBox {
+   color: #0b333c;
+   fillAlphas: 1, 1, 1, 1;
+   fillColors: #ffffff, #ffffff, #ffffff, #ffffff;
+   backgroundAlpha: 0;
+   useRollOver: true;
+}
+
+
+
+.mySelectedButtonStyle {
+		
+}
+
+.HeaderStyle {
+	fontWeight: bold;
+	fontFamily: Verdana;
+}
+
+.DGHeaderStyle {
+	fontWeight: bold;
+	fontFamily: Verdana;
+}
+
+.fseToggleButtons {
+	buttonHeight: 18;
+	buttonWidth: 20;
+	focusAlpha: 0;
+	themeColor: #FFFFFF;
+	horizontalGap: -1;
+	buttonStyleName: "fseButtonBarStyle";	
+}
+
+.fseButtonBarStyle {
+	highlightAlphas: 0.5, 0;
+	fillAlphas: 0.5, 0.15, 0.7, 0.3;
+    fillColors: #ffffff, #000000, #ffffff, #000000;
+   	borderColor: #ffffff;
+}
+
+
+.glassPods {
+	borderStyle: applicationControlBar;
+	fillColors: #FFFFFF, #FFFFFF;
+	fillAlphas: 0, 0.25;
+	highlightAlphas: 0, 0;
+	backgroundColor: #ffffff;
+	backgroundAlpha: .2;
+	borderThickness: 0;
+	dropShadowEnabled: true;
+	cornerRadius: 8;
+	paddingRight: 0;
+	paddingLeft: 0;
+	paddingTop: 0;
+	paddingBottom: 0;
+	horizontalScrollBarStyleName: fseVerticalScrollBar;
+	verticalScrollBarStyleName: fseVerticalScrollBar;
+}
+
+.myTitleStyle {
+	fontWeight: bold;
+}
+
+.sliderText {
+   backgroundAlpha: 0;
+   backgroundColor: #000000;
+   color: #ffffff;
+   borderStyle: solid;
+   borderColor: #d0d8db;
+   borderThickness: 1;
+   cornerRadius: 7;
+   textIndent: 3;
+   textAlign: right;
+}
+
+.StyledTabs {
+	fontWeight: bold;
+}
+
+.SelectedStyledTabs {
+	fontWeight: bold;
+}
+
+.StyledButtonBar {
+	
+}
+
+.glassLabels {
+	color: #FFFFFF;
+	fontSize: 12;
+	fontWeight: bold;
+	paddingLeft: 0;
+	paddingTop: 0;
+	fontFamily: Myriad;
+}
+
+.cssTextArea {
+	backgroundColor: #FFFFFF;
+	borderStyle: solid;
+	borderThickness: 0;
+	cornerRadius: 8;
+	editable: false;
+	paddingRight: 5;
+	paddingLeft: 5;
+	backgroundAlpha: .4;
+	verticalScrollBarStyleName: "fseVerticalScrollBar";
+}
+
+Form {
+	verticalGap: 0;
+	paddingTop: 0;
+	paddingBottom: 0;
+	paddingLeft: 0;
+	paddingRight: 0;
+}
+
+FormItem {
+	paddingTop: 2;
+	paddingBottom: 1;
+}
+
+.undoLink {
+	textDecoration: underline;
+	fontFamily: Verdana;
+	fontSize: 9;
+	fontWeight: normal;	
+
+	rollOverColor: #FFFFFF;
+	selectionColor: #FFFFFF;
+	textSelectionColor: #000000;
+}
+
+.fseSliders {
+	showTrackHighlight: true;
+	dataTipStyleName: sliderTips;
+	dataTipOffset: 0;
+	themeColor: #ffffff;
+}
+
+.sliderTips {
+	backgroundColor: #000000;
+	backgroundAlpha: .60;
+	color: #ffffff;
+	cornerRadius: 5;
+	fontFamily: verdana;
+	fontSize: 10;
+	fontWeight: normal;
+	textDecoration: none;
+	fontStyle: normal;
+}
+
+.styleControlTabNavigator {
+	paddingLeft: 5; 
+	tabWidth: 80; 
+	paddingRight: 5;
+	 backgroundAlpha: 0; 
+	 borderStyle: solid; 
+	 borderColor: #FFFFFF; 
+	 paddingBottom: 10; 
+	 borderThickness: 1; 
+	 cornerRadius: 4;
+	 tabStyleName: "fseTabs";
+}
+
+.fseTabs {
+	cornerRadius: 6;
+	highlightAlphas: 0.4, 0;
+	fillAlphas: 0,0;
+	borderColor: #FFFFFF;
+	themeColor: #ffffff;	
+	paddingLeft: 10;
+	paddingRight: 10;
+	backgroundAlpha: 1;
+	backgroundColor: #FFFFFF;
+	color: #0B333C;
+	textRollOverColor: #0B333C;
+	fontSize: 9;
+}
+
+.fseControlBar {
+   cornerRadius: 8;
+   borderStyle: solid;
+   borderThickness: 0;
+   backgroundColor: #000000;
+   backgroundAlpha: 0.1;
+}
+
+
+.myaccordionHeader {
+   color: #000000;
+}
+
+
+.fseTree {
+	backgroundAlpha: 0;
+	rollOverColor: #c7c7c7;
+	borderStyle: none;
+	selectionColor: #ffffff;
+	indentation: 10;
+	verticalScrollBarStyleName: "fseVerticalScrollBar";
+}	
+	
+RadioButton {
+	fontWeight: bold;
+	color: #FFFFFF;
+}
+
+CheckBox {
+	fontWeight: bold;
+}
+
+.componentLinkBar {
+	rollOverColor: #cad5da;
+	selectionColor: #ffffff;
+	disabledColor: #FFFFFF;
+	fontSize: 9;
+}
+
+.conditionalBox {
+	borderStyle: solid;
+	borderThickness: 0;
+	backgroundColor: #FFFFFF;
+	backgroundAlpha: .2;
+	cornerRadius: 6;
+	horizontalAlign: right;
+	showEffect: WipeDown;
+	hideEffect: WipeUp;
+}
+
+.conditionalForm {
+	paddingTop: 4;
+	paddingBottom: 4;
+	paddingRight: 4;
+	paddingLeft: 4;
+}
+
+.noPadding {
+	paddingRight: 0;
+	paddingTop: 0;
+	paddingLeft: 0;
+	paddingBottom: 0;	
+}
+
+.styleExplorerTitle {
+	fontFamily: Myriad;
+	fontSize: 24;
+	color: #FFFFFF;
+	fontWeight: normal;
+}
+
+.footerLink {
+	fontFamily: Verdana;
+	fontSize: 9;
+	fontWeight: normal;
+	color: #FFFFFF;	
+	rollOverColor: #FFFFFF;
+	textRollOverColor: #FFFFFF;
+	selectionColor: #FFFFFF;
+	textSelectionColor: #000000;
+}
+
+.myButtonBarStyleName {
+	fontFamily: Verdana;
+}
+
+.myScrolls { 
+   cornerRadius: 0;
+   borderColor: #ffffff;
+   highlightAlphas: 0.27, 0;
+   fillAlphas: 1, 1, 1, 1;
+   fillColors: #a5b7bf, #a5b7bf, #a5b7bf, #a5b7bf;
+   trackColors: #6d838e, #8b9da6;
+   symbolColor: #ffffff;
+}
+
+TabNavigator {
+ tabHeight: 23;
+ tabWidth: 150;
+ cornerRadius: 7;
+ horizontalAlign: center;
+ paddingLeft: 0;
+ paddingRight: 0;
+ textIndent: 0;
+ backgroundAlpha: 0;
+ borderStyle: solid;
+ borderColor: #ffffff;
+ borderThickness: 1;
+ tabStyleName: "myTabs";
+ firstTabStyleName: "myTabs";
+ lastTabStyleName: "myTabs";
+ selectedTabTextStyleName: "mySelectedTabs";
+}
+
+.myTabs {
+ cornerRadius: 6;
+ highlightAlphas: 0, 0;
+ letterSpacing: 0;
+ fillColors: #ffffff, #ffffff;
+ backgroundAlpha: 1;
+ backgroundColor: #ffffff;
+ borderColor: #ffffff;
+ color: #000000;
+ textRollOverColor: #ffffff;
+ themeColor: #ffffff;
+ textAlign: center;
+ fontFamily: Verdana;
+
+}
+
+.mySelectedTabs {
+}
+
+.colorPickerPanel {
+   borderThickness: 1;
+   backgroundAlpha: 0;
+   borderAlpha: 0.5;
+   borderThicknessLeft: 0;
+   borderThicknessRight: 0;
+   borderThicknessTop: 0;
+   highlightAlphas: 1, 0.23;
+   borderStyle: solid;
+   headerColors: #ffffff, #ffffff;
+   borderColor: #000000;
+   titleStyleName: "cpHeader";
+}
+
+TextInput {
+   borderStyle: solid;
+   borderColor: #ffffff;
+   cornerRadius: 4;
+   backgroundAlpha: 0.97;
+   backgroundColor: #fdfdfd;
+   color: #000000;
+   fontSize: 10;
+   dropShadowEnabled: true;
+   shadowDistance: 4;
+}
+TextArea {
+   fontSize: 10;
+   leading: 0;
+   borderThickness: 0;
+   cornerRadius: 4;
+   dropShadowEnabled: true;
+}
+
+DataGrid {
+   backgroundAlpha: 0.98;
+   backgroundColor: #ffffff;
+   alternatingItemColors: #e9efee, #ffffff;
+   headerColors: #d6d8d8, #e0d8d8;
+   horizontalGridLines: false;
+   letterSpacing: 0;
+   horizontalGridLineColor: #cccccc;
+   verticalGridLineColor: #cccccc;
+   rollOverColor: #cccccc;
+   textRollOverColor: #0066cc;
+   borderThickness: 0;
+   borderColor: #666666;
+   selectionColor: #A4CBE9;
+   color: #0066CC;
+   textSelectedColor: #0066CC;
+   textIndent: 0;
+   dropShadowEnabled: true;
+   fontSize: 10;
+   fontWeight: normal;
+   headerStyleName: "mydataGridHeaderStyle";
+   
+}
+
+.mydataGridHeaderStyle {
+   color: #0066FF;
+   fontFamily: Verdana;
+   fontWeight: bold;
+   fontSize: 11;
+   fontStyle: normal;
+   textDecoration: none;
+   textAlign: center;
+}
+
+.cpHeader {
+   color: #000000;
+   fontWeight: bold;
+   }
+
+.myWeekDayStyleName {
+	fontWeight: bold;	
+}
+
+.ajfont{
+   font-family:Simpsonfont;
+}
+
+.myHeaderStyleName {
+	fontWeight: bold;	
+}
+
+.myTodayStyleName {
+	fontWeight: bold;
+	color: #FFFFFF;	
+}
+
+Tree {
+   fontSize: 14;
+    color: #ffffff;
+  
+}
+.labelTw
+{
+	color: #FFFFFF;
+	fontWeight: bold;
+	fontSize: 11;
+	textAlign: left;
+}
+.historialestilo{
+	backgroundAlpha: 1;
+   backgroundColor: #00ff00;
+   alternatingItemColors: #ffffff, #ffffff;
+   headerColors: #666666, #cccccc;
+   horizontalGridLines: false;
+   letterSpacing: 3;
+   verticalGridLines: true;
+   verticalGridLineColor: #e0e1da;
+   rollOverColor: #006666;
+   borderThickness: 0;
+   textIndent: 0;
+   fontSize: 10;
+   headerStyleName: "mydataGridHeaderStyles";
+}	
+
+.mydataGridHeaderStyles {
+   color: #ffffff;
+   fontFamily: Verdana;
+   fontWeight: bold;
+   fontSize: 8;
+   fontStyle: normal;
+   textDecoration: none;
+   letterSpacing: 1;
+}
+
+	
+

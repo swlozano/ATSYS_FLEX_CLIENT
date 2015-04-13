@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml" verticalAlign="middle" horizontalAlign="center" width="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			import MODEL.CuentasCobroMl;
+		]]>
+	</mx:Script>
+	<mx:LinkButton buttonMode="true"  label="cambiar estado"  id="lblestado" click="{CuentasCobroMl.getInstance().showWindow()}" width="100%"  textAlign="center" color="#003CFF" fontSize="12" fontWeight="bold" textDecoration="underline" fontStyle="normal"/>
+	<!--mx:Label  text="Cambiar Estado"  mouseOver="{)}" id="lblestado" click="{CuentasCobroMl.getInstance().showWindow()}" width="100%"  textAlign="center" color="#FF0042" fontSize="12" fontWeight="bold" textDecoration="underline" fontStyle="normal"/-->
+</mx:Box>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="absolute" width="800" height="300" verticalAlign="middle" 
+	close="PopUpManager.removePopUp(this)"
+	creationComplete="{ContratoMl.getInstance().ClonGenerarValoresFpago=this,ContratoMl.getInstance().banGenerarOListarVFP=false}"
+	horizontalAlign="center" title="VER VALORES FORMAS PAGO" showCloseButton="true" 
+	borderColor="#006699" borderAlpha="50" fontSize="12" color="#FFFFFF">
+	 <mx:Script>
+	 	<![CDATA[
+	 		import com.adobe.cairngorm.control.CairngormEventDispatcher;
+	 		import EVENT.ValorFpagoEvent;
+	 		import VO.FechasPagoVO;
+	 		import VO.FechaPagoVO;
+	 		import VO.ValorFormaPagoFxVO;
+	 		import mx.collections.ArrayCollection;
+	 		import MODEL.PantallasMl;
+	 		import mx.controls.dataGridClasses.DataGridColumn;
+	 		import MODEL.ContratoMl;
+	 		import mx.managers.PopUpManager;
+	 		import mx.controls.Alert;
+	 		import MODEL.UtilidadesMl;
+	 		
+	 		
+	 		[Bindable]
+		    [Embed(source="REC/IMAGENES/agregar.png")]
+		    public var agregar:Class;
+		     
+		     [Bindable]
+			 [Embed(source="REC/IMAGENES/quitar.png")]
+			 public var quitar:Class;
+			 
+			 [Bindable]
+			 [Embed(source="REC/IMAGENES/warn.png")]
+			 public var alerta:Class;
+	 		
+	 		private function lblfunction_tipo_pago(item:Object,dgcolumn:DataGridColumn):String{
+	 			
+	 			var ret:String = item.tipoPago.nombre;
+	 			
+	 			return ret;
+	 			
+	 		}
+	 		
+	 		private function lblfunction_concepto(item:Object,dgcolumn:DataGridColumn):String{
+	 			
+	 			return ""+item.concepto;
+	 			
+	 		}
+	 		
+	 		private function lblfunction_fechaInPago(item:Object,dgcolumn:DataGridColumn):String{
+	 			
+	 			return ""+UtilidadesMl.getInstance().formaterFechas(item.fechaInicioPago as Date);
+	 			
+	 		}
+	 		
+	 		private function lblfunction_valorDelPago(item:Object,dgcolumn:DataGridColumn):String{
+	 			
+	 			return ""+UtilidadesMl.getInstance().formaterMoneda(item.valorPago);
+	 			
+	 		}
+	 		
+	 		private function lblfunction_PeriodoPago(item:Object,dgcolumn:DataGridColumn):String{
+	 			
+	 			return ""+item.periodoPago;
+	 			
+	 		}
+	 		
+	 		/////////////////////////////fechas de pago/////////////////
+	 		
+	 		private function lblfunction_fechaPago(item:Object,dgcolumn:DataGridColumn):String{
+	 			
+	 			return ""+UtilidadesMl.getInstance().formaterFechas(item.fechaPago as Date);
+	 			
+	 		}
+	 		
+	 		private function lblfunction_fechaIni(item:Object,dgcolumn:DataGridColumn):String{
+	 			
+	 			return ""+UtilidadesMl.getInstance().formaterFechas(item.fechaIni as Date);
+	 			
+	 		}
+	 		
+	 		private function lblfunction_fechaFin(item:Object,dgcolumn:DataGridColumn):String{
+	 			
+	 			return ""+UtilidadesMl.getInstance().formaterFechas(item.fechaFin as Date);
+	 			
+	 		}
+	 		
+	 		
+	 		
+            
+	 		
+	 	]]>
+	 </mx:Script>
+	
+	 <mx:VBox verticalAlign="middle" horizontalAlign="center" width="100%" height="100%" backgroundColor="#006699" borderColor="#FFFFFF">
+	 	
+		<mx:Box width="100%" height="100%"  verticalAlign="middle" horizontalAlign="center" borderColor="#006699" backgroundColor="#FFFFFF">
+		
+		  <mx:ViewStack id="viewstackVfp" change="{viewstackVfp.selectedIndex==0?(this.title='VER VALORES FORMAS PAGO'):(this.title='VER VALORES FORMAS PAGO > FECHAS DE PAGO'),PopUpManager.centerPopUp(this)}" selectedIndex="0" width="98%" height="95%">
+		  		
+			<mx:Box width="100%" height="100%"  verticalAlign="middle" horizontalAlign="center" borderColor="#006699" backgroundColor="#006699">	
+					
+					<mx:DataGrid width="98%" sortableColumns="false" dataProvider="{ContratoMl.getInstance().listVFPtoVisualizar}" height="96%" id="dgvalorFpago"   textAlign="center" fontSize="10" color="#5898C4">
+						<mx:columns>
+							<mx:DataGridColumn headerText="Tipo de pago" labelFunction="lblfunction_tipo_pago" textAlign="center" width="133"/>
+							<mx:DataGridColumn headerText="Concepto" labelFunction="lblfunction_concepto"  width="133"/>
+							<mx:DataGridColumn headerText="Fecha inicio pago" labelFunction="lblfunction_fechaInPago" width="133" textAlign="center"/>
+							<mx:DataGridColumn headerText="Valor del pago" labelFunction="lblfunction_valorDelPago" width="137"/>
+							<mx:DataGridColumn headerText="Periodo pago" labelFunction="lblfunction_PeriodoPago" dataField="col5" width="133"/>
+							<mx:DataGridColumn headerText="Fechas de Pago" itemRenderer="VIEW.Items.ValorFormaPago.ItemFechasPago" dataField="col6" width="133"/>
+						</mx:columns>
+					</mx:DataGrid>
+			    
+			</mx:Box>
+		    
+		    <mx:Box width="100%" height="100%"  verticalAlign="middle" horizontalAlign="center" borderColor="#006699" backgroundColor="#006699">	
+					
+					 <mx:Spacer height="5"/>
+					
+					<mx:LinkButton click="viewstackVfp.selectedIndex=0,this.height=300" label="Volver a Valores Forma Pago" textAlign="left" color="#C9BEBE" textDecoration="underline"/>
+					
+					<mx:DataGrid width="98%"  height="96%" id="dgFechaspago" dataProvider="{ContratoMl.getInstance().listFechasPagoVFPtoVisualizar}"   textAlign="center" fontSize="10" color="#5898C4">
+						<mx:columns>
+							<mx:DataGridColumn textAlign="center" labelFunction="lblfunction_fechaPago" headerText="FECHA DE PAGO"  width="133"/>
+							<mx:DataGridColumn textAlign="center" labelFunction="lblfunction_fechaIni" headerText="FECHA INICIO"  width="133"/>
+							<mx:DataGridColumn textAlign="center" labelFunction="lblfunction_fechaFin" headerText="FECHA FIN"  width="133"/>
+						</mx:columns>
+					</mx:DataGrid>
+			        
+	  				<mx:Spacer height="5"/>
+	  				
+			</mx:Box>
+		    
+		</mx:ViewStack>
+		
+		</mx:Box>
+		
+		<mx:Box width="100%" height="50" id="bxbuttom" verticalAlign="middle" horizontalAlign="center" backgroundColor="#FFFFFF">
+			
+			<mx:HBox width="99%" height="97%" verticalAlign="middle" horizontalAlign="center" backgroundColor="#006699">
+				
+			   <!--mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+					<mx:Image id="ok" click="{GuardarNewFechas()}"  source="{UtilidadesMl.getInstance().rutaCheck}"  toolTip="Aceptar" />	
+			   </mx:Box-->
+			   
+			   <mx:Box width="50%" verticalAlign="middle" horizontalAlign="center" >
+					<mx:Image id="cancel" click="PopUpManager.removePopUp(this)" source="@Embed(source='REC/IMAGENES/delete.png')" toolTip="Cancelar"/>	
+			   </mx:Box>
+			   
+			</mx:HBox>
+			
+		</mx:Box>
+	
+	</mx:VBox>
+	
+</mx:TitleWindow>

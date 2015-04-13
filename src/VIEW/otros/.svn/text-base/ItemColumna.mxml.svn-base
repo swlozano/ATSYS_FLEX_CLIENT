@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml" horizontalAlign="center" verticalAlign="middle" verticalScrollPolicy="off"  >
+<mx:Script>
+	<![CDATA[
+		//public var html:String = "h<b>ol</b>a"
+		
+	]]>
+</mx:Script>
+	<mx:Label id="lbl" text="{data.nombre}"  color="#0066CC"/>
+</mx:Box>

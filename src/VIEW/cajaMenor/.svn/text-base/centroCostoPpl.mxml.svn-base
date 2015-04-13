@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox width="100%" height="100%" xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="crearPantalla()"  styleName="glassPods" verticalAlign="middle" horizontalAlign="center" xmlns:menu="VIEW.menu.*">
+  <mx:Box width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom">
+	<mx:VRule height="10" visible="false"/>
+    	<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	     	
+      	</mx:HBox>
+      <mx:Box width="95%" height="95%" >
+			<mx:DataGrid width="100%" selectable="{CentroCostoMl.getInstance().selectableCcosto}" dataProvider="{CentroCostoMl.getInstance().listCentroCosto}" height="100%" id="dgCentroCosto" themeColor="#307BAB" alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15">
+				<mx:columns>
+					<mx:DataGridColumn headerText="Nombre" dataField="nombre" textAlign="center"/>
+					<mx:DataGridColumn headerText="Ciudad" dataField="ciudad" textAlign="center"/>
+				</mx:columns>
+			</mx:DataGrid>
+		</mx:Box>
+	</mx:Box>
+	<menu:MenuAbajo />
+	
+	<mx:Script>
+	<![CDATA[
+		import MODEL.CentroCostoMl;
+		[Bindable]
+			[Embed(source="/REC/IMAGENES/f.png")]
+		 	 public var buscar:Class;
+		 	 
+		 	 
+	    public function crearPantalla():void
+		{
+			
+			 CentroCostoMl.getInstance().CentroCostoPpl=this;
+			
+		}
+		 	 
+	]]>
+   </mx:Script>
+</mx:VBox>

@@ -1,0 +1,997 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"  
+	creationComplete="{creationCompleteHandler()}" layout="absolute"  
+	width="500" height="500" showCloseButton="false" 
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	  x="{(Application.application.width/2)-(this.width/2)}"
+	  y = "{(Application.application.height/2)-(this.height/2)}" 
+	  initialize="{UtilidadesMl.getInstance().backEnable=false,UtilidadesMl.getInstance().nextEnable=true}"
+	 color="#FFFFFF" fontSize="12">
+	<mx:Script>
+        <![CDATA[ 
+        	import MODEL.ValorFormaPagoMl;
+        	import MODEL.PermisosMl;
+        	import VO.ContratoVO;
+        	import MODEL.UtilidadesMl;
+        	import mx.core.Application;
+        	import EVENT.ContratoEvent;
+        	import MODEL.PantallasMl;
+        	import mx.controls.Alert;
+        	import MODEL.OficioMl;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import MODEL.RecursoHumanoMl;
+        	import MODEL.ContratoMl;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.RecursoHumanoEvent;
+        	import VO.ContinenteVO;
+        	import mx.collections.ArrayCollection;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           [Bindable]
+		    [Embed(source="REC/IMAGENES/siguiente.png")]
+		    public var next:Class;
+		    
+		    [Bindable]
+		    [Embed(source="REC/IMAGENES/add.png")]
+		    public var add:Class;
+		    
+		    [Bindable]
+		    [Embed(source="REC/IMAGENES/atras.png")]
+		    public var back:Class;
+		    
+		    [Bindable]
+		    [Embed(source="/REC/IMAGENES/ConfLogout.png")]
+			public var salir:Class;
+           
+           
+            [Embed(source="/REC/IMAGENES/warn2.png")]
+		    public var alerta:Class;
+           
+            [Bindable]
+            public var formIsValid:Boolean=false;
+            
+            [Bindable]
+            public var formIsValidCalendario:Boolean=false;
+            
+            [Bindable]
+            public var AllformsAreValid:Boolean=false;
+            
+            private var focussedFormControl:DisplayObject;
+           
+           
+           public function addContrato():void{
+           	
+           	 if(AllformsAreValid){
+           	 	
+           	 	if(ValorFormaPagoMl.getInstance().arrValoresfpago!=null && ValorFormaPagoMl.getInstance().arrValoresfpago.length>0){
+           	 		
+           	 		
+           	 		
+           	 		if(dffincontrato.text==""){
+           	 		  var d:String="";	
+           	 		}else{
+           	 			  d = UtilidadesMl.getInstance().formatearACampoFecha(dffincontrato.selectedDate);
+           	 		     }  
+           	 		
+           	 		Alert.yesLabel="SI";
+                    Alert.noLabel="NO";
+            	    Alert.show("RESUMEN DEL CONTRATO" + "\n"+ "NOMBRE DEL CONTRATISTA: " +dgrecursohumano.selectedItem.nombre +" "+ dgrecursohumano.selectedItem.apellido + "\n" + "TIPO DE CONTRATO: " + cbxtipoCcontrato.selectedItem.tipoContrato + "\n" + "OFICIO A DESEMPEÑAR: " + cbxoficiocontrato.selectedItem.nombre + "\n" +"FECHA INICIO DEL CONTRATO: " + UtilidadesMl.getInstance().formatearACampoFecha(dfinicioContrato.selectedDate) +"\n" + "FECHA FIN DEL CONTRATO: " + d +"\n" + "TIEMPO: " + txttiempocontrato.text + " %" + "\n\n" + "Estas seguro de CREAR este CONTRATO?","Agregar CONTRATO" ,Alert.YES|Alert.NO,this,CloseHandlercontrato,add,0);
+           	 		
+           	 	}else{
+           	 		
+           	 	         Alert.show("Para poder Ingresar Contrato se necesita que ingrese al menos Un Valor Forma Pago" ,"Mensaje de alerta",0,null,null,alerta,0);
+           	 	     
+           	 	     }
+           	 	
+           	 }
+           	
+           }
+           
+           private function CloseHandlercontrato(event:CloseEvent):void{
+             
+               switch(event.detail){
+               
+                 case Alert.YES:
+                 
+                 
+                  var arrayValorfpagos:Array;
+                  var arrayValoresformasPagos:Array = new Array();
+                  
+                  for each(var x:* in ValorFormaPagoMl.getInstance().arrValoresfpago){
+                  	
+                  	
+              	     arrayValorfpagos = new Array(x.idtipoPago,x.objetoFormaPago,x.observacion,
+              	     x.periodoPago,x.fechaInicioPago,x.esFavorito,x.valorPago,x.arrayFechaspago
+              	     ,x.idsReten,x.esIbc);
+              	     
+              	     arrayValoresformasPagos.push(arrayValorfpagos);
+                  	       
+                  	
+                  } 
+                  
+                  var contrato:ContratoVO = new ContratoVO(0,cbxoficiocontrato.selectedItem.id,cbxtipoCcontrato.selectedItem.id
+                  ,cbxnacionlabores.selectedItem.code,dgrecursohumano.selectedItem.id,cbxnacioncontrato.selectedItem.code,dfinicioContrato.selectedDate,dffincontrato.selectedDate,parseFloat(txttiempocontrato.text)
+                  ,arrayValoresformasPagos);
+                  
+                  var e:ContratoEvent = new ContratoEvent(ContratoEvent.ADICIONAR_CONTRATO,contrato,null,null);
+                  CairngormEventDispatcher.getInstance().dispatchEvent(e);
+                  returnName();
+                  
+                  ValorFormaPagoMl.getInstance().arrValoresfpago = new ArrayCollection();
+                  ValorFormaPagoMl.getInstance().arrayCopiaFechasPago = null;
+                  
+                  
+                   
+                 break;
+               
+               }
+               
+             }
+           	
+           	 	private static  var ENERO_DIAS:int = 31;
+           		private static  var FEBRERO_DIAS:int = 0;
+           		private static  var MARZO_DIAS:int = 31;
+           		private static   var ABRIL_DIAS:int = 30;
+           		private static   var MAYO_DIAS:int = 31;
+           		private static   var JUNIO_DIAS:int = 30;
+           		private static   var JULIO_DIAS:int = 31;
+           		private static  var  AGOSTO_DIAS:int = 31;
+           		private static   var SEPTIEMBRE_DIAS:int = 30;
+           		private static   var OCTUBRE_DIAS:int = 31;
+           		private static   var NOVIEMBRE_DIAS:int = 30;
+           		private static   var DICIEMBRE_DIAS:int = 31;
+           		
+           		
+           	private function getDia(mes:int,year:int):int{
+           		
+           		var retorno:int;
+           		
+           		switch(mes){
+           			
+           			case 0:
+           			
+           			      return ENERO_DIAS;
+           			
+           			break;
+           			
+           			case 1:
+           			
+           			      if(year%4==0){
+           			      	
+           			      	return 29;
+           			      	
+           			      }else{
+           			      	
+           			      	    return 28;
+           			      	
+           			           }
+           			
+           			break;
+           			
+           			case 2:
+           			
+           			     return MARZO_DIAS; 
+           			
+           			break;
+           			
+           			case 3:
+           			 
+           			    return ABRIL_DIAS; 
+           			
+           			break;
+           			case 4:
+           			
+           			    return MAYO_DIAS; 
+           			
+           			break;
+           			case 5:
+           			 
+           			     return JUNIO_DIAS;
+           			
+           			break;
+           			case 6:
+           			
+           			    return JULIO_DIAS; 
+           			
+           			break;
+           			case 7:
+           			
+           			     return AGOSTO_DIAS; 
+           			
+           			break;
+           			case 8:
+           			
+           			     return SEPTIEMBRE_DIAS; 
+           			
+           			break;
+           			case 9:
+           			
+           			     return OCTUBRE_DIAS; 
+           			
+           			break;
+           			case 10:
+           			
+           			     return NOVIEMBRE_DIAS; 
+           			
+           			break;
+           			case 11:
+           			
+           			    return DICIEMBRE_DIAS;
+           			
+           			break;
+           			
+           		}
+           		
+           		return retorno;
+           		
+           	}	
+           		
+            public function prueba():void{
+            	
+            	ContratoMl.getInstance().FechaInicioContrato =  dfinicioContrato.selectedDate;
+            
+                
+            
+		        var fechaEnd:Date = new Date((dfinicioContrato.selectedDate.getMonth() + 7) +"/"+dfinicioContrato.selectedDate.getDate()+"/"+dfinicioContrato.selectedDate.getFullYear());
+            	
+            	Alert.show("" + "Fecha Inicio : " + dfinicioContrato.selectedDate.toString() + "\n"+ "Fecha Fin : " + fechaEnd.toString());
+            	
+            }
+           
+            public function eliminarValorFpago():void{
+            	
+            	if(ValorFormaPagoMl.getInstance().arrValoresfpago.length>0){
+            		
+            		 if(dgvalorFpago.selectedItem!=null){	
+            		 	     	
+            		 	     if(ValorFormaPagoMl.getInstance().arrValoresfpago.getItemAt(dgvalorFpago.selectedIndex).esIbc==1){
+            		 	     	
+            		 	     	ContratoMl.getInstance().contIBC =0;
+            		 	     	
+            		 	     }
+            		 	
+            		 	     ValorFormaPagoMl.getInstance().arrValoresfpago.removeItemAt(dgvalorFpago.selectedIndex);
+            		 	
+            		
+            		
+            		 }else{
+	              	
+	              	     Alert.show("SELECCIONE UN VALOR FORMA PAGO DE LA LISTA PARA MODIFICARLO","",0,null,null,alerta,0);
+	                    
+	                   }
+            	}else{
+            	 
+            	    Alert.show("NO HAY VALOR FORMA PAGO QUE ELIMINAR. AGREGUE AL MENOS UNO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+            	 
+                 }
+            	
+            }
+           
+            public function addValorFpago():void{
+            	
+            if(cbxtipoCcontrato.selectedItem.id==1){
+              	
+		             if(dfinicioContrato.text==""){
+		             
+		                Alert.show("Para poder Ingresar un Valor Forma Pago Para Tipo de Contrato 'Prestación de servicios' se necesita de la Fecha Inicio del contrato" ,"Mensaje de alerta",0,null,null,alerta,0);
+		             
+		               }else if(dffincontrato.text==""){
+		             
+		                      Alert.show("Para poder Ingresar un Valor Forma Pago Para Tipo de Contrato 'Prestación de servicios' se necesita de la Fecha Fin del contrato" ,"Mensaje de alerta",0,null,null,alerta,0);
+		             
+		                      }else{
+		             	
+		             	            ValorFormaPagoMl.getInstance().listfechasPago=null;
+					            	ValorFormaPagoMl.getInstance().arrayCopiaFechasPago = null;
+					            	PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_AGREGAR_VALOR_FORMA_PAGO;
+					            	var e:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_TIPO_PAGO,null,null,null);
+					            	CairngormEventDispatcher.getInstance().dispatchEvent(e);
+					            	
+					            	ContratoMl.getInstance().FechaInicioContrato =  dfinicioContrato.selectedDate;
+					            	ContratoMl.getInstance().FechaFinContrato = dffincontrato.selectedDate;
+		             	
+		                            }
+                            
+               }else{
+               	
+                       if(dfinicioContrato.text==""){
+		             
+		                  Alert.show("Para poder Ingresar un Valor Forma Pago Para Tipo de Contrato 'Nomina' se necesita al menos La Fecha de Inicio del Contrato" ,"Mensaje de alerta",0,null,null,alerta,0);
+		             
+		                }else{
+		                	
+		                            ValorFormaPagoMl.getInstance().listfechasPago=null;
+					            	ValorFormaPagoMl.getInstance().arrayCopiaFechasPago = null;
+					            	PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_AGREGAR_VALOR_FORMA_PAGO;
+					            	var ev:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_TIPO_PAGO,null,null,null);
+					            	CairngormEventDispatcher.getInstance().dispatchEvent(ev);
+					            	
+					               if(dfinicioContrato.text!="" && dffincontrato.text!=""){	
+					            	
+					            		ContratoMl.getInstance().FechaInicioContrato =  dfinicioContrato.selectedDate;
+					            		ContratoMl.getInstance().FechaFinContrato = dffincontrato.selectedDate;
+		                            
+		                             }else if(dfinicioContrato.text!="" && dffincontrato.text==""){
+		                            	      
+		                            	       ContratoMl.getInstance().FechaInicioContrato =  dfinicioContrato.selectedDate;
+		                            	       var fechaEnd:Date = new Date((dfinicioContrato.selectedDate.getMonth() + 7) +"/"+dfinicioContrato.selectedDate.getDate()+"/"+dfinicioContrato.selectedDate.getFullYear());
+		                            	       
+		                            	       fechaEnd.setDate(getDia(fechaEnd.getMonth(),fechaEnd.getFullYear()));
+		                            	       
+		                            	       ContratoMl.getInstance().FechaFinContrato = fechaEnd;
+		                            	       
+		                                     }
+		                            
+		                     }
+                    
+                    }           
+                            
+            
+            }
+           
+           
+            private function returnName():void {
+                 PopUpManager.removePopUp(this);
+                 PermisosMl.getInstance().habilitarMenus();
+                 ContratoMl.getInstance().contIBC =0;
+                 ValorFormaPagoMl.getInstance().arrValoresfpago = new ArrayCollection();
+                  ValorFormaPagoMl.getInstance().arrayCopiaFechasPago = null;
+            }
+            
+            
+            private function cambiarAcbxNacion():void
+            {
+                cbxcontinenteContrato.setVisible(false);
+                cbxnacioncontrato.setVisible(true);
+                frmItemLugarCOntrato.label = "NACIÓN";
+                checklugcontrato.enabled = true;
+           
+            }
+            
+            private function cambiarAcbxNacionlabores():void
+            {
+                cbxcontinentelabores.setVisible(false);
+                cbxnacionlabores.setVisible(true);
+                frmItemLugarlabores.label = "NACIÓN";
+                checkluglabores.enabled = true;
+                
+            }
+            
+            private function listarPaises(continente:String,ban:int):void{
+            	
+            	ContratoMl.getInstance().banNacionCOntrato = ban;
+            	
+            	RecursoHumanoMl.getInstance().nomContinenteToListarPaises = continente;
+            	
+            	var e:RecursoHumanoEvent=new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_PAISES_RECURSO_HUMANO,null,null);
+            	CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            	
+            }
+            
+            private function resetLugarContrato():void{
+            	
+            	if(checklugcontrato.selected){
+            		
+            		cbxcontinenteContrato.selectedIndex =-1;
+            		
+            		cbxcontinenteContrato.setVisible(true);
+            		
+            		cbxnacioncontrato.selectedIndex = -1;
+            		
+            		cbxnacioncontrato.setVisible(false);
+            		
+            		checklugcontrato.enabled = false;
+            		
+            		checklugcontrato.selected = false;
+            		
+            		frmItemLugarCOntrato.label = "CONTINENTE";
+            		formIsValid = false;
+            		
+            	}
+            	
+            }
+            
+            private function resetLugarlabores():void{
+            	
+            	if(checkluglabores.selected){
+            		
+            		cbxcontinentelabores.selectedIndex =-1;
+            		
+            		cbxcontinentelabores.setVisible(true);
+            		
+            		cbxnacionlabores.selectedIndex = -1;
+            		
+            		cbxnacionlabores.setVisible(false);
+            		
+            		checkluglabores.enabled = false;
+            		
+            		checkluglabores.selected = false;
+            		
+            		frmItemLugarlabores.label = "CONTINENTE";
+            		formIsValid=false;
+            		
+            	}
+            	
+            }
+            
+            public function permitirGuardar():void{
+           	  
+           	 
+           	  
+           	   if(formIsValid == true &&  formIsValidCalendario ==true){
+           	   	
+           	   	   AllformsAreValid = true;
+           	   	
+           	   }else{
+           	   	     
+           	   	     AllformsAreValid = false;
+           	   	     
+           	        }
+           	
+            }
+            
+            
+            private function dataProviderContinentes():ArrayCollection{
+           
+            	var arrayContIngles:Array=new Array(new String("Africa"),new String("Asia"),new String("Antarctica"),new String("Europe"),new String("North America"),new String("Oceania"),new String("South America"));
+            	var arrayContSpa:Array=new Array(new String("Africa"),new String("Asia"),new String("Antartica"),new String("Europa"), new String("Norte America"),new String("Oceania"),new String("Sur America"));
+            	var continente:ContinenteVO;
+            	var arraycontinentes:ArrayCollection = new ArrayCollection();
+            	
+            	for(var x:int=0;x<arrayContIngles.length;x++){
+            		
+            		continente = new ContinenteVO(arrayContIngles[x],arrayContSpa[x]);
+            		arraycontinentes.addItem(continente);
+            		
+            	}
+            	
+            	return arraycontinentes;
+            	
+            } 
+            
+            private function validate(validator:Validator):Boolean{
+               
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+            
+            private function validateCalendario(validator:Validator):Boolean{
+               
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValidCalendario = formIsValidCalendario && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+           
+            private function validateFormCalendario(event:Event):void{
+             
+               focussedFormControl = event.target as DisplayObject;
+               formIsValidCalendario = true;
+               validateCalendario(fechaInicioContratovalidator);
+               
+               if(cbxtipoCcontrato.selectedItem.id==1){
+                
+                 validateCalendario(fechaFinContratovalidator);
+               }
+               
+                validateCalendario(tiempoValidator);
+               
+               permitirGuardar();
+               
+            }
+            
+            private function validarCalendarioFechaInFechaFin():void{
+            
+            	
+             if(dfinicioContrato.text!="" && dffincontrato.text!=""){	
+            	
+            	if(dffincontrato.selectedDate < dfinicioContrato.selectedDate){
+            		
+            		dffincontrato.text ="";
+            		
+            		Alert.show("La fecha Fin del contrato NO puede ser menor que la fecha de Inicio del contrato" ,"Mensaje de alerta",0,null,null,alerta,0);
+            		
+            	}
+              }
+              
+              
+            	
+            }
+            
+            private function validateForm(event:Event):void{
+             
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(cbxcontinenteContratoValidator);
+               validate(cbxnacioncontratoValidator);
+               validate(cbxcontinentelaboresValidator);
+               validate(cbxnacionlaboresValidator);
+               validate(dgrecHumanoValidator);
+               permitirGuardar();
+               
+            }
+            
+            private function creationCompleteHandler():void
+            {
+               ContratoMl.getInstance().pantallaAgregarContrato = this;
+               resetFocus();
+            }   
+            
+            private function resetFocus():void
+            {
+                focusManager.setFocus(cbxtipoCcontrato);
+            }
+            
+            public function dg_labelFunTipopago(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var retorno:String;
+                  
+                  if(parseFloat(item.idtipoPago)==1){
+                  
+                   retorno = "FIJO"; 
+                  
+                  }else if(parseFloat(item.idtipoPago)==2){
+                  	
+                            retorno = "PORCENTAJE"; 
+                           
+                          }else if(parseFloat(item.idtipoPago)==3){
+                  	
+                                  retorno = "OTRO"; 
+                           
+                                  }
+                   
+              	
+                 return retorno;
+               
+              }
+              
+              public function dg_labelFunvalorPago(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var retorno:String;
+                 
+                   retorno = UtilidadesMl.getInstance().formaterMoneda(item.valorPago);
+              	
+                 return retorno;
+               
+              }
+            
+            
+            
+            public function direccionarAtras(index:int):void{
+              
+              var retorno:int;
+            
+               if(index==0){
+               	
+                  VstackContratos.selectedIndex=0; 
+                  UtilidadesMl.getInstance().backEnable=false; 
+                  UtilidadesMl.getInstance().nextEnable=true;
+                  
+               	
+               }else if(index==1){
+               	
+               	        VstackContratos.selectedIndex=0;
+               	        UtilidadesMl.getInstance().backEnable=false;
+               	        UtilidadesMl.getInstance().nextEnable=true;
+               	
+               	       }/*else if(index==2){
+               	       	
+               	       	       VstackVfpago.selectedIndex=1;
+               	       	       UtilidadesMl.getInstance().backEnable=true;
+               	       	       UtilidadesMl.getInstance().nextEnable=true;
+               	       	
+               	              }*/
+               	              
+            
+            }
+            
+            public function direccionarAdelante(index:int):void{
+              
+              var retorno:int;
+            
+               if(index==0){
+               	
+                  VstackContratos.selectedIndex=1;  
+                  UtilidadesMl.getInstance().backEnable=true; 	 
+                  UtilidadesMl.getInstance().nextEnable=false;
+               	
+               }else if(index==1){
+               	
+               	       VstackContratos.selectedIndex=1;
+               	       UtilidadesMl.getInstance().backEnable=true;
+               	       UtilidadesMl.getInstance().nextEnable=false;
+               	
+               	       }/*else if(index==2){
+               	       	
+               	       	       VstackVfpago.selectedIndex=2;
+               	       	       UtilidadesMl.getInstance().backEnable=true;
+               	               UtilidadesMl.getInstance().nextEnable=false;	
+               	              }*/
+               	              
+            
+            }
+            
+            
+            
+        ]]>
+    </mx:Script>
+    <mx:NumberValidator
+    
+    requiredFieldError="!!Este campo es Obligatorio. Ingrese el Tiempo del Contrato por favor¡¡"   	
+   	minValue="1"
+   	maxValue="100"
+   	exceedsMaxError="!!El tiempo no puede exederce del 100%¡¡"
+   	negativeError="!!El TIempo no puede ser Negativo"
+   	lowerThanMinError="!!El tiempo no puede ser negativo"
+   	property="text"
+   	source="{txttiempocontrato}"
+   	id="tiempoValidator"
+   	  
+   	/>
+    
+<mx:DateValidator
+     
+        requiredFieldError="!!Este campo es Obligatorio. Ingrese la Fecha de Inicio de Contrato por favor¡¡"
+        formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+     	id="fechaInicioContratovalidator"
+     	source="{dfinicioContrato}"
+     	property="text"
+     	
+    />  
+    
+    <mx:DateValidator
+     
+        requiredFieldError="!!Este campo es Obligatorio. Ingrese la Fecha Fin de Contrato por favor¡¡"
+        formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+     	id="fechaFinContratovalidator"
+     	source="{dffincontrato}"
+     	property="text"
+     	
+    />  
+
+
+  
+    
+<mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione una Continente"
+   	minValue="0"
+   	property="selectedIndex"
+   	source="{cbxcontinenteContrato}"
+   	id="cbxcontinenteContratoValidator"
+   	
+   	/> 
+   	
+<mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione un Recurso Humano de la grilla"
+   	minValue="0"
+   	requiredFieldError="!!Este Campo es requerido, Seleccione un Recurso Humano de la Grilla"
+   	
+   	property="selectedIndex"
+   	source="{dgrecursohumano}"
+   	id="dgrecHumanoValidator"
+   	
+   	/>   	
+
+   	
+<mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione una Continente"
+   	minValue="0"
+   	property="selectedIndex"
+   	source="{cbxcontinentelabores}"
+   	id="cbxcontinentelaboresValidator"
+   	
+   	/>    	
+   	
+   	<mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione un País"
+   	minValue="0"
+   	property="selectedIndex"
+   	source="{cbxnacioncontrato}"
+   	id="cbxnacioncontratoValidator"
+   	
+   	/>
+   	
+   	<mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione un País"
+   	minValue="0"
+   	property="selectedIndex"
+   	source="{cbxnacionlabores}"
+   	id="cbxnacionlaboresValidator"
+   	
+   	/>
+    
+  <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+    
+    
+       <mx:Box  width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+		 	 <mx:Canvas width="100%" height="100%" id="canvas1"  fontSize="13">
+		 		<mx:Label  id="lblAddCmenor" text="AÑADIR CONTRATO" color="#FFFFFF" fontWeight="bold" fontSize="13"
+		 	     x="{(canvas1.width/2)-(lblAddCmenor.width/2)}" y="12"/>	
+		 	 </mx:Canvas>
+		   </mx:Box>
+      
+  
+  	 <mx:Box id="box2" height="82%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center"> 
+  	 	 
+  	 	 <mx:ViewStack id="VstackContratos"  width="100%" height="100%" selectedIndex="{UtilidadesMl.getInstance().current}">
+  	 		
+  	 		 <mx:Box width="100%" height="100%" label="aj" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+  	 		  	
+  	 		  	
+  	 		  	  <mx:Form width="95%" height="100%" >
+  	 		  	  	  
+  	 		  	  	  <mx:Spacer height="10"/>
+  	 		  	  	  
+  	 		  	  	  <mx:FormItem label="TIPO DE CONTRATO"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11" > 	
+	  	                  <mx:ComboBox toolTip="{cbxtipoCcontrato.selectedItem.tipoContrato}" maxWidth="251" minWidth="251" labelField="tipoContrato" dataProvider="{ContratoMl.getInstance().listTipoContrato}" id="cbxtipoCcontrato"  color="#000000" fontSize="10"/>  	  	
+	               	  </mx:FormItem>
+	               	  
+	               	  <mx:Spacer height="10"/>
+	               	  
+	               	  <mx:FormItem label="OFICIO A DESEMPEÑAR" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11"> 	
+	  	    				<mx:ComboBox maxWidth="251" minWidth="251" toolTip="{cbxoficiocontrato.selectedItem.nombre}" labelField="nombre" dataProvider="{OficioMl.getInstance().listOficio}" id="cbxoficiocontrato"  color="#000000" fontSize="10"/>  	  	
+	  					</mx:FormItem>
+	  					
+	  					<mx:Spacer height="10"/>
+	  					
+	  					<mx:Box width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	     				<mx:HRule width="95%"/>
+	  	     			</mx:Box>
+	  					
+	  					<mx:Spacer height="5"/>
+	  					
+	  					<mx:HBox width="100%"   verticalAlign="middle" horizontalAlign="center" fontSize="10" color="#FFFFFF" >
+	  	    				<mx:Label text="LUGAR DE CONTRATO" fontWeight="bold" fontSize="10" />
+	  	    				<mx:CheckBox id="checklugcontrato" change="{resetLugarContrato()}" label="cambiar" enabled="false"/>
+	     			    </mx:HBox>
+	     			    
+	     			    <mx:FormItem label="CONTINENTE" id="frmItemLugarCOntrato"   fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">
+	  	     			   <mx:Canvas width="100%">
+	  						  <mx:ComboBox maxWidth="251" minWidth="251" change="{validateForm(event),listarPaises(cbxcontinenteContrato.selectedItem.NombreAnglo,1),cambiarAcbxNacion()}" labelField="Nombrelatino" dataProvider="{dataProviderContinentes()}" id="cbxcontinenteContrato" prompt="Seleccione Continente"  
+	  							    color="#000000" fontSize="10"/>	
+	  						  <mx:ComboBox maxWidth="251" toolTip="{cbxnacioncontrato.selectedItem.name}" minWidth="251" id="cbxnacioncontrato" change="{validateForm(event)}" dataProvider="{ContratoMl.getInstance().listNacionContrato}" labelField="name"  visible="false" prompt="Seleccione Nacion" width="75%" 
+	  							/>
+	  					   </mx:Canvas>
+	  	     			
+	  	     			</mx:FormItem>
+	  	     			
+	  	     			<mx:Spacer height="6"/>
+	  	     			
+	  	     			<mx:Box width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	     				<mx:HRule width="95%"/>
+	  	     			</mx:Box>
+	  					
+	  					<mx:Spacer height="5"/>
+	  	     			
+	  	     			<mx:HBox width="100%"   verticalAlign="middle" horizontalAlign="center" fontSize="10" color="#FFFFFF" >
+	  	    				<mx:Label text="LUGAR DE LABORES" fontWeight="bold" fontSize="10" />
+	  	    				<mx:CheckBox id="checkluglabores" change="{resetLugarlabores()}" label="cambiar" enabled="false"/>
+	     			    </mx:HBox>
+	     			    
+	     			    <mx:FormItem label="CONTINENTE" id="frmItemLugarlabores"   fontWeight="bold" color="#FFFFFF" width="100%"  fontSize="11">
+	  	     			   <mx:Canvas width="100%">
+	  						  <mx:ComboBox change="{validateForm(event),listarPaises(cbxcontinentelabores.selectedItem.NombreAnglo,0),cambiarAcbxNacionlabores()}" labelField="Nombrelatino" dataProvider="{dataProviderContinentes()}" id="cbxcontinentelabores" prompt="Seleccione Continente"  
+	  							 maxWidth="251" minWidth="251"   color="#000000" fontSize="10"/>	
+	  						  <mx:ComboBox id="cbxnacionlabores" change="{validateForm(event)}" dataProvider="{ContratoMl.getInstance().listNacionlabores}" labelField="name"  visible="false" prompt="Seleccione Nacion"  
+	  							maxWidth="251" minWidth="251" toolTip="{cbxnacionlabores.selectedItem.name}"/>
+	  					   </mx:Canvas>
+	  	     			
+	  	     			</mx:FormItem>
+	  	     			
+	  	     			<mx:Spacer height="6"/>
+	               	  
+	               	  <mx:Box width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	     				<mx:HRule width="95%"/>
+	  	     			</mx:Box>
+	  					
+	  					<mx:Spacer height="5"/>
+	               	  
+	               	  <mx:Box width="100%" verticalAlign="middle" horizontalAlign="center" fontSize="10" color="#FFFFFF" >
+	  	    				<mx:Label text="RECURSO HUMANO" fontWeight="bold" fontSize="10" />
+	     			  </mx:Box>
+	           
+	               	  <mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+	               	  	
+	               	  	 <mx:DataGrid change="{validateForm(event)}"  dataProvider="{RecursoHumanoMl.getInstance().listRecursoHumano}" id="dgrecursohumano"  width="96%" height="95%" textAlign="center" fontFamily="Verdana" fontWeight="bold" fontSize="10" >
+						    
+						    <mx:columns>
+						       <mx:DataGridColumn  headerText="Nombres" dataField="nombre" textAlign="center" />
+						       <mx:DataGridColumn   headerText="Apellidos" dataField="apellido"  textAlign="center"/>
+						       <mx:DataGridColumn   headerText="Cédula" dataField="cedula"  textAlign="center"/>
+			  	 		    </mx:columns>	  	      	  		
+
+	  	      	  	     </mx:DataGrid>
+	               	  	
+	               	  </mx:Box>
+	             
+  	 		  	  </mx:Form>
+  	 		  	
+  	 		  </mx:Box>
+  	 		  
+  	 		  
+  	 		  
+  	 		  <mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_2">
+  	 		  	 
+		  	 		  	  <mx:Form  width="100%" height="100%">
+		  	 		  	              
+		  	 		  	    <mx:Spacer height="15"/>          
+		  	 		  	              
+		  	 		  	    <mx:Box verticalAlign="middle" width="100%" horizontalAlign="center">
+		  	 		  	  	     <mx:Label text="FECHAS DE CONTRATO" fontWeight="bold" color="#FFFFFF" fontSize="11"/>
+		  	 		  	  	</mx:Box>          
+		  	 		  	              
+		  	 		  	   <mx:VBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+		  	 		  	  	     
+		  	 		  	  	       
+		  	 		  	  	      
+		  	 		  	  	        <mx:Box width="100%" height="50%" verticalAlign="middle" horizontalAlign="center" >
+		  	 		  	  	      
+		  	 		  	  	                  
+		  	 		  	  	     
+		  	 		  	  	                  <mx:HBox verticalAlign="middle" horizontalAlign="center" width="100%">
+		  	 		  	  	                  	
+		  	 		  	  	                  	 <mx:Box verticalAlign="middle" width="50%" horizontalAlign="right">
+		  	 		  	  	                  	 	<mx:Label text="FECHA DE INICIO DE CONTRATO (MM/DD/AA)" fontWeight="bold" color="#FFFFFF" fontSize="11"/>
+		  	 		  	  	                  	 </mx:Box>
+		  	 		  	  	                  	
+		  	 		  	  	                  	 <mx:Box verticalAlign="middle" width="50%" horizontalAlign="left">
+		  	 		  	  	                  	 	<mx:DateField editable="true" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" change="{validateFormCalendario(event),validarCalendarioFechaInFechaFin()}"  id="dfinicioContrato" width="75%" color="#000000" fontSize="10"/>
+		  	 		  	  	                  	 </mx:Box>
+		  	 		  	  	                  	
+		  	 		  	  	                  </mx:HBox>
+
+							               	  
+							               	  <mx:Spacer height="8"/>
+							               	  	
+							               	  <mx:HBox verticalAlign="middle" horizontalAlign="center" width="100%">
+							               	  	  
+							               	  	  <mx:Box verticalAlign="middle" width="50%" horizontalAlign="right">
+		  	 		  	  	                  	 	<mx:Label text="FECHA FIN DE CONTRATO (MM/DD/AA)" fontWeight="bold" color="#FFFFFF" fontSize="11"/>
+		  	 		  	  	                  	 </mx:Box>
+		  	 		  	  	                  	 
+		  	 		  	  	                  	 <mx:Box verticalAlign="middle" width="50%" horizontalAlign="left">
+		  	 		  	  	                  	 	<mx:DateField editable="true" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" change="{validateFormCalendario(event),validarCalendarioFechaInFechaFin()}" id="dffincontrato" width="75%" color="#000000" fontSize="10"/>
+		  	 		  	  	                  	 </mx:Box>
+							               	  	  
+							               	  </mx:HBox>
+							               	  
+							               	  <mx:Spacer height="8"/>
+							               	  
+							               	  <mx:HBox verticalAlign="middle" horizontalAlign="center" width="100%">
+							               	  	
+							               	  	  <mx:Box verticalAlign="middle" width="50%" horizontalAlign="right">
+		  	 		  	  	                  	 	<mx:Label text="TIEMPO" click="{prueba()}" fontWeight="bold" color="#FFFFFF" fontSize="11"/>
+		  	 		  	  	                  	 </mx:Box>
+		  	 		  	  	                  	 
+		  	 		  	  	                  	 <mx:HBox verticalAlign="middle" width="50%" horizontalAlign="left">
+		  	 		  	  	                  	 	<mx:TextInput maxChars="3" change="{validateFormCalendario(event)}" restrict="0-9" id="txttiempocontrato" width="20%" fontSize="10" color="#000000"/>
+		  	 		  	  	                  	    <mx:Label text="%" fontWeight="bold" fontSize="11" color="#FFFFFF"/>
+		  	 		  	  	                  	 </mx:HBox>
+							               	  	 
+							               	  </mx:HBox>
+							               	  
+			               	         </mx:Box>
+			               	         
+	  				      
+				  				      <mx:Box width="100%" verticalAlign="middle" horizontalAlign="center">
+				  	     				<mx:HRule width="95%"/>
+				  	     			 </mx:Box>
+				  	     			 
+				  	     			   <mx:Box verticalAlign="middle" width="100%" horizontalAlign="center">
+		  	 		  	  	     		  <mx:Label text="VALORES FORMA PAGO" fontWeight="bold" color="#FFFFFF" fontSize="11"/>
+		  	 		  	  			  </mx:Box>
+				  	     			 
+				  	     			 <mx:Box width="100%" height="50%" verticalAlign="middle" horizontalAlign="center" >
+				  	     			 	
+				  	     			 	   <mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+	               	  	
+									               	  	 <mx:DataGrid  dataProvider="{ValorFormaPagoMl.getInstance().arrValoresfpago}"  id="dgvalorFpago"  width="96%" height="95%" textAlign="center" fontFamily="Verdana" fontWeight="bold" fontSize="10" >
+														    
+														    <mx:columns>
+														       <mx:DataGridColumn  headerText="Tipo Pago"    labelFunction="dg_labelFunTipopago"  textAlign="center" />
+														       <mx:DataGridColumn  headerText="Periodo Pago" dataField="periodoPago"  textAlign="center"/>
+														       <mx:DataGridColumn  headerText="Valor Pago"  labelFunction="dg_labelFunvalorPago"  textAlign="center"/>
+											  	 		    </mx:columns>	  	      	  		
+								
+									  	      	  	     </mx:DataGrid>
+									               	  	
+									               	  </mx:Box>
+									               	  
+									               	  <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+									  	   	  			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+									  	   	  				<mx:Button click="{addValorFpago()}"  toolTip="agregar Valor Forma de Pago" upSkin="@Embed(source='REC/IMAGENES/add_item.png')" downSkin="@Embed(source='REC/IMAGENES/add_item_down.png')" overSkin="@Embed(source='REC/IMAGENES/add_item.png')"/>
+									  	   	  			</mx:Box>
+									  	   	  			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+									  	   	  				<mx:Button click="{eliminarValorFpago()}"  toolTip="eliminar Valor Forma de Pago" upSkin="@Embed(source='REC/IMAGENES/removeItem.png')" downSkin="@Embed(source='REC/IMAGENES/removeItemDown.png')" overSkin="@Embed(source='REC/IMAGENES/removeItem.png')"/>
+									  	   	  			</mx:Box>
+									  				  </mx:HBox>
+								  	 		  	  	  
+								  	 		  	  	 <mx:Spacer height="5"/> 
+								  	 		  	  	  
+								  	 		  	  	
+				  	     			 	
+				  	     			 </mx:Box>
+			               	  	
+			               	  </mx:VBox>
+			               	  
+		  	 		  	  </mx:Form>
+		  	 		  	
+  	 		  
+  	 		  </mx:Box>
+  	 		  
+  	 		 <mx:Box>
+  	 		 	
+  	 		 </mx:Box>
+  	 		
+  	 	  </mx:ViewStack>
+  	 </mx:Box>
+  	  
+  	  <mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+			    <mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+			      
+			      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+			      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+			      		<mx:Image source="{UtilidadesMl.getInstance().backEnable==true?(UtilidadesMl.getInstance().rutaback):UtilidadesMl.getInstance().rutaback2}"
+			      			  mouseOver="{direccionarAtras(VstackContratos.selectedIndex)}" toolTip="Atras" />	
+			      	</mx:Box>
+			      	
+			      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+			      		<mx:Image id="ok" click="{addContrato()}" source="{AllformsAreValid == true?(UtilidadesMl.getInstance().rutaCheck):(UtilidadesMl.getInstance().rutaCheck2)}"  toolTip="Aceptar"  />	
+			      	</mx:Box>
+			      	  
+			      </mx:HBox>
+			      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+			      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+			      			<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar" 
+			      				/>	
+			      		</mx:Box>
+			      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+			      			<mx:Image source="{UtilidadesMl.getInstance().nextEnable==true?(UtilidadesMl.getInstance().next):UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" mouseOver="{direccionarAdelante(VstackContratos.selectedIndex)}"/>	
+			      		</mx:Box>
+			      		
+			    	</mx:HBox>
+			    </mx:HBox>
+						 	
+			 </mx:Box>
+  	  
+  </mx:VBox>  
+    
+</mx:TitleWindow>
+
+
+
+
+
+
+
+
+
+
+

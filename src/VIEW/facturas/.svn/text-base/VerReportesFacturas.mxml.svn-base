@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+layout="absolute" 
+showCloseButton="true"
+close="PopUpManager.removePopUp(this)"
+creationComplete="{FacturasMl.getInstance().VerreporteFacturas = this}" 
+initialize="{init()}"
+verticalAlign="middle"
+horizontalAlign="center"
+width="{Application.application.width}" height="{Application.application.height}" 
+cornerRadius="15" borderColor="#006699" borderAlpha="50" backgroundAlpha="1.0" color="#FFFFFF" title="RESULTADOS " fontWeight="bold" fontSize="12" backgroundColor="#EBF0F2">
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import VO.ReporteFacturaVO;
+			import mx.collections.ArrayCollection;
+			import MODEL.UtilidadesMl;
+			import mx.controls.dataGridClasses.DataGridColumn;
+			import MODEL.FacturasMl;
+			import mx.managers.PopUpManager;
+			import mx.core.Application;
+			
+			
+			[Bindable]
+			public var dpBarras:ArrayCollection;
+					
+			[Bindable]
+			public var fechaInici:Date;
+			
+			[Bindable]
+			public var fechaFn:Date;
+					
+		   [Bindable]
+	        public var dpPie:ArrayCollection;
+	        
+	        [Bindable]
+	        public var ban:Boolean;
+	        
+	        [Bindable]
+			[Embed(source="/REC/IMAGENES/warn2.png")]
+			public var alerta:Class;
+	        
+	        [Bindable]	 
+            public var arrTipo:Array = [{tipo:'Valor de Ventas', id:1},{tipo:'Número de Ventas', id:2}];
+	       			
+	       	[Bindable]	 
+            public var arrBusqueda:Array = [{busq:'Periodo', id:1},{busq:'Persona', id:2}];		
+	       			
+			private function lbl_function_fechaInicio(item:Object,dgcolumn:DataGridColumn):String{
+				
+				var retorno:String;
+				
+				retorno = UtilidadesMl.getInstance().formaterFechas(item.fechaInicio);
+				
+				return retorno;
+				   
+			}
+			
+			private function lbl_function_FIni_FFin(item:Object):String{
+				
+			   var retorno:String;
+			   
+			   retorno = item.fechaInicio +" - "+item.fechaFin;
+				
+			   return retorno;	
+				
+			}
+			
+			private function lbl_function_fechaFin(item:Object,dgcolumn:DataGridColumn):String{
+				
+				var retorno:String;
+				
+				retorno = UtilidadesMl.getInstance().formaterFechas(item.fechaFin);
+				
+				return retorno;
+				
+			}
+			
+			public function init():void{
+				
+				lkbtntabla.enabled=false;
+				
+				dpBarras = new ArrayCollection();
+				
+				var reporte:ReporteFacturaVO;
+				for each(var x:* in FacturasMl.getInstance().reporteFacturas){
+						
+		                reporte = new ReporteFacturaVO(x.totalesAPagar,UtilidadesMl.getInstance().formaterFechas(x.fechaInicio)+" - "+UtilidadesMl.getInstance().formaterFechas(x.fechaFin));
+						dpBarras.addItem(reporte);
+						
+						
+					}
+				
+			}
+			
+			
+			public function cambiarIndexViewstack():void{
+				
+				var reporte:ReporteFacturaVO;
+				//dpBarras = new ArrayCollection();
+				
+				if(cbxBusqueda.selectedItem.id==1){
+					
+					vstackResultados.selectedIndex=0;
+					ban=false;
+					
+					dpBarras = new ArrayCollection();
+					
+					for each(var t:* in FacturasMl.getInstance().reporteFacturas){
+										
+		                reporte = new ReporteFacturaVO(t.totalesAPagar,UtilidadesMl.getInstance().formaterFechas(t.fechaInicio)+" - "+UtilidadesMl.getInstance().formaterFechas(t.fechaFin));
+						dpBarras.addItem(reporte);
+						
+					}
+					
+				}else if(cbxBusqueda.selectedItem.id==2){
+					          ban=false;
+						  if(dgresultado.selectedItem!=null){	
+							   ban=false;
+							
+							   vstackResultados.selectedIndex=2;
+							   
+							        var obj:Object = dgresultado.selectedItem.facturaReportN2VOs;
+							   
+							        dpBarras = new ArrayCollection();
+							   
+							        for each(var x:* in dgresultado.selectedItem.facturaReportN2VOs){
+										
+						                reporte = new ReporteFacturaVO(x.totalesAPagar,x.personaVO.nombreRs);
+										dpBarras.addItem(reporte);
+										
+									}
+							
+						  }else{
+						  	      
+						  	      cbxBusqueda.selectedIndex=0;
+						          Alert.show("Seleccione un Item de la lista para realizar esta operación","",0,null,null,alerta,0);    
+						       
+						       }
+						
+						
+						}
+				
+			}
+			
+			
+			
+			public function makedpToChartColumn():void{
+				
+				dpBarras = new ArrayCollection();
+				
+				var reporte:ReporteFacturaVO;
+				
+				        if(cbxBusqueda.selectedItem.id==1){
+                           			
+                           	if(cbxtipo!=null){		
+                           				  
+								if(cbxtipo.selectedItem.id==1){
+								
+									for each(var x:* in FacturasMl.getInstance().reporteFacturas){
+										
+						                reporte = new ReporteFacturaVO(x.totalesAPagar,UtilidadesMl.getInstance().formaterFechas(x.fechaInicio)+" - "+UtilidadesMl.getInstance().formaterFechas(x.fechaFin));
+										dpBarras.addItem(reporte);
+										
+										
+									}
+								
+								}else{
+									
+									 
+									   for each(var y:* in FacturasMl.getInstance().reporteFacturas){
+										
+						                	reporte = new ReporteFacturaVO(y.totalesNumeroVentas,UtilidadesMl.getInstance().formaterFechas(y.fechaInicio)+" - "+UtilidadesMl.getInstance().formaterFechas(y.fechaFin));
+											dpBarras.addItem(reporte);
+										
+										
+									    } 
+									
+								     }
+                           	}
+				        }else if(cbxBusqueda.selectedItem.id==2){
+				        	
+				                   if(dgresultado.selectedItem!=null){
+				                   	
+				                       if(cbxtipo.selectedItem.id==1){
+							
+											for each(var z:* in dgresultado.selectedItem.facturaReportN2VOs){
+												
+								                reporte = new ReporteFacturaVO(z.totalesAPagar,z.personaVO.nombreRs);
+												dpBarras.addItem(reporte);
+												
+												
+											}
+										
+										}else{
+											
+											 
+											   for each(var a:* in dgresultado.selectedItem.facturaReportN2VOs){
+												
+								                	reporte = new ReporteFacturaVO(a.totalesNumeroVentas,a.personaVO.nombreRs);
+													dpBarras.addItem(reporte);
+												
+												
+											    } 
+											
+										     }	
+				                   	
+				                   }
+				                
+				                }
+				        
+				        
+				        
+				
+			}
+			
+			private function lbl_function_nitCliente(item:Object, dgcolumn:DataGridColumn):String{
+				
+				
+				var retorno:String;
+				
+				retorno = item.personaVO.nit;
+				
+				return retorno;
+				
+			}
+			
+			private function lbl_function_valorVentas(item:Object, dgcolumn:DataGridColumn):String{
+				
+				
+				var retorno:String;
+				
+				retorno = UtilidadesMl.getInstance().formaterMoneda(item.totalesAPagar);
+				
+				return retorno;
+				
+			}
+			
+			private function lbl_function_numeroVentas(item:Object, dgcolumn:DataGridColumn):String{
+				
+				
+				var retorno:String;
+				
+				retorno = UtilidadesMl.getInstance().formaterMoneda(item.totalesNumeroVentas);
+				
+				return retorno;
+				
+			}
+			
+			private function lbl_function_nombreCliente(item:Object, dgcolumn:DataGridColumn):String{
+				
+				
+				var retorno:String;
+				
+				retorno = item.personaVO.nombreRs;
+				
+				return retorno;
+				
+			}
+			
+			
+			/////////////////
+			public function lnkBtnGraficos():void{
+				
+				vstackResultados.selectedIndex=1;
+				
+				lkbtntabla.enabled=true;
+				
+				//makedpToChartColumn();
+				
+			}
+			
+			public function lnkBtnTablas():void{
+				
+				lkbtnGraf.enabled=true;
+				
+				cbxtipo.selectedIndex=0;
+				
+				if(ban==false){
+				
+						if(cbxBusqueda.selectedItem.id==1){
+							
+							vstackResultados.selectedIndex=0;
+							
+						}else if(cbxBusqueda.selectedItem.id==2){
+							
+							      vstackResultados.selectedIndex=2;
+							
+						          }
+						          
+						          
+				} else{
+						          	
+		                 vstackResultados.selectedIndex=3;
+		               
+		               }
+				
+				
+				        
+				     
+				 
+				
+			}
+			
+			
+			////////////////////////////////////////////////
+			
+			private function lbl_function_fechafacturacion(item:Object,dgcolumn:DataGridColumn):String{
+				
+				var retorno:String;
+				
+				retorno = UtilidadesMl.getInstance().formaterFechas(item.fechaFacturacion);
+				
+				return retorno;
+				
+			}
+			
+			private function lbl_function_fechaPactadapago(item:Object,dgcolumn:DataGridColumn):String{
+				
+				var retorno:String;
+				
+				retorno = UtilidadesMl.getInstance().formaterFechas(item.fechaPactadaPago);
+				
+				return retorno;
+				
+			}
+			
+			private function lbl_function_total(item:Object,dgcolumn:DataGridColumn):String{
+				
+				var retorno:String;
+				
+				retorno = UtilidadesMl.getInstance().formaterMoneda(item.totalApagar);
+				
+				return retorno;
+				
+			}
+			
+			
+			//////////////////////////////////
+			
+			public function banentrarVistaFacturas():void{
+				
+				if(vstackResultados.selectedIndex==3){
+					
+					ban = true;
+					cbxBusqueda.selectedIndex=-1;
+					cbxBusqueda.prompt="seleccione";
+					
+				}
+				
+			}
+			
+			
+		]]>
+	</mx:Script>
+	
+	<!--mx:Label text="barras"/-->
+   		   
+   		   <mx:CurrencyFormatter id="moneyFormatter" currencySymbol="$" thousandsSeparatorTo="," /> 
+
+   		   
+   		    <mx:SolidColor id="sc1" color="blue" alpha=".3"/>
+			<mx:SolidColor id="sc2" color="red" alpha=".3"/>
+
+		    <!-- Define custom Strokes for the columns. -->
+		    <mx:Stroke id="s1" color="blue" weight="2"/>
+		    <mx:Stroke id="s2" color="red" weight="2"/>
+		    
+		    <!--mx:Label text="barras"/-->
+		    
+		    <!--mx:Label text="torta"/-->
+		    
+		    <mx:SolidColor id="sc3" color="blue" alpha=".3"/>
+		    <mx:SolidColor id="sc4" color="red" alpha=".3"/>
+		    <mx:SolidColor id="sc5" color="green" alpha=".3"/>
+		    <mx:SolidColor id="sc6" color="gray" alpha=".3"/>
+		    <mx:SolidColor id="sc7" color="black" alpha=".3"/>
+		    <mx:SolidColor id="sc8" color="yellow" alpha=".3"/>
+		    
+		    <!--mx:Label text="torta"/-->
+			
+			<mx:WipeUp id="myWU" duration="300"/>
+			<mx:WipeDown id="myWD" duration="300"/>
+			<mx:WipeRight id="myWR" duration="300"/>
+	
+	
+	
+	<mx:Box height="100%" width="100%" horizontalAlign="center" verticalAlign="middle">
+	
+       <!--mx:Panel height="95%" width="98%" title="RESULTADOS" fontSize="12" borderColor="#006699"-->
+   			<mx:HBox height="10%" width="98%" verticalAlign="middle" horizontalAlign="left">
+   				<!--mx:LinkBar dataProvider="{vstackResultados}"  borderStyle="solid" backgroundColor="#EEEEFF" /-->
+   				<mx:HBox height="70%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="15" backgroundColor="#DCE4EA">
+   				
+	   				<mx:LinkButton id="lkbtntabla" click="{lnkBtnTablas()}" enabled="{lkbtnGraf.enabled==false?(true):(false)}" label="Tabla" fontSize="11" color="#1E5460" cornerRadius="15"/>
+	   				<mx:VRule height="10"/>
+	   				<mx:LinkButton id="lkbtnGraf" click="{lnkBtnGraficos()}" enabled="{lkbtntabla.enabled==false?(true):(false)}" label="Gráficos" fontSize="11" color="#1E5460" cornerRadius="15"/>
+   				
+   				</mx:HBox>
+   				
+   					
+   				<mx:HBox height="70%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" cornerRadius="15" backgroundColor="#ECF4FA">
+   					<mx:Label text="Seleccione" color="#000000" enabled="{vstackResultados.selectedIndex!=1?(true):(false)}"/>
+   					<mx:ComboBox change="{cambiarIndexViewstack()}" enabled="{vstackResultados.selectedIndex!=1?(true):(false)}" selectedIndex="0" dataProvider="{arrBusqueda}" labelField="busq" id="cbxBusqueda" cornerRadius="10"/>
+   				</mx:HBox>
+   			</mx:HBox>
+       				
+       				<mx:ViewStack height="100%" width="98%" change="{banentrarVistaFacturas()}" id="vstackResultados" creationCompleteEffect="{myWR}">
+       					
+       				  <!--indice 0 tabla periodos-->	
+       					
+       					<mx:Box width="100%" height="100%" label="Tabla" hideEffect="{myWD}"  showEffect="{myWU}" verticalAlign="middle" horizontalAlign="center">
+       						<mx:DataGrid id="dgresultado" dataProvider="{FacturasMl.getInstance().reporteFacturas}"  height="99%" width="99%" >
+								<mx:columns>
+									<mx:DataGridColumn textAlign="center" labelFunction="lbl_function_fechaInicio" dataField="fechaInicio" headerText="Fecha Inicio"   />
+									<mx:DataGridColumn textAlign="center" labelFunction="lbl_function_fechaFin" dataField="fechaFin" headerText="Fecha Fin" />
+									<mx:DataGridColumn textAlign="center" dataField="totalesAPagar" headerText="Valor de Ventas"/>
+                                    <mx:DataGridColumn textAlign="center" dataField="totalesNumeroVentas" headerText="Número Ventas"/>
+								</mx:columns>
+							</mx:DataGrid>
+       					</mx:Box>
+       					
+       					<!--indice 1 graficos periodos-->
+       					
+       					<mx:Box width="100%" height="100%" label="Gráficos" hideEffect="{myWD}" showEffect="{myWU}" verticalAlign="middle" horizontalAlign="center">
+       						
+       						<mx:ComboBox labelField="tipo" enabled="{ban==true?(false):(true)}" change="{makedpToChartColumn()}" dataProvider="{arrTipo}" id="cbxtipo" cornerRadius="10"/>
+       						
+       						<mx:HDividedBox width="99%" height="99%">
+       						
+       						<!--mx:Label text="Espacio reservado para la barra"/-->
+       						  
+       							<mx:Box height="100%" width="100%" horizontalAlign="center" verticalAlign="middle">
+       							
+								    <mx:Panel title="Gráfico Columnas" width="100%" height="100%" color="#000000" borderColor="#ABA9A9" cornerRadius="5">
+								        <mx:ColumnChart id="myChart" width="95%" height="95%" dataProvider="{dpBarras}" showDataTips="true">
+								            <mx:horizontalAxis>
+								                <mx:CategoryAxis 
+								                	
+								                    dataProvider="{dpBarras}" 
+								                    categoryField="rangoFechas"
+								                   
+								                />
+								            </mx:horizontalAxis>
+								            <mx:series>
+								                <mx:ColumnSeries 
+								                    yField="valorVentas"
+								                    displayName="{ban==false?('Valor de Ventas'):('Total a Pagar')}"
+								                    fill="{sc1}"
+								                    stroke="{s2}"
+								                />
+								            </mx:series>
+								        </mx:ColumnChart>
+								        <mx:Legend dataProvider="{myChart}"/>
+								    </mx:Panel>
+								</mx:Box>
+       							<!--mx:Label text="Espacio reservado para la barra"/-->
+       								
+       							<!--mx:Label text="Espacio reservado para el pie"/-->	
+       							
+       							<mx:Box height="100%" width="100%" verticalAlign="middle" horizontalAlign="center">
+       								
+       								  <mx:Panel title="Gráfico Pie" width="100%" height="100%" color="#000000" borderColor="#ABA9A9" cornerRadius="5">
+									     <mx:PieChart id="myChart2" 
+									        dataProvider="{dpBarras}" 
+									        showDataTips="true"
+									         height="95%" width="95%">
+									        <mx:series>
+									           <mx:PieSeries 
+									                field="valorVentas" 
+									                nameField="rangoFechas" 
+									                labelPosition="callout"
+									           />
+									        </mx:series>
+									     </mx:PieChart>
+									     <mx:Legend dataProvider="{myChart2}"/>
+									  </mx:Panel>
+       								
+       							</mx:Box>
+       							    
+       							<!--mx:Label text="Espacio reservado para el pie"/-->	
+       							
+       						</mx:HDividedBox>
+       					</mx:Box>
+       					
+       					<!--indice 2 tabla Personas-->
+       					
+       					<mx:Box width="100%" height="100%" label="Tabla" hideEffect="{myWD}"  showEffect="{myWU}" verticalAlign="middle" horizontalAlign="center">
+       						<mx:DataGrid id="dgresultadoPersonas" dataProvider="{dgresultado.selectedItem.facturaReportN2VOs}"  height="99%" width="99%" >
+								<mx:columns>
+								
+									<mx:DataGridColumn textAlign="center" labelFunction="lbl_function_nombreCliente"  headerText="Cliente"/>
+									<mx:DataGridColumn textAlign="center" labelFunction="lbl_function_nitCliente"  headerText="Nit" />
+									<mx:DataGridColumn textAlign="center" labelFunction="lbl_function_valorVentas" dataField="totalesAPagar" headerText="Valor de Ventas"/>
+                                    <mx:DataGridColumn textAlign="center" labelFunction="lbl_function_numeroVentas" dataField="totalesNumeroVentas" headerText="Número Ventas"/>
+								    <mx:DataGridColumn textAlign="center" itemRenderer="VIEW.Items.Facturas.ItemClFac"/>
+								</mx:columns>
+							</mx:DataGrid>
+       					</mx:Box>
+       					
+       					
+       					<!--indice 3 tabla Facturas-->
+       					
+       					<mx:Box width="100%" height="100%" label="Tabla" hideEffect="{myWD}"  showEffect="{myWU}" verticalAlign="middle" horizontalAlign="center">
+       						<mx:DataGrid id="dgresultadoFacturas" dataProvider="{dgresultadoPersonas.selectedItem.facturaVOs}"  height="99%" width="99%" >
+								<mx:columns>
+								
+									<mx:DataGridColumn textAlign="center"  dataField="numeroFactura" headerText="Número Factura"/>
+									<mx:DataGridColumn textAlign="center"  headerText="Fecha Facuracion" labelFunction="lbl_function_fechafacturacion" />
+									<mx:DataGridColumn textAlign="center"  headerText="Fecha Pactada Pago" labelFunction="lbl_function_fechaPactadapago"/>
+                                    <mx:DataGridColumn textAlign="center"  headerText="Total a Pagar" labelFunction="lbl_function_total"/>
+								
+								</mx:columns>
+							</mx:DataGrid>
+       					</mx:Box>
+       					
+       				</mx:ViewStack>
+       				
+       			<!--/mx:Panel-->	
+       			
+       	</mx:Box>
+	
+</mx:TitleWindow>

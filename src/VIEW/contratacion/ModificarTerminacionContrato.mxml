@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	close="returnName()" 
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	layout="absolute" 
+	width="500" 
+	height="462" 
+	creationComplete="creationCompleteHandler()"
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	showCloseButton="false" 
+	>
+	<mx:Script>
+        <![CDATA[
+        	import mx.controls.DateChooser;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.ContratoEvent;
+        	import VO.TerminarContratoVO;
+        	import MODEL.PermisosMl;
+        	import MODEL.ContratoMl;
+        	import mx.controls.Alert;
+        	import MODEL.UtilidadesMl;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import mx.core.Application;
+        	import mx.events.CloseEvent;        
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+            
+            [Bindable]
+            public var seleccionar:String="SELECCIONAR";
+            [Bindable]
+            public var desmarcar:String="DESMARCAR";
+            [Bindable]
+            private var ArraySolicitante:Array = [{solicitante:'Empleado', num:0},{solicitante:'Empresa',num:1},{solicitante:'Terminación Natural',num:2}];
+            
+            [Bindable]
+            public var formIsValid:Boolean=false;
+            private var focussedFormControl:DisplayObject;
+            
+            public function TerminarContrato():void{
+            	
+            	if(formIsValid){
+            		
+            		var cartaRenuncia:int;
+            		var cartaAceptacion:int;
+            		var cartaTerminacion:int;
+            		var respuesta:int;
+            		
+            		var datePropRetiro:Date = new Date(addfechaPROPretiroTContrato.text);
+            		var dateRetiro:Date = new Date(addfecharetiroTcontrato.text);
+            		
+            		
+            		if(addSItcontrato.selected){
+            			
+            			  respuesta=1;
+            			
+            		  }else{
+            		  	   
+            		  	     respuesta=0;
+            		  	   
+            		       }
+            		
+            		if(addCartaderenunciaTcontrato.selected){
+            			
+            			cartaRenuncia=1;
+            			
+            		}else{
+            			
+            		       cartaRenuncia=0;
+            		      
+            		     }
+            		
+            		if(addCartadeaceptacionTcontrato.selected){
+            			
+            			cartaAceptacion=1;
+            			
+            		}else{
+            			
+            		       cartaAceptacion=0;
+            		      
+            		     }
+            		 
+            		 if(addCartadeterminacionTcontrato.selected){
+            			
+            			cartaTerminacion=1;
+            			
+            		}else{
+            			
+            		       cartaTerminacion=0;
+            		      
+            		     }
+            		 
+            		
+            		var terminar:TerminarContratoVO = new TerminarContratoVO(ContratoMl.getInstance().ContratoPpl.dgcontrato.selectedItem.id,cbxSolicitantesTcontrato.selectedItem.num,addmotivoTcontrato.text
+            		,cartaRenuncia,cartaAceptacion,cartaTerminacion,datePropRetiro,dateRetiro,respuesta);
+            		
+            		var e:ContratoEvent = new ContratoEvent(ContratoEvent.TERMINAR_CONTRATO,null,terminar);
+            		CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            		returnName();
+            		
+            	}
+            	
+            }
+            
+            
+            private function checkall():void{
+           
+             if(selecall.selected){
+              
+               addCartaderenunciaTcontrato.selected=true;
+               addCartadeaceptacionTcontrato.selected=true;
+               addCartadeterminacionTcontrato.selected=true;
+             }else{
+             
+               addCartaderenunciaTcontrato.selected=false;
+               addCartadeaceptacionTcontrato.selected=false;
+               addCartadeterminacionTcontrato.selected=false;
+             }
+           }
+           
+            private function returnName():void {
+                 PopUpManager.removePopUp(this);
+                 ContratoMl.getInstance().selectableContrato=true;
+                 PermisosMl.getInstance().habilitarMenus();
+            }
+            
+            
+            
+            private function validateForm(event:Event):void{
+            
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(motivoValidator);
+               //validate(objValidator);
+               validate(fechaPROretiroValidator);
+               validate(fecharetiroValidator);
+            }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+            private function creationCompleteHandler():void
+            {
+               resetFocus();
+            }   
+            
+            private function resetFocus():void
+            {
+                focusManager.setFocus(addmotivoTcontrato);
+            }
+            
+            
+            
+            
+            public function displayDate():Date {
+            	
+            	
+            	var now:Date = new Date();
+				var day_int:int = now.getDate(); 
+				var month_int:int = (now.getMonth()+1);
+				var year_int:int = now.getFullYear(); // 
+                
+                var day_string:String;
+                
+				if (day_int < 10) {
+					day_string = "0" + day_int.toString();
+				}
+				else {
+					day_string = day_int.toString();
+				}
+                
+                
+                var month_string:String;
+                
+				if (month_int < 10) { 
+					month_string = "0" + month_int.toString();
+				}
+				else {
+					month_string = month_int.toString();
+				}
+	
+				var year_string:String = year_int.toString();
+				
+                return new Date(month_string + "/" + day_string + "/" + year_string);
+
+            }
+            
+            
+            public function rangofin():Date{
+            	
+            	var retorno:Date= new Date();
+            	
+            	if(ContratoMl.getInstance().ContratoPpl.dgcontrato.selectedItem.fechaFin!=null){
+            		
+            	   retorno = ContratoMl.getInstance().ContratoPpl.dgcontrato.selectedItem.fechaFin;
+            		
+            	}else{
+            		
+            		  var aux:Date = new Date();
+            		      
+            		   aux = displayDate();
+            		   
+            		   aux.setFullYear(aux.getFullYear()+1);
+            		   
+            		   retorno = aux;
+            		
+            	     }
+            	     
+            	 return retorno;    
+            	
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+        ]]>
+    </mx:Script>
+    
+     
+     <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Nombre del Oficio por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="motivoValidator"
+        source="{addmotivoTcontrato}" 
+        property="text"
+        minLength="2"
+        maxLength="500"
+    />
+    
+    <mx:DateValidator
+     
+        requiredFieldError="!!Este campo es Obligatorio. Ingrese la Fecha propuesta de retiro por favor¡¡"
+        formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+     	id="fechaPROretiroValidator"
+     	source="{addfechaPROPretiroTContrato}"
+     	property="text"
+     	
+    />
+    
+    <mx:DateValidator
+     
+        requiredFieldError="!!Este campo es Obligatorio. Ingrese la Fecha de retiro por favor¡¡"
+        formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+     	id="fecharetiroValidator"
+     	source="{addfecharetiroTcontrato}"
+     	property="text"
+     	
+    />
+    
+  
+      <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+      	
+            <mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+				<mx:Canvas width="100%" height="100%" id="canvas1" >
+					<mx:Label  id="lblAddUs" text="TERMINACIÓN DE CONTRATO" color="#FFFFFF" fontWeight="bold" fontSize="13"
+	 		 		x="{(canvas1.width/2)-(lblAddUs.width/2)}" y="12"/>	
+				</mx:Canvas>
+		    </mx:Box>
+    
+     
+       <mx:Box id="box2" height="72%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+       	
+              <mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+              	
+             
+			     <mx:Form width="90%" height="90%" verticalScrollPolicy="off"  >
+			            
+			            <mx:Spacer height="10"/>
+			               	
+			 	    	<mx:FormItem label="SOLICITANTE" fontWeight="bold"  width="100%" color="#FFFFFF" fontSize="11"> 	
+					  	   <mx:ComboBox selectedIndex="{ContratoMl.getInstance().cbxSolicitanteSelectedIndex}" id="cbxSolicitantesTcontrato" labelField="solicitante" dataProvider="{ArraySolicitante}"/> 
+					  	</mx:FormItem>
+				    	
+				    	<mx:Spacer height="10"/>
+				    	
+				    	<mx:FormItem  label="MOTIVO" fontWeight="bold"  width="100%" color="#FFFFFF" fontSize="11"> 	
+					  	    <mx:TextArea text="{ContratoMl.getInstance().listTerminacionesContratoXrespuesta.motivo}" change="{validateForm(event)}" id="addmotivoTcontrato" width="80%" color="#000000" fontSize="10" height="80"/>  	  	
+					  	</mx:FormItem>
+					  	
+					  	<mx:Spacer height="10"/>
+					  	
+					  	<mx:FormItem label="FECHA PROPUESTA DE RETIRO"  fontWeight="bold"  width="100%" color="#FFFFFF" fontSize="11"> 	
+					  	    <mx:DateField text="{UtilidadesMl.getInstance().formatearACampoFecha(ContratoMl.getInstance().listTerminacionesContratoXrespuesta.fechaPropuestaRetiro)}" selectableRange="{{rangeStart: displayDate(),rangeEnd: rangofin()}}"  
+					  	    dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" change="{validateForm(event)}" id="addfechaPROPretiroTContrato" width="80%" color="#000000" fontSize="10"/>  	  	
+					  	</mx:FormItem>
+				    	
+				    	<mx:Spacer height="10"/>
+				    	
+				    	<mx:FormItem label="RESPUESTA"  fontWeight="bold" width="100%" color="#FFFFFF" fontSize="11"> 	
+					      <mx:RadioButtonGroup id="addrespuestTcontrato"  />
+					      <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="left">
+					      	   <mx:RadioButton selected="{}" label="SI" groupName="addrespuestTcontrato" id="addSItcontrato" color="#FFFFFF" fontSize="10"/> 	
+					   	       <mx:RadioButton label="NO" groupName="addrespuestTcontrato" id="addNOtcontrato" color="#FFFFFF" fontSize="10"/> 	
+					      </mx:HBox>  
+					    </mx:FormItem>
+				    	
+				    	<mx:Spacer height="10"/>
+					  	
+					  	<mx:FormItem label="FECHA DE RETIRO" fontWeight="bold" width="100%" color="#FFFFFF" fontSize="11"> 	
+					  	    <mx:DateField text="{addNOtcontrato.selected==true?(''):('')}" enabled="{addNOtcontrato.selected==true?(false):(true)}" selectableRange="{{rangeStart: displayDate(),rangeEnd: rangofin()}}" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" change="{validateForm(event)}" id="addfecharetiroTcontrato" width="80%" color="#000000" fontSize="10"/>  	  	
+					  	</mx:FormItem>
+				    	
+				    	<mx:Spacer height="10"/>
+				    	
+				    	<mx:FormItem label="SOPORTES"  fontWeight="bold"  width="100%" color="#FFFFFF" fontSize="11">
+					  	     <mx:CheckBox label="{selecall.selected==true?(desmarcar):seleccionar} TODOS" id="selecall" fontStyle="normal" textDecoration="normal" click="{checkall()}"  color="#FFFFFF" fontSize="10"/>
+					  	     <mx:CheckBox label="Carta de renuncia" id="addCartaderenunciaTcontrato"   color="#FFFFFF" fontSize="10"/>
+					  	     <mx:CheckBox label="Carta de aceptación" id="addCartadeaceptacionTcontrato"  color="#FFFFFF" fontSize="10"/>
+					  	     <mx:CheckBox label="Carta de terminación" id="addCartadeterminacionTcontrato" color="#FFFFFF" fontSize="10"/>
+					  	</mx:FormItem>
+					  	
+				        <mx:Spacer height="10"/>
+				      
+			    </mx:Form>
+			    
+			 </mx:Box>  
+		
+		  </mx:Box>    
+			
+			
+			<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+				<mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+					<mx:HBox height="100%" width="50%" verticalAlign="middle">
+						<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+							<mx:Image source="{UtilidadesMl.getInstance().rutaback2}"
+	  	  					 toolTip="Atras" />	
+						</mx:Box>
+						<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+							<mx:Image id="ok" click="{TerminarContrato()}" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  toolTip="Aceptar" enabled="{formIsValid}" />	
+						</mx:Box>
+	  				</mx:HBox>
+					<mx:HBox height="100%" width="50%" verticalAlign="middle">
+						<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+							<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar"/>	
+						</mx:Box>
+						<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+							<mx:Image source="{UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" />	
+						</mx:Box>
+	  				</mx:HBox>
+				</mx:HBox>
+			</mx:Box>	
+			    
+			    
+	  </mx:VBox>		    
+    
+</mx:TitleWindow>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow  xmlns:mx="http://www.adobe.com/2006/mxml" 
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	layout="absolute" width="550" height="620"
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	initialize="UtilidadesMl.getInstance().backEnable = false,UtilidadesMl.getInstance().nextEnable=true"
+	showCloseButton="false">
+	<mx:Script>
+		<![CDATA[
+			import VO.RetencionesVO;
+			import mx.managers.PopUpManager;
+			import mx.events.CloseEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.validators.Validator;
+			import MODEL.ContratoMl;
+			import MODEL.UtilidadesMl;
+			import mx.core.Application;
+			
+			[Bindable]
+            public var formIsValid:Boolean=false;
+            
+            private var focussedFormControl:DisplayObject;
+			
+			
+			private function returnName():void{
+				
+				PopUpManager.removePopUp(this);
+				
+			}
+			
+			/*private function validateForm(event:Event):void{
+            
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(nameValidator);
+               validate(objValidator);
+            }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } */
+            
+            
+		]]> 
+	</mx:Script>
+	        
+	 <mx:Fade id="fadeIn"  alphaFrom="-20" alphaTo="100" duration="500"/>       
+	        
+	<mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+
+		<mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+			<mx:Canvas width="100%" height="100%" id="canvas1" >
+				<mx:Label showEffect="fadeIn" id="lblAddUs" text="EDITAR LIQUIDACIÓN" color="#FFFFFF" fontWeight="bold" fontSize="13"
+ 		 		x="{(canvas1.width/2)-(lblAddUs.width/2)}" y="12"/>	
+			</mx:Canvas>
+		</mx:Box>
+ 
+		<mx:Box id="box2" height="84%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+			  
+			  <mx:Spacer height="10"/>
+			                 
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+								
+								<mx:HBox width="100%">
+									
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="Número del contrato: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:Label text="aqui el num del contrato" styleName="labelTw"/>
+									</mx:Box>
+										
+								</mx:HBox>
+							
+							</mx:Box>
+							
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								    
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="CUENTA BANCARIA: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:ComboBox id="cbxcuentabancaria" width="75%"/>
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+							
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								    
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="PRIMA DE SERVICIOS: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:ComboBox id="cbxprimaServicios" width="75%"/>
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								    
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="VACACIONES: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:ComboBox id="cbxvacaciones" width="75%"/>
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								    
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="CESANTIAS: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:ComboBox id="cbxcesantias" width="75%"/>
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+							
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								    
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="INTERESES CESANTIAS: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:ComboBox id="cbxInteresescesantias" width="75%"/>
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="DIAS TRABAJADOS: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:TextInput  id="txtDiastrabajados" styleName="labelTw" width="30%"/>
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+							
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+								
+								<mx:HBox width="100%">
+									
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="Valor prima de servicios: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:TextInput id="txtprimaServicios" width="75%"/>
+									</mx:Box>
+										
+								</mx:HBox>
+							
+							</mx:Box>
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+								
+								<mx:HBox width="100%">
+									
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="Valor Vacaciones: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:TextInput id="txtvacaciones" width="75%"/>
+									</mx:Box>
+										
+								</mx:HBox>
+							
+							</mx:Box>
+							
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+								
+								<mx:HBox width="100%">
+									
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="Valor Cesantias: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:TextInput id="txtcesantias" width="75%"/>
+									</mx:Box>
+										
+								</mx:HBox>
+							
+							</mx:Box>
+							
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+								
+								<mx:HBox width="100%">
+									
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="Valor Intereses Cesantias: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:TextInput id="txtInteresescesantias" width="75%"/>
+									</mx:Box>
+										
+								</mx:HBox>
+							
+							</mx:Box>
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+								
+								<mx:HBox width="100%">
+									
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="Valor Total Liquidación: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:TextInput id="txttotalLiquidacion" width="75%"/>
+									</mx:Box>
+										
+								</mx:HBox>
+							
+							</mx:Box>
+							
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+								
+								<mx:HBox width="100%">
+									
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="Fecha Liquidación: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:DateField id="dfFechaLiquidacion" monthNames="{UtilidadesMl.getInstance().arrayMeses}" dayNames="{UtilidadesMl.getInstance().arrayDias}" width="75%"/>
+									</mx:Box>
+										
+								</mx:HBox>
+							
+							</mx:Box>
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+								
+								<mx:HBox width="100%">
+									
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="Fecha del pago: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:DateField id="dfFechaLiquidacion" monthNames="{UtilidadesMl.getInstance().arrayMeses}" dayNames="{UtilidadesMl.getInstance().arrayDias}" width="75%"/>
+									</mx:Box>
+										
+								</mx:HBox>
+							
+							</mx:Box>
+							
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+								
+								<mx:HBox width="100%">
+									
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="Sueldo Básico: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:TextInput id="txtsueldobasico" width="75%"/>
+									</mx:Box>
+										
+								</mx:HBox>
+							
+							</mx:Box>
+							<mx:Spacer height="8"/>
+							
+							<mx:HBox width="100%" >
+							
+							  	   	  <mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+							  	   	  	
+							  	   	  	<mx:Button toolTip="ACTUALIZAR LA INFORMACIÓN" upSkin="@Embed(source='REC/IMAGENES/actualize.png')" downSkin="@Embed(source='REC/IMAGENES/actctualizeDown.png')" overSkin="@Embed(source='REC/IMAGENES/actualize.png')"/>
+							  	   	  
+							  	   	  </mx:Box>
+							  	   	  
+							  	   	  <mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+							  	   	  
+							  	   	  	<mx:Button  toolTip="ELIMINAR ESTA LIQUIDACIÓN" upSkin="@Embed(source='REC/IMAGENES/removeItem.png')" downSkin="@Embed(source='REC/IMAGENES/removeItemDown.png')" overSkin="@Embed(source='REC/IMAGENES/removeItem.png')"/>
+							  	   	 
+							  	   	  </mx:Box>
+							  	   	  
+							 </mx:HBox>
+							
+			</mx:Box>				
+
+
+
+		<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+			<mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+				
+				<mx:HBox height="100%" width="50%" verticalAlign="middle" horizontalAlign="left">
+					
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+						<mx:Image source="{UtilidadesMl.getInstance().rutaback2}"
+  	  					 toolTip="Atras" />	
+					</mx:Box>
+					
+  				</mx:HBox>
+  				
+  				<mx:Box horizontalAlign="center" verticalAlign="middle" width="50%" disabledColor="#000000">
+						<mx:Image id="ok" source="{UtilidadesMl.getInstance().rutaCheck2}"  toolTip="Aceptar"  />	
+				</mx:Box>
+  				
+				<mx:HBox height="100%" width="50%" verticalAlign="middle" horizontalAlign="right">
+					
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+						<mx:Image source="{UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" />	
+					</mx:Box>
+					
+  				</mx:HBox>
+  				
+			</mx:HBox>
+			
+		</mx:Box>
+	
+	</mx:VBox>
+	
+</mx:TitleWindow>
+
+
+
+
+
+
+
+
+

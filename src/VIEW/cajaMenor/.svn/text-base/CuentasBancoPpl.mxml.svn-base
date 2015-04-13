@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="crearPantalla()" width="100%" height="100%" styleName="glassPods" verticalAlign="middle" horizontalAlign="center" xmlns:menu="VIEW.menu.*">
+	<mx:Script>
+		<![CDATA[
+			import MODEL.CajaMenorMl;
+			
+	    public function crearPantalla():void
+		{
+			CajaMenorMl.getInstance().cuentasBancoPpl = this;
+			
+		}
+			
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Box width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom">
+	    <mx:Box width="95%" height="95%" >
+			<mx:DataGrid width="100%" selectable="{CajaMenorMl.getInstance().selectableCBanco}" dataProvider="{CajaMenorMl.getInstance().listCajamenor}"  height="100%" id="dgCuentasBanco" themeColor="#307BAB" alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15">
+				<mx:columns>
+					<mx:DataGridColumn headerText="Nombre" dataField="nombre" textAlign="center"/>
+					<mx:DataGridColumn headerText="Valor" dataField="montoInicio" itemRenderer="VIEW.Items.CajaMenor.ItemMontoInicio" width="200"/>
+					<mx:DataGridColumn headerText="Saldo" dataField="valor" itemRenderer="VIEW.Items.CajaMenor.ItemValor" width="200" />
+				</mx:columns>
+			</mx:DataGrid>
+			
+		</mx:Box>
+	</mx:Box>
+	<menu:MenuAbajo />
+	
+</mx:VBox>

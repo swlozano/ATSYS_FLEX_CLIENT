@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow  xmlns:mx="http://www.adobe.com/2006/mxml" 
+	close="returnName()" layout="absolute" 
+	width="500" height="470" 
+	creationComplete="{crearPantalla()}"
+	showCloseButton="false" backgroundAlpha="1.0" 
+	alpha="1.0" 
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	  x="{(Application.application.width/2)-(this.width/2)}"
+	  y = "{(Application.application.height/2)-(this.height/2)}" 
+	  initialize="UtilidadesMl.getInstance().backEnable=false,UtilidadesMl.getInstance().nextEnable=true" 
+	color="#FFFFFF" fontSize="12">
+	<mx:Script>
+        <![CDATA[
+        	import VO.ValorFormaPagoVO;
+        	import MODEL.PantallasMl;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.ValorFpagoEvent;
+        	import VO.FechasPagoVO;
+        	import MODEL.ValorFormaPagoMl;
+        	import MODEL.UtilidadesMl;
+        	import mx.core.Application;
+        	import mx.utils.StringUtil;
+        	import mx.collections.ArrayCollection;  
+        	import mx.controls.Alert;
+        	import MODEL.ContratoMl;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           
+             
+           
+           [Bindable]
+		    [Embed(source="REC/IMAGENES/siguiente.png")]
+		    public var next:Class;
+		    
+		    [Bindable]
+		    [Embed(source="REC/IMAGENES/add.png")]
+		    public var add:Class;
+		    
+		    [Bindable]
+		    [Embed(source="REC/IMAGENES/atras.png")]
+		    public var back:Class;
+		    
+		    [Bindable]
+		    [Embed(source="/REC/IMAGENES/ConfLogout.png")]
+			public var salir:Class;
+            
+            [Embed(source="/REC/IMAGENES/warn2.png")]
+		    public var alerta:Class;
+            
+            [Bindable]
+            public var formIsValid:Boolean=false;
+            
+            [Bindable]
+            private var Arrayperiodo:Array = [{numDias:'15', num:15},{numDias:'30', num:30}];
+            
+            [Bindable]
+            public var formIsValidRet:Boolean=false;
+            
+            private var focussedFormControl:DisplayObject;
+            
+           
+            private function crearPantalla():void{
+            	
+            	ValorFormaPagoMl.getInstance().valorFPagoPpl = this;
+            	
+            }
+            
+            
+            public function agregarValorFormaPago():void{
+            	
+                
+                if(formIsValid){
+                	
+                	if(ValorFormaPagoMl.getInstance().arrayCopiaFechasPago!=null){
+                		
+                		var fechasPago:Array;
+                 		var cont:int=0;
+                		var valorfpago:ValorFormaPagoVO;
+                		var favorito:int;
+                		var esIbc:int;
+                		
+                		
+                		var fpgo:Date;
+                		var f_ini:Date;
+                		var f_fin:Date;
+                		
+                		for each(var x:* in ValorFormaPagoMl.getInstance().arrayCopiaFechasPago){
+                			    
+                			    fpgo = new Date();
+                			    f_ini = new Date();
+                			    f_fin = new Date();
+                			    
+                			    fpgo = x.fechapago;
+                			    f_ini = x.fechaInicio;
+                			    f_fin = x.fechaFin;
+                			    
+                			    fechasPago = new Array(fpgo,f_ini,f_fin);
+                			     
+                			    ValorFormaPagoMl.getInstance().arrayCopiaFechasPago.removeItemAt(cont);
+                			    ValorFormaPagoMl.getInstance().arrayCopiaFechasPago.addItemAt(fechasPago,cont);
+                			    cont++;                			      
+                		}
+                		 var borrar:Object = ValorFormaPagoMl.getInstance().arrayCopiaFechasPago;
+                		
+                			
+                		 favorito=0;
+                		     
+                		
+                		 if(checkIBCValfpago.selected){
+                		 	
+                		 	esIbc =1;
+                		 	ContratoMl.getInstance().contIBC = ContratoMl.getInstance().contIBC + 1;
+                		 	
+                		 }else{
+                		 	
+                		         esIbc =0;
+                		        
+                		      }    
+                		
+                		
+                		var arpruff:Array = getRetencionesSeleccionadas();
+                		
+                		trace();
+                		
+						                		
+                		valorPagoValfpago.text = UtilidadesMl.getInstance().combertirDecimalToEntero(valorPagoValfpago.text);
+                		//SABADO 19 2009
+                		var arregloFechasPago:ArrayCollection = new ArrayCollection();
+                		arregloFechasPago = ValorFormaPagoMl.getInstance().arrayCopiaFechasPago;
+                		valorfpago = new ValorFormaPagoVO(0,cbxtipopago.selectedItem.id
+                		,objValfpago.text,observacionValfpago.text,periodoValfpago.selectedItem.num,dffechaInPagoValfpago.selectedDate
+                		,favorito,parseFloat(valorPagoValfpago.text),esIbc,getRetencionesSeleccionadas(),ValorFormaPagoMl.getInstance().arrayCopiaFechasPago);
+                		
+                		//ValorFormaPagoMl.getInstance().arrValoresfpago = new ArrayCollection();
+                		ValorFormaPagoMl.getInstance().arrValoresfpago.addItem(valorfpago);
+                		ValorFormaPagoMl.getInstance().arrayCopiaFechasPago = new ArrayCollection();
+                		arregloFechasPago = new ArrayCollection();
+                		returnName();
+                		
+                		  
+                		 
+                	}else{
+                		
+                	        Alert.show("Necesitas generar las fechas de pago para poder Ingresar el Valor forma pago. Ve hacia la vista siguiente para poder Generar las Fechas de pago" ,"Mensaje de alerta",0,null,null,alerta,0);
+                	     
+                	     }
+                	
+                }
+                
+            	
+            }
+            
+            public function getRetencionesSeleccionadas():Array
+            {
+            	var arrayRet:Array = new Array();
+            	
+            	
+            	if(ContratoMl.getInstance().pantallaAgregarContrato.cbxtipoCcontrato.selectedIndex==0){
+            		
+            		if(dgretenciones.selectedItem!=null){
+            		
+            		  arrayRet.push(dgretenciones.selectedItem.id);
+            		
+            		}else{
+            			
+            		       arrayRet = new Array();
+            		     
+            		     }
+            	
+            	
+            	}else{
+            		
+            	        arrayRet = new Array();
+            	      
+            	     }
+            	
+            	return arrayRet;
+            	
+            }
+          
+            
+            public function CalcularFechasPago():void{
+            	
+            	
+              if(dffechaInPagoValfpago.text!=""){
+              	
+            	
+		            	if(ValorFormaPagoMl.getInstance().arrayCopiaFechasPago==null || ValorFormaPagoMl.getInstance().arrayCopiaFechasPago.length==0){
+		            		
+		            		    
+		            		
+				            		var fpago:Date = new Date(dffechaInPagoValfpago.text); 
+				            		 
+				            		var fechasPago:FechasPagoVO = new FechasPagoVO(fpago,ContratoMl.getInstance().FechaInicioContrato,ContratoMl.getInstance().FechaFinContrato,periodoValfpago.selectedItem.num);
+				            		var e:ValorFpagoEvent = new ValorFpagoEvent(ValorFpagoEvent.LISTAR_FECHAS_PAGO,fechasPago,null);
+				            		CairngormEventDispatcher.getInstance().dispatchEvent(e);
+		            		
+		            	}
+            	
+            	}else{
+            		
+            		 VstackVfpago.selectedIndex=0;
+            	      Alert.show("La fecha de Inicio de Pago es necesaria para generar las fechas de pago" ,"Mensaje de alerta",0,null,null,alerta,0);
+            	      
+            	     
+            	     }
+            	
+            }
+            
+           
+            
+            public function agregarfecha():void{
+            	
+            	var agregarf:agregarFechasPago = agregarFechasPago(PopUpManager.createPopUp(PantallasMl.atsys,agregarFechasPago,true));
+            	PopUpManager.centerPopUp(agregarf);
+            	
+            }
+            
+            public function eliminarFecha():void{
+            	
+            	if(ValorFormaPagoMl.getInstance().arrayCopiaFechasPago.length>0){
+            		
+            		 if(dgfechasPago.selectedItem!=null){	
+            		 	
+            		 	ValorFormaPagoMl.getInstance().arrayCopiaFechasPago.removeItemAt(dgfechasPago.selectedIndex);
+            		 	
+            		 }else{
+	              	
+	              	     Alert.show("SELECCIONE UNA FECHA DE LA LISTA PARA MODIFICARLA","",0,null,null,alerta,0);
+	                    
+	                   }
+            		
+            	}else{
+            	 
+            	    Alert.show("NO HAY FECHAS QUE ELIMINAR. AGREGUE AL MENOS UNA PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+            	 
+                 }
+            	
+            }
+            
+            public function modificarfecha():void{
+            	
+            if(ValorFormaPagoMl.getInstance().arrayCopiaFechasPago.length>0){
+            	
+            	
+	              if(dgfechasPago.selectedItem!=null){	
+	            	
+	            	var modifecha:modificarFechasPago = modificarFechasPago(PopUpManager.createPopUp(PantallasMl.atsys,modificarFechasPago,true));
+	            	PopUpManager.centerPopUp(modifecha);
+	              
+	              }else{
+	              	
+	              	     Alert.show("SELECCIONE UNA FECHA DE LA LISTA PARA MODIFICARLA","",0,null,null,alerta,0);
+	                    
+	                   }
+            
+            
+            }else{
+            	 
+            	    Alert.show("NO HAY FECHAS QUE MODIFICAR. AGREGUE AL MENOS UNA PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+            	 
+                 }
+              
+              
+            }
+            
+            
+            private function returnName():void {
+            
+                 PopUpManager.removePopUp(this);
+                 UtilidadesMl.getInstance().backEnable=true;
+                 UtilidadesMl.getInstance().nextEnable=false;
+                
+            }
+            
+            private function validate(validator:Validator):Boolean{
+               
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            }
+            
+          
+            
+            private function validateForm(event:Event):void{
+             
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(cbxtipopagovalidator);
+               validate(objetoVfpValidator);
+               validate(observacionVfpValidator);
+               validate(periodoValidator);
+               validate(fechaIniciopagovalidator);
+               validate(valorPagoValidator);
+               
+            }
+         
+            private function restringirDiasFechaInicioPago(f_init:Date,date:DateField):void{
+            	 
+             if(date.text!=""){ 
+             	
+            	if(f_init.date!= 1 && f_init.date!=16){
+            		
+            		Alert.show("El dia de la fecha de Inicio del Pago debe ser 1 o 16","Mensaje de alerta",0,null,null,alerta,0);
+            		date.text="";
+            		
+            	}
+            	
+             }
+            	
+            }
+            
+            private function validarFechaInicioPago():void{
+            	
+             if(dffechaInPagoValfpago.text!=""){	
+            	
+            	if(dffechaInPagoValfpago.selectedDate < ContratoMl.getInstance().FechaInicioContrato ){
+            		
+            		
+            		
+            		Alert.show("La fecha inicial del pago NO puede ser menor que la fecha de Inicio del contrato","Mensaje de alerta",0,null,null,alerta,0);
+            		dffechaInPagoValfpago.text ="";
+            	}
+              }
+            	
+            }
+            
+            public function direccionarAtras(index:int):void{
+              
+             if(ContratoMl.getInstance().pantallaAgregarContrato.cbxtipoCcontrato.selectedIndex==0){
+            
+	               if(index==0){
+	               	
+	                  VstackVfpago.selectedIndex=0; 
+	                  UtilidadesMl.getInstance().backEnable=false; 
+	                  UtilidadesMl.getInstance().nextEnable=true;
+	                  
+	               	
+	               }else if(index==1){
+	               	
+	               	        VstackVfpago.selectedIndex=0;
+	               	        UtilidadesMl.getInstance().backEnable=false;
+	               	        UtilidadesMl.getInstance().nextEnable=true;
+	               	
+	               	       }else if(index==2){
+	               	       	
+	               	       	       VstackVfpago.selectedIndex=1;
+	               	       	       UtilidadesMl.getInstance().backEnable=true;
+	               	       	       UtilidadesMl.getInstance().nextEnable=true;
+	               	       	
+	               	              }
+	               	              
+	            }else{
+	            	
+		            if(index==0){
+		               	
+		                  VstackVfpago.selectedIndex=0; 
+		                  UtilidadesMl.getInstance().backEnable=false; 
+		                  UtilidadesMl.getInstance().nextEnable=true;
+		                  
+		               	
+		               }else if(index==2){
+		               	
+		               	        VstackVfpago.selectedIndex=0;
+		               	        UtilidadesMl.getInstance().backEnable=false;
+		               	        UtilidadesMl.getInstance().nextEnable=true;
+		               	
+		               	       }
+	            	
+	                 }
+               	              
+            
+            }
+            
+            public function direccionarAdelante(index:int):void{
+              
+             
+             if(ContratoMl.getInstance().pantallaAgregarContrato.cbxtipoCcontrato.selectedIndex==0){
+            
+	               if(index==0){
+	               	
+	                  VstackVfpago.selectedIndex=1;  
+	                  UtilidadesMl.getInstance().backEnable=true; 	 
+	               	  
+	               	  CalcularFechasPago();
+	               	  
+	               }else if(index==1){
+	               	
+	               	       VstackVfpago.selectedIndex=2;
+	               	       UtilidadesMl.getInstance().backEnable=true;
+	               	       UtilidadesMl.getInstance().nextEnable=false;
+	               	
+	               	       }else if(index==2){
+	               	       	
+	               	       	       VstackVfpago.selectedIndex=2;
+	               	       	       UtilidadesMl.getInstance().backEnable=true;
+	               	               UtilidadesMl.getInstance().nextEnable=false;	
+	               	              }
+	           }else{
+	           	
+	                   if(index==0){
+	               	
+		                  VstackVfpago.selectedIndex=2;  
+		                  UtilidadesMl.getInstance().backEnable=true; 	 
+		               	  UtilidadesMl.getInstance().nextEnable=false;
+		               	  CalcularFechasPago();
+		               	  
+		               }else if(index==2){
+		               	
+		               	       VstackVfpago.selectedIndex=2;
+		               	       UtilidadesMl.getInstance().backEnable=true;
+		               	       UtilidadesMl.getInstance().nextEnable=false;
+		               	
+		               	       }
+	                
+	                }
+               	              
+            
+            }
+            
+           
+        ]]>
+    </mx:Script>
+  
+  
+  <mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione un tipo de pago"
+   	minValue="0"
+   	property="selectedIndex"
+   	source="{cbxtipopago}"
+   	id="cbxtipopagovalidator"
+   	
+   	/> 
+   	
+   	<mx:DateValidator
+     
+        requiredFieldError="!!Este campo es Obligatorio. Ingrese la Fecha de Inicio de Pago por favor¡¡"
+        formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+     	id="fechaIniciopagovalidator"
+     	source="{dffechaInPagoValfpago}"
+     	property="text"
+     	
+    />
+   	
+   	<mx:NumberValidator
+    
+    requiredFieldError="!!Este campo es Obligatorio. Ingrese el Tiempo del Contrato por favor¡¡"   	
+   	minValue="0"
+   	maxValue="30"
+   	lowerThanMinError="!!Escoja un periodo de pago"
+   	property="text"
+   	source="{periodoValfpago}"
+   	id="periodoValidator"
+   	
+   	/>
+   	
+   	<mx:NumberValidator
+    
+    requiredFieldError="!!Este campo es Obligatorio. Ingrese el Valor del Pago por favor¡¡"   	
+   	minValue="0"
+   	negativeError="!!El Valor del pago no puede ser Negativo"
+   	lowerThanMinError="!!El Valor del pago no puede ser Negativo"
+   	property="text"
+   	source="{valorPagoValfpago}"
+   	id="valorPagoValidator"
+   	
+   	/>
+   	
+   	<mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Objeto de la forma de pago¡¡"
+    	tooShortError="!!Este campo necesita al menos 5 caracteres mínimo para ser válido¡¡"
+        id="objetoVfpValidator"
+        source="{objValfpago}" 
+        property="text"
+        minLength="1"
+        
+    />
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese una Observación a la forma de pago¡¡"
+    	tooShortError="!!Este campo necesita al menos 5 caracteres mínimo para ser válido¡¡"
+        id="observacionVfpValidator"
+        source="{observacionValfpago}" 
+        property="text"
+        minLength="1"
+        
+    />
+   
+        
+	<mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+  	 
+  	    <mx:Box  width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+		 	 <mx:Canvas width="100%" height="100%" id="canvas1"  fontSize="13">
+		 		<mx:Label  id="lblAddCmenor" text="AÑADIR VALOR FORMA PAGO" color="#FFFFFF" fontWeight="bold" fontSize="13"
+		 	     x="{(canvas1.width/2)-(lblAddCmenor.width/2)}" y="12"/>	
+		 	 </mx:Canvas>
+		 </mx:Box>
+  	 
+  	 <mx:Box id="box2" height="79%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center"> 
+  	 
+  	 	  <mx:ViewStack id="VstackVfpago"   width="100%" height="100%" selectedIndex="{UtilidadesMl.getInstance().current}">
+  	 		
+  	 		  <mx:Box  width="100%" height="100%" label="aj" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+  	 		  	
+  	 		  	  <mx:Form width="95%" height="98%" >
+  	 		  	  	  
+  	 		  	  	  <mx:Spacer height="15"/>
+  	 		  	  	  
+  	 		  	  	  <mx:FormItem label="TIPO DE PAGO"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11" > 	
+	  	                  <mx:ComboBox   dataProvider="{ContratoMl.getInstance().listTipopago}" labelField="nombre"  id="cbxtipopago" change="{validateForm(event)}"  color="#000000" fontSize="10"/>  	  	
+	               	  </mx:FormItem>
+	               	  
+	               	  <mx:Spacer height="10"/>
+	               	  
+	               	  <mx:FormItem label="OBJETO FORMA PAGO" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11" > 	
+	  				
+	  				      <mx:TextArea id="objValfpago" height="70" change="{validateForm(event)}" width="75%"  color="#000000" fontSize="10" maxChars="100"/>  
+	  				
+	  				  </mx:FormItem>
+	  				  
+	  				  <mx:Spacer height="10"/>
+	  				  
+	  				  <mx:FormItem label="OBSERVACIÓN" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11" > 	
+	  				
+	  				      <mx:TextArea id="observacionValfpago" change="{validateForm(event)}" height="70" width="75%"  fontSize="10" color="#000000" maxChars="100"/>  
+	  				
+	  				  </mx:FormItem>
+	  				  
+	  				  <mx:Spacer height="10"/>
+	  				  
+	  				  <mx:FormItem label="PERIODO DE PAGO" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11" > 	
+	  				      <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	  				      	
+	  				        <!--mx:TextInput restrict="0-9" id="periodoValfpago" change="{validateForm(event)}" width="20%"  fontSize="10"/-->  
+	  				        <mx:ComboBox dataProvider="{Arrayperiodo}" labelField="numDias" id="periodoValfpago" change="{validateForm(event),ValorFormaPagoMl.getInstance().arrayCopiaFechasPago=null}" fontSize="10" width="50%" color="#000000"/>
+	  				        <mx:Label text="DIAS" color="#FFFFFF" fontSize="10"/>
+	  				        
+	  				        
+	  				      </mx:HBox>
+	  				  </mx:FormItem>
+	  				  
+	  				  <mx:Spacer height="10"/>
+	  				  
+	  				  <mx:FormItem textAlign="center" label="FECHA DE INICIO DE PAGO (MM/DD/AA)"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">
+	  	     				
+	  	     					<mx:DateField editable="true" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" id="dffechaInPagoValfpago" change="{validateForm(event),validarFechaInicioPago(),restringirDiasFechaInicioPago(dffechaInPagoValfpago.selectedDate,dffechaInPagoValfpago)}"  width="75%" fontSize="10" color="#000000"/>
+	  	     				
+	  				   </mx:FormItem>
+	  				   
+	  				   <mx:Spacer height="10"/>
+	  				   
+	  				   <!--mx:FormItem label="FAVORITO"  fontWeight="bold" color="#FFFFFF" width="100%"  fontSize="11">
+	  	     				
+	  	     			    <mx:CheckBox id="checkfavoritoValfpago"/>
+	  	     				
+	  				   </mx:FormItem-->
+	  				   
+	  				   <mx:Spacer height="10"/>
+	  				   
+	  				   <mx:FormItem label="VALOR DEL PAGO" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11" > 	
+	  				
+	  				      <mx:TextInput focusIn="{valorPagoValfpago.text=UtilidadesMl.getInstance().combertirDecimalToEntero(valorPagoValfpago.text)}" focusOut="{valorPagoValfpago.text=UtilidadesMl.getInstance().formaterMoneda(valorPagoValfpago.text)}" id="valorPagoValfpago" restrict="0-9" change="{validateForm(event)}" width="75%"  color="#000000" fontSize="10"/>  
+	  				
+	  				   </mx:FormItem>
+	  				   
+	  					<mx:Spacer height="10"/>
+	  					 
+	  					<mx:FormItem visible="false" creationComplete="{ContratoMl.getInstance().pantallaAgregarContrato.cbxtipoCcontrato.selectedItem.id==1?(basic.label='BASICO'):(basic.label='IBC')}" id="basic" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">
+	  	     				
+	  	     			    <mx:CheckBox id="checkIBCValfpago"  selected="true"/>
+	  	     				
+	  				   </mx:FormItem>
+	  	     		 
+  	 		  	  </mx:Form>
+  	 		  	
+  	 		  </mx:Box>
+  	 		  
+  	 		 
+  	 		  <mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_2">
+  	 		  	
+  	 		  	  <mx:Form width="98%" height="98%">
+  	 		  	  	
+  	 		  	  	 <mx:Spacer height="10"/>
+	  					
+	  					<!--mx:Box width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	     				<mx:HRule width="95%"/>
+	  	     			</mx:Box-->
+	  	     			<mx:Box verticalAlign="middle" width="100%" horizontalAlign="center">
+		  	 		  	  	     <mx:Label text="RETENCIONES" fontWeight="bold" color="#FFFFFF" fontSize="11"/>
+		  	 		  	  	</mx:Box>    
+		  	 		  	  	
+		  	 		  	  	<mx:Spacer height="10"/>
+	  					
+  	 		  	  	
+  	 		  	  	<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+	               	  	
+	  	      	    			<!--mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center" fontSize="11" color="#FFFFFF">
+		  	      	       			<mx:Label text="SELECCIONAR TODOS" color="#FFFFFF" fontSize="10" fontWeight="bold"/>
+		  	      	       			<mx:CheckBox selected="false" change="{checkall()}" id="checkbxselectall" />	
+	  	      	    			</mx:HBox-->
+	               	  	
+	               	  	 <mx:DataGrid width="96%"  dataProvider="{ContratoMl.getInstance().listRetencionespago}"  id="dgretenciones"  height="95%"  textAlign="center" color="#000000" fontSize="10">
+	  	                     <mx:columns>
+                     				<mx:DataGridColumn headerText="Retención" dataField="nombre" textAlign="center" />
+                     				<mx:DataGridColumn headerText="Porcentaje" width="100" dataField="porcentaje" textAlign="center" />
+                     				<!--mx:DataGridColumn headerText="selección" width="80" dataField="id" textAlign="center"/-->
+                     					<!--mx:itemRenderer >
+						   				<mx:Component>
+						    	 				<mx:CheckBox click="data.asignado=!data.asignado" 
+						    	 				selected="{data.asignado}"  horizontalCenter="true"/>
+						   				</mx:Component>   
+										</mx:itemRenderer>
+                     				</mx:DataGridColumn-->
+			 				</mx:columns>
+	  	 				</mx:DataGrid>
+	               	  	
+	               	  </mx:Box>
+	               	 
+  	 		  	  </mx:Form>
+  	 		  	
+  	 		  </mx:Box>
+  	 		  
+  	 		  <mx:Box  width="100%" height="100%"  verticalAlign="middle" horizontalAlign="center" >
+  	 		  	
+  	 		  	  <mx:Form width="98%" height="98%">
+  	 		  	  	 
+  	 		  	  	 <mx:Spacer height="10"/>
+  	 		  	  	 
+  	 		  	  	    <mx:Box verticalAlign="middle" width="100%" horizontalAlign="center">
+		  	 		  	  	 <mx:Label text="FECHAS DE PAGO" fontWeight="bold" color="#FFFFFF" fontSize="11"/>
+		  	 		  	</mx:Box>
+  	 		  	  	 
+  	 		  	  	 <mx:Spacer height="10"/>
+  	 		  	  	 
+  	 		  	  	  <mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+	               	  	
+	               	  	 <mx:DataGrid  id="dgfechasPago"  dataProvider="{ValorFormaPagoMl.getInstance().arrayCopiaFechasPago}" width="96%" height="95%" textAlign="center"  fontFamily="Verdana" fontWeight="bold" fontSize="10" >
+						    
+						    <mx:columns>
+						       <mx:DataGridColumn   itemRenderer="VIEW.Items.ValorFormaPago.ItemFechapago"  headerText="Fecha Pago"  textAlign="center" />
+						       
+						       <mx:DataGridColumn  itemRenderer="VIEW.Items.ValorFormaPago.ItemFechaInit"   headerText="Inicio"   textAlign="center"/>
+						       
+						       <mx:DataGridColumn itemRenderer="VIEW.Items.ValorFormaPago.ItemFechafin" headerText="Fin"  textAlign="center"/>
+			  	 		    </mx:columns>	  	      	  		
+
+	  	      	  	     </mx:DataGrid>
+	               	  	
+	               	  </mx:Box>
+	               	  
+	               	  <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	   	  		
+	  	   	  				<mx:Button click="{agregarfecha()}" toolTip="agregar fecha de Pago" upSkin="@Embed(source='REC/IMAGENES/add_item.png')" downSkin="@Embed(source='REC/IMAGENES/add_item_down.png')" overSkin="@Embed(source='REC/IMAGENES/add_item.png')"/>
+	  	   	  	
+	  	   	  		
+	  	   	  				<mx:Button click="{eliminarFecha()}"  toolTip="eliminar fecha de Pago" upSkin="@Embed(source='REC/IMAGENES/removeItem.png')" downSkin="@Embed(source='REC/IMAGENES/removeItemDown.png')" overSkin="@Embed(source='REC/IMAGENES/removeItem.png')"/>
+	  	   	  			
+	  	   	  			
+	  	   	  			    <mx:Button click="{modificarfecha()}" upSkin="@Embed(source='REC/IMAGENES/actualize.png')" downSkin="@Embed(source='REC/IMAGENES/actctualizeDown.png')" overSkin="@Embed(source='REC/IMAGENES/actualize.png')"  toolTip="actualizar fecha de pago"  />
+	  	   	  			  
+	  				  </mx:HBox>
+  	 		  	  	  
+  	 		  	  </mx:Form>
+  	 		  	
+  	 		  </mx:Box>
+  	 		
+  	 	  </mx:ViewStack>
+  	 </mx:Box>
+  	 
+  	 <mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+			    <mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+			      
+			      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+			      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+			      		<mx:Image source="{UtilidadesMl.getInstance().backEnable==true?(UtilidadesMl.getInstance().rutaback):UtilidadesMl.getInstance().rutaback2}"
+			      			  mouseOver="{direccionarAtras(VstackVfpago.selectedIndex)}" toolTip="Atras" />	
+			      	</mx:Box>
+			      	
+			      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+			      		<mx:Image id="ok" click="{agregarValorFormaPago()}" source="{formIsValid == true?(UtilidadesMl.getInstance().rutaCheck):(UtilidadesMl.getInstance().rutaCheck2)}"  toolTip="Aceptar"  />	
+			      	</mx:Box>
+			      	
+			      </mx:HBox>
+			      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+			      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+			      			<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar" 
+			      				/>	
+			      		</mx:Box>
+			      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+			      			<mx:Image source="{UtilidadesMl.getInstance().nextEnable==true?(UtilidadesMl.getInstance().next):UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" mouseOver="{direccionarAdelante(VstackVfpago.selectedIndex)}"/>	
+			      		</mx:Box>
+			      		
+			    	</mx:HBox>
+			    </mx:HBox>
+						 	
+			 </mx:Box>
+  	 
+  </mx:VBox>
+
+</mx:TitleWindow>
+
+
+
+
+
+
+

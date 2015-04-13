@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="300"
+creationComplete="{ContratoMl.getInstance().FechasDePagoPpl=this}" borderColor="#006699" cornerRadius="15" alpha="1.0"
+showCloseButton="true"
+close="{PopUpManager.removePopUp(this)}"
+
+borderAlpha="1">
+	<mx:Script>
+		<![CDATA[
+			import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import EVENT.ContratoEvent;
+			import VO.FechaPagoVO;
+			import VO.ValorFormaPagoFxVO;
+			import MODEL.ContratoMl;
+			import mx.controls.Alert;
+			import MODEL.PantallasMl;
+			import mx.managers.PopUpManager;
+			import MODEL.ValorFormaPagoMl;
+			
+			[Bindable]
+		    [Embed(source="REC/IMAGENES/siguiente.png")]
+		    public var next:Class;
+		    
+		    [Bindable]
+		    [Embed(source="REC/IMAGENES/add.png")]
+		    public var add:Class;
+		    
+		    [Bindable]
+		    [Embed(source="REC/IMAGENES/atras.png")]
+		    public var back:Class;
+		    
+		    [Bindable]
+		    [Embed(source="/REC/IMAGENES/ConfLogout.png")]
+			public var salir:Class;
+            
+            [Embed(source="/REC/IMAGENES/warn2.png")]
+		    public var alerta:Class;
+			
+			private function returnName():void {
+                 PopUpManager.removePopUp(this);
+            }
+			
+			public function agregarfecha():void{
+            	
+            	var agregarf:addFechaPago = addFechaPago(PopUpManager.createPopUp(PantallasMl.atsys,addFechaPago,true));
+            	PopUpManager.centerPopUp(agregarf);
+            	
+            }
+			
+			public function ContinuarGuardando():void{
+				
+				var fechapagoVo:FechaPagoVO;
+				var arrayFechasPay:Array = new Array();
+				
+				for each(var x:* in ValorFormaPagoMl.getInstance().arrayFechasPago){
+					
+					 fechapagoVo = new FechaPagoVO().FechaPagoVOConstructor(x.fechapago,x.fechaInicio,x.fechaFin);
+					
+					 arrayFechasPay.push(fechapagoVo);
+					
+				}
+				
+				
+				
+				var valorFpagofx:ValorFormaPagoFxVO = new ValorFormaPagoFxVO().ValorFormaPagoFxVOConstructor(
+				
+				ContratoMl.getInstance().idValorFpago,arrayFechasPay);
+				
+				//////////////Guardar en el array ValorFormaPagoFxVO
+				
+				ContratoMl.getInstance().ValorFormaPagoFxVO.push(valorFpagofx);
+				
+				var arraycomprobar:Array;
+				
+				arraycomprobar = ContratoMl.getInstance().ValorFormaPagoFxVO;
+				
+				if(ContratoMl.getInstance().Contador+1 <= ContratoMl.getInstance().ClonArrayCollectionOflistValoresFPagoXContrato.length)
+				{
+					
+					
+					//ContratoMl.getInstance().Contador++;
+					//ContratoMl.getInstance().Contadorlength = ContratoMl.getInstance().Contadorlength + 1;
+					var intt:int = ContratoMl.getInstance().Contador;
+					intt = ContratoMl.getInstance().Contadorlength;
+					intt = ContratoMl.getInstance().ClonArrayCollectionOflistValoresFPagoXContrato.length;
+					
+					
+					var obj:Object = ContratoMl.getInstance().ClonArrayCollectionOflistValoresFPagoXContrato.getItemAt(ContratoMl.getInstance().Contador);
+			
+			        ContratoMl.getInstance().Contador++;
+			        
+			        intt = ContratoMl.getInstance().Contador;
+			 
+					ContratoMl.getInstance().idValorFpago = obj.id;
+								
+					ContratoMl.getInstance().tipodePago = obj.tipoPago.nombre;
+					
+					ContratoMl.getInstance().Concepto = obj.concepto;
+					
+					ContratoMl.getInstance().Observacion = obj.observacion;
+					
+					ContratoMl.getInstance().periodoPago = obj.periodoPago;
+					
+					ContratoMl.getInstance().fechaInicioPago = obj.fechaInicioPago;
+					
+					ContratoMl.getInstance().esIbc =obj.esIbc;
+					
+					ContratoMl.getInstance().valorDelPago = obj.valorPago;
+					
+					
+					var valFpago:ResValorFormaPagoView = ResValorFormaPagoView(PopUpManager.createPopUp(PantallasMl.atsys,ResValorFormaPagoView,true));
+					PopUpManager.centerPopUp(valFpago);
+					returnName();
+					
+										
+					
+					}else{
+						
+						   returnName();
+						   var eveent:ContratoEvent = new ContratoEvent(ContratoEvent.CREAR_ADENDO,null,null,null);
+						   CairngormEventDispatcher.getInstance().dispatchEvent(eveent);
+					       //Alert.show("HORA DE GUARDAR");
+					     
+					     }
+				
+				
+			}
+			
+			  
+			public function eliminarFecha():void{
+            	
+            	if(ValorFormaPagoMl.getInstance().arrayFechasPago.length>0){
+            		
+            		 if(dgfechasPago.selectedItem!=null){	
+            		 	
+            		 	ValorFormaPagoMl.getInstance().arrayFechasPago.removeItemAt(dgfechasPago.selectedIndex);
+            		 	
+            		 }else{
+	              	
+	              	     Alert.show("SELECCIONE UNA FECHA DE LA LISTA PARA MODIFICARLA","",0,null,null,alerta,0);
+	                    
+	                   }
+            		
+            	}else{
+            	 
+            	    Alert.show("NO HAY FECHAS QUE ELIMINAR. AGREGUE AL MENOS UNA PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+            	 
+                 }
+            	
+            }
+			
+			public function modificarfecha():void{
+            	
+            if(ValorFormaPagoMl.getInstance().arrayCopiaFechasPago.length>0){
+            	
+            	
+	              if(dgfechasPago.selectedItem!=null){	
+	            	
+	            	var modifecha:modFechaPago = modFechaPago(PopUpManager.createPopUp(PantallasMl.atsys,modFechaPago,true));
+	            	PopUpManager.centerPopUp(modifecha);
+	              
+	              }else{
+	              	
+	              	     Alert.show("SELECCIONE UNA FECHA DE LA LISTA PARA MODIFICARLA","",0,null,null,alerta,0);
+	                    
+	                   }
+            
+            
+            }else{
+            	 
+            	    Alert.show("NO HAY FECHAS QUE MODIFICAR. AGREGUE AL MENOS UNA PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+            	 
+                 }
+              
+              
+            }
+			
+			
+		]]>
+	</mx:Script>
+   <mx:VBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" borderColor="#006699" backgroundColor="#006699">
+   	
+   	
+	<mx:Box  width="100%" height="100%"  verticalAlign="middle" horizontalAlign="center"  backgroundColor="#FFFFFF">
+  	 		  	
+  	 		  	  <mx:Form width="98%" height="98%" borderColor="#006699" backgroundColor="#006699">
+  	 		  	  	 
+  	 		  	  	 <mx:Spacer height="10"/>
+  	 		  	  	 
+  	 		  	  	    <mx:Box verticalAlign="middle" width="100%" horizontalAlign="center">
+		  	 		  	  	 <mx:Label text="FECHAS DE PAGO" fontWeight="bold" color="#FFFFFF" fontSize="11"/>
+		  	 		  	</mx:Box>
+  	 		  	  	 
+  	 		  	  	 <mx:Spacer height="10"/>
+  	 		  	  	 
+  	 		  	  	  <mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+	               	  	
+	               	  	 <mx:DataGrid  id="dgfechasPago" dataProvider="{ValorFormaPagoMl.getInstance().arrayFechasPago}"  width="96%" height="95%" textAlign="center"  fontFamily="Verdana" fontWeight="bold" fontSize="10" >
+						    
+						    <mx:columns>
+						       <mx:DataGridColumn itemRenderer="VIEW.Items.ValorFormaPago.ItemFechapago"  headerText="Fecha Pago"  textAlign="center" />
+						       
+						       <mx:DataGridColumn itemRenderer="VIEW.Items.ValorFormaPago.ItemFechaInit"  headerText="Inicio"   textAlign="center"/>
+						       
+						       <mx:DataGridColumn itemRenderer="VIEW.Items.ValorFormaPago.ItemFechafin"  headerText="Fin"  textAlign="center"/>
+			  	 		    </mx:columns>	  	      	  		
+
+	  	      	  	     </mx:DataGrid>
+	               	  	
+	               	  </mx:Box>
+	               	  
+	               	  <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	   	  		
+	  	   	  				<mx:Button click="{agregarfecha()}"  toolTip="agregar fecha de Pago" upSkin="@Embed(source='REC/IMAGENES/add_item.png')" downSkin="@Embed(source='REC/IMAGENES/add_item_down.png')" overSkin="@Embed(source='REC/IMAGENES/add_item.png')"/>
+	  	   	  	
+	  	   	  		
+	  	   	  				<mx:Button click="{eliminarFecha()}"  toolTip="eliminar fecha de Pago" upSkin="@Embed(source='REC/IMAGENES/removeItem.png')" downSkin="@Embed(source='REC/IMAGENES/removeItemDown.png')" overSkin="@Embed(source='REC/IMAGENES/removeItem.png')"/>
+	  	   	  			
+	  	   	  			
+	  	   	  			    <mx:Button click="{modificarfecha()}" upSkin="@Embed(source='REC/IMAGENES/actualize.png')" downSkin="@Embed(source='REC/IMAGENES/actctualizeDown.png')" overSkin="@Embed(source='REC/IMAGENES/actualize.png')"  toolTip="actualizar fecha de pago"  />
+	  	   	  			  
+	  				  </mx:HBox>
+  	 		  	  	  
+  	 		  	  </mx:Form>
+  	 		  	
+  	 </mx:Box>
+	  <mx:Box width="100%" verticalAlign="middle" horizontalAlign="center" borderColor="#006699" backgroundColor="#006699">
+	  	
+	  	  <mx:Button label="OK" click="{ContinuarGuardando()}"/>
+	  	
+	  </mx:Box> 
+	  
+  </mx:VBox>
+	   
+</mx:TitleWindow>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml" width="550" height="660" verticalScrollPolicy="off" horizontalScrollPolicy="off" verticalAlign="middle" horizontalAlign="center" borderStyle="none" cornerRadius="15" borderColor="#7AADD1">
+	<mx:Script>
+		<![CDATA[
+			
+			
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Box  verticalScrollPolicy="off" horizontalScrollPolicy="off" width="85%" height="98%" verticalAlign="middle" horizontalAlign="center" borderStyle="solid" borderColor="#000000" cornerRadius="20">
+		
+		<mx:Spacer height="20"/>
+		
+		<mx:Box width="100%" verticalAlign="middle" horizontalAlign="center" >
+		    <mx:Label textAlign="center" id="titulo" fontWeight="bold" fontSize="15" color="#000203" fontStyle="italic" width="70%"/>
+		</mx:Box>
+		
+		<mx:Spacer height="20"/>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center" borderStyle="none">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="dnombre" fontWeight="bold" fontSize="12" textAlign="right" color="#000203" width="80%"/>
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="nombre" fontWeight="bold" fontSize="11" color="#000203" textAlign="left" width="85%"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center" borderStyle="none">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="dced" fontWeight="bold" fontSize="12" color="#000203" textAlign="right" width="80%"/>
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="ced" fontWeight="bold" fontSize="11" color="#000203" width="85%" textAlign="left"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="dcuenta" fontWeight="bold" fontSize="12" color="#000203" textAlign="right" width="80%"/>
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="cuenta" fontWeight="bold" fontSize="11" color="#000203" textAlign="left" width="85%"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="dsueldo" fontWeight="bold" fontSize="12" color="#000203" textAlign="right" width="80%"/>
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="sueldo" fontWeight="bold" fontSize="11" color="#000203" textAlign="left" width="85%"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="daux" fontWeight="bold" fontSize="12" color="#000203" textAlign="right" width="80%"/>
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="aux" fontWeight="bold" fontSize="11" color="#000203" textAlign="left" width="85%"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="dfInicio" fontWeight="bold" fontSize="12" color="#000203" width="80%" textAlign="right"/>
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="fInicio" fontWeight="bold" fontSize="11" color="#000203" width="85%" textAlign="left"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="dfend" fontWeight="bold" fontSize="12" color="#000203" width="80%" textAlign="right"/>
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="fend" fontWeight="bold" fontSize="11" color="#000203" width="85%" textAlign="left"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="dDias" fontWeight="bold" fontSize="12" color="#000203" width="80%" textAlign="right"/>
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="Dias" fontWeight="bold" fontSize="11" color="#000203" textAlign="left" width="85%"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="dfLiq" fontWeight="bold" fontSize="12" color="#000203" width="80%" textAlign="right"/>
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="fLiq" fontWeight="bold" fontSize="11" color="#000203" width="85%" textAlign="left"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="dfPago" fontWeight="bold" fontSize="12" color="#000203" width="80%" textAlign="right"/>
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="fPago" fontWeight="bold" fontSize="11" color="#000203" width="85%" textAlign="left"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="dprima" fontWeight="bold" fontSize="12" color="#000203" width="80%" textAlign="right" />
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="prima" fontWeight="bold" fontSize="11" color="#000203" width="85%" textAlign="left"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="dvaca" fontWeight="bold" fontSize="12" color="#000203" width="80%" textAlign="right"/>
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="vaca" fontWeight="bold" fontSize="11" color="#000203" width="85%" textAlign="left"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="dcesan" fontWeight="bold" fontSize="12" color="#000203" width="80%" textAlign="right"/>
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="cesan"  fontWeight="bold" fontSize="11" color="#000203" width="85%" textAlign="left"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="dintecesan" fontWeight="bold" fontSize="12" color="#000203" width="80%" textAlign="right"/>
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="intecesan" fontWeight="bold" fontSize="11" color="#000203" width="85%" textAlign="left"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Label id="dTotal"  fontWeight="bold" fontSize="12" color="#000203" width="80%" textAlign="right"/>
+			</mx:Box>
+			
+			<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				<mx:Label id="Total" fontWeight="bold" fontSize="13" color="#000203" width="85%" textAlign="left"/>
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:Spacer height="15"/>
+	
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center" height="40">
+			
+			<mx:VBox width="50%" verticalAlign="middle" horizontalAlign="center">
+				<mx:HRule width="80%" strokeColor="#000606" strokeWidth="3"/>
+			    <mx:Label id="firma1" fontWeight="bold" fontSize="10" color="#000203" width="70%" textAlign="center"/>
+			</mx:VBox>
+			
+			<mx:VBox width="50%" verticalAlign="middle" horizontalAlign="center">
+				<mx:HRule width="80%" strokeColor="#000000" strokeWidth="3"/>
+			    <mx:Label id="firma2" fontWeight="bold" fontSize="10" color="#000203" width="70%" textAlign="center"/>
+			</mx:VBox>
+			
+		</mx:HBox>
+		
+		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center" height="40">
+			
+			<mx:VBox width="50%" verticalAlign="middle" horizontalAlign="center">
+				<mx:HRule width="80%" strokeWidth="3" strokeColor="#000000"/>
+			    <mx:Label id="firma3" fontWeight="bold" fontSize="10" color="#000203" width="70%" textAlign="center"/>
+			</mx:VBox>
+			
+			<mx:VBox width="50%" verticalAlign="middle" horizontalAlign="center">
+				<mx:HRule width="80%" strokeColor="#000000" strokeWidth="3"/>
+			    <mx:Label id="firma4" fontWeight="bold" fontSize="10" color="#000203" width="70%" textAlign="center"/>
+			</mx:VBox>
+			
+		</mx:HBox>
+		
+		<mx:Spacer height="20"/>
+		
+	</mx:Box>
+	
+</mx:Box>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

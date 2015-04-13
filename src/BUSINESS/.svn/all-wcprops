@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/ATSYS_WEB/!svn/ver/87/ATSYS_WEB/src/BUSINESS
+END
+FacturaDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/ATSYS_WEB/!svn/ver/86/ATSYS_WEB/src/BUSINESS/FacturaDelegate.as
+END
+MovimientoDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/BUSINESS/MovimientoDelegate.as
+END
+UsuarioSysDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/BUSINESS/UsuarioSysDelegate.as
+END
+CuentasCobroDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/BUSINESS/CuentasCobroDelegate.as
+END
+ContratoDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/ATSYS_WEB/!svn/ver/85/ATSYS_WEB/src/BUSINESS/ContratoDelegate.as
+END
+PersonasDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/ATSYS_WEB/!svn/ver/87/ATSYS_WEB/src/BUSINESS/PersonasDelegate.as
+END
+RecursoHumanoDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/BUSINESS/RecursoHumanoDelegate.as
+END
+RolSysDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/BUSINESS/RolSysDelegate.as
+END
+CuentasPorPagarDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ATSYS_WEB/!svn/ver/26/ATSYS_WEB/src/BUSINESS/CuentasPorPagarDelegate.as
+END
+CajaMenorDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/BUSINESS/CajaMenorDelegate.as
+END
+LiquidacionDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ATSYS_WEB/!svn/ver/59/ATSYS_WEB/src/BUSINESS/LiquidacionDelegate.as
+END
+PermisosDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/BUSINESS/PermisosDelegate.as
+END
+CentroCostoDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/BUSINESS/CentroCostoDelegate.as
+END
+OficioDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/ATSYS_WEB/!svn/ver/60/ATSYS_WEB/src/BUSINESS/OficioDelegate.as
+END
+SolicitudesServiciosDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/BUSINESS/SolicitudesServiciosDelegate.as
+END

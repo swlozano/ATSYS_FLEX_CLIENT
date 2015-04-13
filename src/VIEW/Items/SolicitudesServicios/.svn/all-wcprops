@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/SolicitudesServicios
+END
+ItemConceptoFichaPermiso.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/SolicitudesServicios/ItemConceptoFichaPermiso.mxml
+END
+ItemValorPrestamoFichaPrestamo.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/SolicitudesServicios/ItemValorPrestamoFichaPrestamo.mxml
+END
+ItemFechaInicioFichaPermiso.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/SolicitudesServicios/ItemFechaInicioFichaPermiso.mxml
+END
+ItemFechaFinFichaPermiso.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/SolicitudesServicios/ItemFechaFinFichaPermiso.mxml
+END
+ItemFechaPagoFichaPrestamo.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VIEW/Items/SolicitudesServicios/ItemFechaPagoFichaPrestamo.mxml
+END

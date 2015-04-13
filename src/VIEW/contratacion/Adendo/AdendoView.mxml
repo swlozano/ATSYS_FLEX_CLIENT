@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	close="returnName()" 
+	layout="absolute" 
+	x="450" y="250" 
+	width="350" 
+	height="194" 
+	showCloseButton="true" 
+	cornerRadius="15"  
+	title="Adendo" borderAlpha="50" 
+	fontSize="12" fontWeight="bold" 
+	creationComplete="{ContratoMl.getInstance().Clon_AdendoView = this}"
+	borderColor="#006699" color="#FFFFFF">
+	<mx:Script>
+        <![CDATA[
+        	import VIEW.contratacion.ContratoPpl;
+        	import VIEW.facturas.abonarPpl;
+        	import mx.controls.Alert;
+        	import MODEL.ContratoMl;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import BUSINESS.ContratoDelegate;
+        	import EVENT.ContratoEvent;
+        	import MODEL.UtilidadesMl;
+        	import MODEL.PantallasMl;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+                
+            [Bindable]
+            public var formIsValid:Boolean=false; 
+            
+            [Embed(source="/REC/IMAGENES/warn2.png")]
+		    public var alerta:Class;
+            
+            [Bindable]
+            public var nufechainicio:Date; 
+            
+            private var focussedFormControl:DisplayObject;
+                
+            private function returnName():void {
+             PopUpManager.removePopUp(this);
+            }
+            
+            
+            private function setNuevaFechaInicio():String{
+            	
+              	var newfechainicio:Date = new Date();
+              	var new2fechainicio:Date;
+              	
+              	var nuevafechainicio:String;
+              	var m:Number;
+              	var d:Number;
+              	var y:Number;
+              	
+              	newfechainicio = ContratoMl.getInstance().ContratoPpl.dgcontrato.selectedItem.fechaFin;
+              	
+              	m = newfechainicio.getMonth();
+            	d = newfechainicio.getDate();
+            	y = newfechainicio.getFullYear();
+              	
+              	new2fechainicio = new Date((m+1)+"/"+(d+1)+"/"+y); 
+              	 
+            	nufechainicio = new Date();
+            	nufechainicio = new2fechainicio;
+            	
+            	//Alert.show("" + new2fechainicio.toString());
+            	
+            	nuevafechainicio = UtilidadesMl.getInstance().formatearACampoFecha(new2fechainicio);
+            	
+            	return nuevafechainicio;
+            	
+            }
+            
+            
+            
+            private function validarfecha(fecharef:Date,fechavalidar:Date,dfield:DateField,mensaje:String):void{
+            	
+            	
+            	if(dfield.text!=""){
+            		
+            		if(fechavalidar <= fecharef){
+            			
+            		   Alert.show(mensaje,"Mensaje de alerta",0,null,null,alerta,0);
+            		   formIsValid=false;
+            	       dfield.text="";
+            			
+            		}
+            		
+            	}
+            	
+            	
+            }
+            
+            
+            
+            public function listarValoresFPagoXcontrato():void{
+            	
+            	ContratoMl.getInstance().nuevaFechaInicioAdendoContrato = new Date(fechaInicio.text);;
+            	ContratoMl.getInstance().nuevaFechaFinAdendoContrato = fechaFin.selectedDate;
+            	
+            	var e:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_VALORESFPAGO_X_CONTRATO,null,null,null);
+            	CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            	returnName();
+            	
+            }
+            
+            private function validateForm(event:Event):void{
+            
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(fechInValidator);
+               validate(fechFinValidator);
+            }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+            
+        ]]>
+    </mx:Script>
+    
+    
+    <mx:DateValidator
+    
+	    requiredFieldError="!!La Nueva Fecha de Inicio es Requerida¡¡"
+	    property="text"
+	    
+	    formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+	    
+	    source="{fechaInicio}"
+	    id="fechInValidator"
+    	
+    />
+    
+    <mx:DateValidator
+    
+	    requiredFieldError="!!La Nueva Fecha Fin es Requerida¡¡"
+	    formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+	    property="text"
+	    source="{fechaFin}"
+	    id="fechFinValidator"
+    	
+    />
+    
+    
+    <mx:Box width="100%" 
+    	height="100%" x="0" y="0" 
+    	verticalAlign="middle" 
+    	horizontalAlign="center">
+    	
+    	<mx:Box width="99%" height="98%" backgroundColor="#006699" verticalAlign="middle" horizontalAlign="center">
+    		<mx:Spacer height="10" />
+    		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="center">
+    				<mx:Label text="Fecha Inicio (MM/DD/AA)"/>
+    			</mx:Box> 
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="center">
+    				<mx:DateField editable="true" text="{setNuevaFechaInicio()}" change="{validateForm(event),validarfecha(ContratoMl.getInstance().ContratoPpl.dgcontrato.selectedItem.fechaFin,fechaInicio.selectedDate,fechaInicio,'La Nueva fecha inicial no puede ser menor que la anterior fecha final del contrato')}" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" id="fechaInicio" width="90%"  color="#000000" fontSize="10" fontWeight="normal"/>
+    			</mx:Box>
+    		</mx:HBox>
+    		
+    		<mx:Spacer height="10" />
+    		
+    		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="center">
+    				<mx:Label text="Fecha Fin (MM/DD/AA)"/>
+    			</mx:Box> 
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="center">
+    				<mx:DateField editable="true" id="fechaFin" change="{validateForm(event),validarfecha(new Date(fechaInicio.text),fechaFin.selectedDate,fechaFin,'La Nueva fecha final no puede ser menor a la nueva fecha Inicial')}" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" width="90%"  color="#000000" fontWeight="normal" fontSize="10"/>
+    			</mx:Box>
+    		</mx:HBox>
+    		
+    		<mx:Spacer height="10" />
+    		
+    		<mx:HBox 
+    			width="100%" 
+    			verticalAlign="middle" 
+    			horizontalAlign="center"
+    			>
+    			
+    			<mx:Box width="40%"/>
+    			<mx:Box width="60%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="left">
+    				<mx:Button  label="Continuar" click="{listarValoresFPagoXcontrato()}" enabled="{formIsValid}" cornerRadius="8"/>
+    			</mx:Box>
+    			
+    		</mx:HBox>
+    		
+    		
+    	</mx:Box>
+    </mx:Box>
+</mx:TitleWindow>
+
+
+
+
+
+
+
+
+
+
+

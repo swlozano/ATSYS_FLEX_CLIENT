@@ -1,0 +1,1410 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox width="100%" height="100%" xmlns:mx="http://www.adobe.com/2006/mxml" 
+	creationComplete="{crearPantalla(),initCollections()}"   styleName="glassPods" verticalAlign="middle" horizontalAlign="center" xmlns:menu="VIEW.menu.*">
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.dataGridClasses.DataGridColumn;
+			
+			
+			///////////////////LABEL FUNCTIONS PARA VISTA CAUSACIONES NOMINA///////////////////
+			private function lbl_function_salario(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.salario);
+				
+			}
+			
+			private function lbl_function_ibc(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.ibc);
+				
+			}
+			
+			private function lbl_function_subtotal(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.subtotal);
+				
+			}
+			
+			private function lbl_function_auxtransporte(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.auxilioTransporte);
+				
+			}
+			
+			private function lbl_function_desc_salud(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.descuentoSalud);
+				
+			}
+			
+			
+			private function lbl_function_descuentoPension(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.descuentoPension);
+				
+			}
+			
+			private function lbl_function_totalOtrasDeducciones(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.totalOtrasDeducciones);
+				
+			}
+			
+			private function lbl_function_totalOtrosMas(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.totalOtrosMas);
+				
+			}
+			
+			private function lbl_function_totalAPagar(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.totalAPagar);
+				
+			}
+			
+			
+			private function lbl_function_totalCausEmpresa(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.totalCausEmpresa);
+				
+			}
+			/////////////////////////////////////////////////////////////////////////
+			
+			//////////////////////////LBL FUNCTIONS CAUSACIONES EMPRESA NOMINA//////
+			
+			
+			private function lbl_function_ibcEmpresa(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.ibcEmpresa);
+				
+			}
+			
+			
+			private function lbl_function_salud(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.salud);
+				
+			}
+			
+			private function lbl_function_pension(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.pension);
+				
+			}
+			
+			private function lbl_function_ibcRiesgos(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.ibcRiesgos);
+				
+			}
+			
+			private function lbl_function_riesgos(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.riesgos);
+				
+			}
+			
+			private function lbl_function_cesantias(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.cesantias);
+				
+			}
+			
+			private function lbl_function_interesesCesantias(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.interesesCesantias);
+				
+			}
+			
+			private function lbl_function_ccf(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.ccf);
+				
+			}
+			
+			private function lbl_function_sena(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.sena);
+				
+			}
+			
+			private function lbl_function_icbf(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.icbf);
+				
+			}
+			
+			private function lbl_function_prima(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.prima);
+				
+			}
+			
+			private function lbl_function_vacaciones(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.vacaciones);
+				
+			}
+			
+			private function lbl_function_total(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.total);
+				  
+			}
+			
+			///////////////////////////////////////////////////////////////////////
+			
+			///////////////////LBLFUNCTIONS CAUSACIONES PS/////////////////////////
+			
+			private function lbl_function_basico(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.basico);
+				
+			}
+			
+			private function lbl_function_totalDevengados(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.totalDevengados);
+				
+			}
+			
+			private function lbl_function_totalOtrosMasS(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.totalOtrosMas);
+				
+			}
+			
+			private function lbl_function_totaL(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.total);
+				
+			}
+			
+			private function lbl_function_totalRetenciones(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.totalRetenciones);
+				
+			}
+			
+			private function lbl_function_totalDeducciones(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.totalDeducciones);
+				
+			}
+			
+			private function lbl_function_totalAPagaR(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.totalAPagar);
+				
+			}
+			
+			///////////////////////////////////////////////////////////////////////
+			
+			///////////////////LBLFUNCTIONS BONIFICACIONES/////////////////////////
+			
+			private function lbl_function_valor(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.valor);
+				
+			}
+			
+			private function lbl_function_valorRetencion(item:Object,dgcolumn:DataGridColumn):String{
+				
+				return ""+UtilidadesMl.getInstance().formaterMoneda(item.valorRetencion);
+				
+			}
+			
+			///////////////////////////////////////////////////////////////////////
+			
+		]]>
+	</mx:Script>
+	<mx:Box width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom">
+	 <mx:VRule height="10" visible="false"/>
+	 	<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+			<mx:LinkButton visible="{viewStackCausaciones.selectedIndex!=0?(viewStackCausaciones.selectedIndex!=5?(true):(false)):(false)}" 
+				 id="lkVolverCausacion" textAlign="center" label="Volver a Causaciones"
+				 color="#FFFFFF"  textDecoration="underline" fontWeight="bold" click="{lkVolverCausacionClick()}" fontSize="12"/>
+	        <mx:MenuBar textAlign="center" cornerRadius="7" labelField="@label" itemClick="{menuHandler(event)}" 
+			            dataProvider="{menuBarCollection}"/> 
+			
+			<!--MENU BAR PARA EL ENVIO A CUENTAS POR PAGAR-->
+			
+			 <mx:MenuBar id="menuCausacionToCuentaPpgr" enabled="{enableOpciones}" labelField="@label" itemClick="{opciones(event)}" cornerRadius="5">
+      	    	<mx:XMLList>
+      	    	
+			            <menuitem label="OPCIONES">
+			            
+			                <menuitem data="1" label="Enviar Causacion Nomina a Cuentas Por Pagar"/>
+			           
+			            </menuitem>
+			            
+                </mx:XMLList>
+      	     </mx:MenuBar>
+			
+			<!--////////////////////////////////////////////-->
+			
+			        
+      	</mx:HBox>
+      	   
+      	        	     	
+			      	<mx:ViewStack id="viewStackCausaciones"  height="95%" width="95%" selectedIndex="0">
+			      	
+			           <!--INDICE 0-->	
+			      	
+				      	  <mx:Box width="95%" height="95%" >
+
+								<mx:DataGrid width="100%" horizontalScrollPolicy="auto"  height="97%" dataProvider="{ContratoMl.getInstance().listCausacionNomina}" id="dgCausaciones" themeColor="#307BAB" alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15">
+
+									<mx:columns>
+										<mx:DataGridColumn  dataField="nombreRh" textAlign="center" headerText="Empleado"  width="250"/>
+
+										<mx:DataGridColumn  dataField="identificacion" width="150" textAlign="center" headerText="IdentificaciÃ³n" />
+										<mx:DataGridColumn  dataField="tipoContrato" textAlign="center" width="230" headerText="Tipo contrato" />
+										<mx:DataGridColumn  dataField="salario" labelFunction="lbl_function_salario" textAlign="center" headerText="Salario" width="150" />
+										<mx:DataGridColumn  dataField="ibc" labelFunction="lbl_function_ibc" textAlign="center" headerText="IBC" width="150"/> 
+										<mx:DataGridColumn  dataField="tiempo" headerText="Tiempo"  textAlign="center" width="120"/>
+										<mx:DataGridColumn  dataField="diasTrabajados" textAlign="center" headerText="DIAS TRABAJADOS" width="170"/>
+										<mx:DataGridColumn  dataField="subtotal" labelFunction="lbl_function_subtotal" textAlign="center" headerText="SUBTOTAL" width="150"/>
+										<mx:DataGridColumn  dataField="auxilioTransporte" labelFunction="lbl_function_auxtransporte" textAlign="center" headerText="AUX.TRANSPORTE" width="200"/>
+										<mx:DataGridColumn  dataField="descuentoSalud" labelFunction="lbl_function_desc_salud" textAlign="center" headerText="Descuento salud" width="200"/>
+										<mx:DataGridColumn  dataField="descuentoPension" labelFunction="lbl_function_descuentoPension" textAlign="center" headerText="Descuento pensiÃ³n" width="200"/>
+										<mx:DataGridColumn  dataField="totalOtrasDeducciones" labelFunction="lbl_function_totalOtrasDeducciones" textAlign="center" headerText="Total deducciones" width="200"/>
+										<mx:DataGridColumn  dataField="totalOtrosMas" labelFunction="lbl_function_totalOtrosMas" textAlign="center" headerText="Total otros mÃ¡s" width="200"/>
+										<mx:DataGridColumn  dataField="totalAPagar" labelFunction="lbl_function_totalAPagar" textAlign="center" headerText="Total a pagar"  width="200"/>
+										<mx:DataGridColumn  textAlign="center" headerText="Caus. empresa" itemRenderer="VIEW.Items.Causacion.ItemGenerarCC" width="150"/>
+										<mx:DataGridColumn  dataField="totalCausEmpresa" labelFunction="lbl_function_totalCausEmpresa" textAlign="center" headerText="Total caus. empresa" width="200"/>
+
+										<mx:DataGridColumn  dataField="identificacion" textAlign="center" headerText="IdentificaciÃ³n" width="180" />
+										<mx:DataGridColumn  width="100" dataField="tipoContrato" textAlign="center" headerText="Tipo contrato" />
+										<mx:DataGridColumn width="150" dataField="salario" textAlign="center" headerText="Salario" />
+										<mx:DataGridColumn width="150" dataField="ibc" textAlign="center" headerText="IBC" />
+										<mx:DataGridColumn width="100" dataField="tiempo" textAlign="center"  headerText="Tiempo" />
+										<mx:DataGridColumn width="150" dataField="diasTrabajados" textAlign="center" headerText="DIAS TRABAJADOS" />
+										<mx:DataGridColumn width="150" dataField="subtotal" textAlign="center" headerText="SUBTOTAL" />
+										<mx:DataGridColumn width="150" dataField="auxilioTransporte" textAlign="center" headerText="AUX.TRANSPORTE" />
+										<mx:DataGridColumn width="140" dataField="descuentoSalud" textAlign="center" headerText="Descuento salud" />
+										<mx:DataGridColumn width="150" dataField="descuentoPension" textAlign="center" headerText="Descuento pensiÃ³n" />
+										<mx:DataGridColumn width="150" dataField="totalOtrasDeducciones" textAlign="center" headerText="Total deducciones" />
+										<mx:DataGridColumn width="150" dataField="totalOtrosMas" textAlign="center" headerText="Total otros mÃ¡s" />
+										<mx:DataGridColumn width="130" dataField="totalAPagar" textAlign="center" headerText="Total a pagar"  />
+										<mx:DataGridColumn width="100" textAlign="center" headerText="Caus. empresa" itemRenderer="VIEW.Items.Causacion.ItemGenerarCC"/>
+										<mx:DataGridColumn width="150" dataField="totalCausEmpresa" textAlign="center" headerText="Total caus. empresa" />
+
+										
+									</mx:columns>
+								</mx:DataGrid>
+						  </mx:Box>
+						
+						<!--INDICE 1-->
+						
+						<mx:Box width="95%" height="95%" >
+						
+							<mx:DataGrid width="100%"  height="97%"  horizontalScrollPolicy="auto"
+								id="dgCausacioEmpresa" themeColor="#307BAB" 
+								alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15"
+								dataProvider="{ContratoMl.getInstance().CausacionPpl.listCausacionEmpresa}">
+								<mx:columns>
+									<mx:DataGridColumn  dataField="diasCotizados" textAlign="center" headerText="DÃ­as cotizados" width="150"/>
+									<mx:DataGridColumn labelFunction="lbl_function_ibcEmpresa" dataField="ibcEmpresa" textAlign="center" headerText="IBC"  width="130"/>
+									<mx:DataGridColumn labelFunction="lbl_function_salud" dataField="salud" textAlign="center" headerText="Salud"  width="130"/>
+									<mx:DataGridColumn labelFunction="lbl_function_pension" dataField="pension" textAlign="center" headerText="PensiÃ³n" width="130"/>
+									<mx:DataGridColumn labelFunction="lbl_function_ibcRiesgos" dataField="ibcRiesgos" textAlign="center" headerText="IBC RIESGOS" width="170" />
+									
+									<mx:DataGridColumn labelFunction="lbl_function_riesgos" dataField="riesgos" textAlign="center" headerText="Riesgos" width="130"/>
+									<mx:DataGridColumn labelFunction="lbl_function_cesantias" dataField="cesantias" textAlign="center" headerText="CesantÃ­as"  width="150"/>
+									<mx:DataGridColumn labelFunction="lbl_function_interesesCesantias" dataField="interesesCesantias" textAlign="center" headerText="Intereses CesantÃ­as"  width="180"/>
+									<mx:DataGridColumn labelFunction="lbl_function_ccf" dataField="ccf" textAlign="center" headerText="CCF" width="130"/>
+									<mx:DataGridColumn labelFunction="lbl_function_sena" dataField="sena" textAlign="center" headerText="SENA" width="130"/>
+									
+									<mx:DataGridColumn labelFunction="lbl_function_icbf" dataField="icbf" textAlign="center" headerText="ICBF" width="130"/>
+									<mx:DataGridColumn labelFunction="lbl_function_prima" dataField="prima" textAlign="center" headerText="Prima"  width="150"/>
+									<mx:DataGridColumn labelFunction="lbl_function_vacaciones" dataField="vacaciones" textAlign="center" headerText="Vacaciones"  width="150"/>
+									<mx:DataGridColumn labelFunction="lbl_function_total" dataField="total" textAlign="center" headerText="Total" width="150"/>
+									
+								</mx:columns>
+							</mx:DataGrid>
+							
+						</mx:Box>
+						
+						<!--INDICE 2-->
+						
+						<mx:Box width="95%" height="95%" >
+						
+							<mx:DataGrid width="100%"  height="97%"  
+								id="dgBonificaciones" themeColor="#307BAB" 
+								alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15"
+								dataProvider="{CausacionesMl.getInstance().listaBonificaciones}">
+								<mx:columns>
+									<mx:DataGridColumn  textAlign="center" headerText="BonificaciÃ³n" dataField="nombre"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Valor" labelFunction="lbl_function_valor" dataField="valor"/>
+									<mx:DataGridColumn headerText="Seleccionar" dataField="id"  textAlign="center">
+										        	       <mx:itemRenderer >
+														   <mx:Component>
+														      <mx:CheckBox  click="data.seleccionado=!data.seleccionado"  
+														      selected="{data.seleccionado}"  horizontalCenter="true"/>
+														   </mx:Component>   
+													   </mx:itemRenderer>
+										        	     </mx:DataGridColumn>
+								</mx:columns>
+							</mx:DataGrid>
+							
+						</mx:Box>
+						
+						<!--INDICE 3-->
+						
+						<mx:Box width="95%" height="95%" >
+						
+							<mx:DataGrid width="100%"  height="97%"  
+								id="dgProvisiones" themeColor="#307BAB" 
+								alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15"
+								dataProvider="{CausacionesMl.getInstance().listaProvisiones}">
+								<mx:columns>
+									<mx:DataGridColumn  textAlign="center" headerText="ProvisiÃ³n" dataField="nombre"/>
+									<mx:DataGridColumn  textAlign="center" headerText="ObservaciÃ³n" dataField="observacion"/>
+									<mx:DataGridColumn headerText="Seleccionar" dataField="id"  textAlign="center">
+										        	       <mx:itemRenderer >
+														   <mx:Component>
+														      <mx:CheckBox   click="data.seleccionado=!data.seleccionado"  
+														       selected="{data.seleccionado}"  horizontalCenter="true" />
+														      
+														   </mx:Component>   
+													   </mx:itemRenderer>
+										        	     </mx:DataGridColumn>
+									<mx:DataGridColumn  textAlign="center" headerText="Valor" itemRenderer="VIEW.Items.Causacion.ItemAddValProvision" dataField="valor" />
+								</mx:columns>
+							</mx:DataGrid>
+							
+						</mx:Box>
+						
+						<!--INDICE 4-->
+								
+						<mx:Box width="95%" height="95%" >
+						
+							<mx:DataGrid width="100%"  height="97%"  
+								id="dgDeducciones" themeColor="#307BAB" 
+								alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15"
+								dataProvider="{CausacionesMl.getInstance().listaDeducciones}" >
+								<mx:columns>
+									<mx:DataGridColumn  textAlign="center" headerText="DeducciÃ³n" dataField="nombre"/>
+									<mx:DataGridColumn  textAlign="center" headerText="ObservaciÃ³n" dataField="observacion"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Afecta IBC" dataField="afectaIbc" labelFunction="labelFunctionIbc"/>
+									<mx:DataGridColumn  textAlign="center" headerText="valor" labelFunction="lbl_function_valor" dataField="valor"/>
+									<mx:DataGridColumn headerText="Seleccionar" dataField="id"  textAlign="center">
+										        	       <mx:itemRenderer >
+														   <mx:Component>
+														      <mx:CheckBox  click="data.seleccionado=!data.seleccionado"  
+														      selected="{data.seleccionado}"  horizontalCenter="true"/>
+														   </mx:Component>   
+													   </mx:itemRenderer>
+										        	     </mx:DataGridColumn>
+								</mx:columns>
+							</mx:DataGrid>
+							
+						</mx:Box>
+						
+						<!--INDICE 5-->
+						
+						<mx:Box width="95%" height="95%" >
+							<mx:DataGrid width="100%" horizontalScrollPolicy="auto"  height="97%" dataProvider="{ContratoMl.getInstance().listCausacionps}" id="dgCausacionesPs" themeColor="#307BAB" alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15">
+								<mx:columns>
+								
+									<mx:DataGridColumn  textAlign="center" headerText="IdentificaciÃ³n" dataField="identificacion" width="180"/>
+									<mx:DataGridColumn  textAlign="center" headerText="RUT" dataField="rut" width="160"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Contratista"  dataField="contratista" width="250"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Servicios BÃ¡sicos" dataField="basico" labelFunction="lbl_function_basico" width="200"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Num. DÃ­as" dataField="diasTrabajados" width="150"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Devengados" dataField="totalDevengados" labelFunction="lbl_function_totalDevengados" width="150"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Otros" dataField="totalOtrosMas" labelFunction="lbl_function_totalOtrosMasS" width="150"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Total" dataField="total" labelFunction="lbl_function_totaL" width="170"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Retenciones" dataField="totalRetenciones" labelFunction="lbl_function_totalRetenciones" width="180"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Deducciones" dataField="totalDeducciones" labelFunction="lbl_function_totalDeducciones" width="180"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Total a pagar" dataField="totalAPagar" labelFunction="lbl_function_totalAPagaR" width="200"/>
+									
+								</mx:columns>
+							</mx:DataGrid>
+					  </mx:Box>
+					  
+					  <mx:Box width="95%" height="95%" >
+						
+							<mx:DataGrid width="100%"  height="97%"  
+								id="dgOtrosMas" themeColor="#307BAB" 
+								alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15"
+								dataProvider="{ContratoMl.getInstance().CausacionPpl.dgCausaciones.selectedItem.otrosMases}">
+								<mx:columns>
+									<mx:DataGridColumn  textAlign="center" headerText="Nombre" dataField="nombre"/>
+									<mx:DataGridColumn  textAlign="center" headerText="ObservaciÃ³n" dataField="observacion"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Valor" labelFunction="lbl_function_valor" dataField="valor" />
+									<mx:DataGridColumn  headerText="Afecta Ibc" dataField="strAfectaIbc"  textAlign="center" />
+				        	       	
+								</mx:columns>
+							</mx:DataGrid>
+						
+						</mx:Box>
+						
+						<mx:Box width="95%" height="95%" >
+							<mx:DataGrid width="100%"  height="97%"  
+								id="dgProvisionesPs" themeColor="#307BAB" 
+								alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15"
+								dataProvider="{dgCausacionesPs.selectedItem.provisionPses}">
+								<mx:columns>
+									<mx:DataGridColumn  textAlign="center" headerText="ProvisiÃ³n" dataField="nombre"/>
+									<mx:DataGridColumn  textAlign="center" headerText="ObservaciÃ³n" dataField="observacion"/>
+									<mx:DataGridColumn  textAlign="center" labelFunction="lbl_function_valor" headerText="Valor" dataField="valor" />
+								</mx:columns>
+							</mx:DataGrid>
+							
+						</mx:Box>
+						
+						<mx:Box width="95%" height="95%" >
+							<mx:DataGrid width="100%"  height="97%"  
+								id="dgOtrosMasPs" themeColor="#307BAB" 
+								alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15"
+								dataProvider="{dgCausacionesPs.selectedItem.otrosMasPses}">
+								<mx:columns>
+									<mx:DataGridColumn  textAlign="center" headerText="Nombre" dataField="nombre"/>
+									<mx:DataGridColumn  textAlign="center" headerText="ObservaciÃ³n" dataField="observacion"/>
+									<mx:DataGridColumn  textAlign="center" headerText="Valor" labelFunction="lbl_function_valor" dataField="valor" />
+									<mx:DataGridColumn  textAlign="center" headerText="Porcentaje" dataField="porcentaje" />
+									<mx:DataGridColumn  textAlign="center" headerText="Valor RetenciÃ³n" labelFunction="lbl_function_valorRetencion" dataField="valorRetencion" />
+									<mx:DataGridColumn  textAlign="center" headerText="Total" labelFunction="lbl_function_totaL" dataField="total" />
+								</mx:columns>
+							</mx:DataGrid>
+							
+						</mx:Box>
+								
+			      	</mx:ViewStack>
+		
+		     <!--/mx:Box-->
+		     
+		  <!--/mx:ViewStack-->  
+		
+	</mx:Box>
+	<!--menu:MenuAbajo/-->
+	<mx:Script>
+	<![CDATA[
+		import VIEW.contratacion.CausacionPs.frmModificarBasicoPs;
+		import VIEW.contratacion.CausacionPs.frmModificarDiasTrabajadosPs;
+		import VIEW.contratacion.CausacionPs.frmOtrosMasPSView;
+		import VIEW.contratacion.CausacionPs.frmProvisionesPSView;
+		import VIEW.contratacion.Causacion.frmModificarIbc;
+		import VIEW.contratacion.Causacion.frmModificarDiasTrabajados;
+		import VIEW.contratacion.Causacion.frmOtrosMasView;
+		import EVENT.RecursoHumanoEvent;
+		import VIEW.CuentasPagar.AgregarCuentaPorPagar;
+		import EVENT.CausacionEvent;
+		import mx.events.CloseEvent;
+		import com.adobe.cairngorm.control.CairngormEvent;
+		import mx.managers.PopUpManager;
+		import VO.ValorIdVO;
+		import VO.CausacionNominaVO;
+		import mx.collections.ArrayCollection;
+		import MODEL.CausacionesMl;
+		import mx.controls.Alert;
+		import mx.collections.XMLListCollection;
+		import mx.events.MenuEvent;
+		import flash.sampler.getInvocationCount;
+		import MODEL.UtilidadesMl;
+		import mx.controls.Menu;
+		import MODEL.PantallasMl;
+		import com.adobe.cairngorm.control.CairngormEventDispatcher;
+		import EVENT.ContratoEvent;
+		import VIEW.otros.CbxCoincidencia;
+		import MODEL.ContratoMl;
+		import MODEL.OficioMl;
+		
+		     [Bindable]
+			 [Embed(source="/REC/IMAGENES/f.png")]
+		 	  public var buscar:Class;
+		 	 
+		 	 [Embed(source="/REC/IMAGENES/warn2.png")]
+			public var alerta:Class;
+		 	 
+		 	 [Bindable] public var listCausacionEmpresa:Object;
+		 	 
+		 	 [Bindable] public var enableOpciones:Boolean=false;   
+		 	 
+		 	 [Bindable]
+              private var ArrayOpciones:Array = [{generarCausaciones:'GENERAR CAUSACIONES', id:1},{generarCausaciones:'VER CAUSACIONES', id:2}];
+		 	 
+		 	[Bindable]
+            public var menuBarCollection:XMLListCollection;
+    		
+    		[Bindable]
+            public var menubarXMLInicio:XMLList =
+                <>
+			    <menuitem label="Causaciones" >
+			        <menuitem label="Generar causaciÃ³n" data="4" enabled="true" />
+			        <menuitem label="Calcular causaciÃ³n" data="5" enabled="true"/>
+			        <menuitem label="Guardar causaciÃ³n" data="6" enabled="true"/>
+			        <menuitem label="Ver causaciones" data="7" enabled="true">
+			            <menuitem label="PrestaciÃ³n Servicios" data="8" enabled="true"/>
+			            <menuitem label="Nomina" data="9" enabled="true"/>
+			        </menuitem>
+			    </menuitem>                	
+			    <menuitem label="Agregar" >
+			        <menuitem label="Provisiones"  enabled="true">
+			        	<menuitem label="Ver" data="2" enabled="true"/>
+						<menuitem label="Agregar" data="16" enabled="false"/>
+			            <menuitem label="Modificar" data="17" enabled="false"/>
+			            <menuitem label="Eliminar" data="18" enabled="false"/>
+			        </menuitem>
+			        <menuitem label="Deducciones" data="3" enabled="true"/>
+			        <menuitem label="Otros MÃ¡s"   >
+			        	<menuitem label="Ver" data="15" enabled="true"/>
+						<menuitem label="Agregar" data="10" enabled="false"/>
+			            <menuitem label="Modificar" data="11" enabled="false"/>
+			            <menuitem label="Eliminar" data="12" enabled="false"/>
+			        </menuitem>
+			    </menuitem>
+			    <menuitem label="Modificar" >
+			        <menuitem label="DÃ­as trabajados" data="13" enabled="true"/>
+			        <menuitem label="IBC" data="14" enabled="true"/>
+			    </menuitem>
+			    </>;
+                
+                
+             /////////////////////////////////CONCERNIENTE AL ENVIO A CUENTAS POR PAGAR//////////////
+             
+             public function opciones(event:MenuEvent):void{
+             	
+             	var op:int =event.item.@data;
+             	
+             	switch(op){
+             		
+             		case 1:
+             		
+             		    if(dgCausaciones.selectedItem!=null){
+             		    	
+             		    	/*var cuentasPagar:AgregarCuentaPorPagar = AgregarCuentaPorPagar(PopUpManager.createPopUp(PantallasMl.atsys,AgregarCuentaPorPagar,true));
+             		    	PopUpManager.centerPopUp(cuentasPagar);
+             		    	*/
+             		    	PantallasMl.ESTADO_PANTALLA=PantallasMl.getInstance().PANTALLA_AGREGAR_CUENTAS_X_PAGAR_CAUSACION_NOMINA;                 	
+					                                  													
+						    var evx:RecursoHumanoEvent = new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_RECURSO_HUMANO,null,null);
+						    CairngormEventDispatcher.getInstance().dispatchEvent(evx);
+             		    	
+             		    }else{
+             		    	
+             		           Alert.show("SELECCIONE UNA CAUSACION PARA REALIZAR ESTA OPERACIÃ“N","Mensaje de alerta",0,null,null,alerta,0);
+             		          
+             		         }  
+             		
+             		break;
+             		
+             	}
+             	
+             }
+               
+                
+		 	//////////////////////////////////////////////////ps///////////////////
+		 	
+             
+		 	 
+		 	 public function crearPantalla():void
+		     {
+				    ContratoMl.getInstance().CausacionPpl = this;
+				    
+		     }
+		     
+		     public function showWindow(index:int):void{
+		     	
+		     	 if(index==1){
+		     	 	 
+		     	 	 PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_PARAMETROS_GENERAR_CAUSACION;
+		     	 	 
+		     	 	 var e:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_TIPO_CONTRATO,null,null,null);
+					 CairngormEventDispatcher.getInstance().dispatchEvent(e);
+		     	 	
+		     	 }
+		     	
+		     }
+		     
+		     private function lkVolverCausacionClick():void{
+		     	
+		     	var borrar:int = CausacionesMl.getInstance().currentTipoCausacion;
+		     	modificarItemsMenuBar(4);
+                menuBarCollection = new XMLListCollection(menubarXMLInicio);
+		     	if(!guardarCausacion)
+		     	{
+						if(verificarDatosSeleccionados())
+						{		     		
+		     				Alert.yesLabel = "SI";
+        					Alert.noLabel = "NO";
+        					Alert.show("Los datos que no se hayan calculado se perderÃ¡n." + "\n" +"Â¿EstÃ¡ seguro de continuar?","",Alert.YES|Alert.NO,this,handlerAlertReturnCausaPpl,null,1);
+		    			}
+		    			else{
+			    				  if(CausacionesMl.getInstance().currentTipoCausacion == 2)
+						     		{
+						     			viewStackCausaciones.selectedIndex = 0;
+						     		}
+						     		else{
+						     			viewStackCausaciones.selectedIndex = 5;
+						     		} 	
+		    			    }
+		     	}
+		     	else
+		     	{
+		     		
+		     		if(CausacionesMl.getInstance().currentTipoCausacion == 2)
+		     		{
+		     			viewStackCausaciones.selectedIndex = 0;
+		     		}
+		     		else{
+		     			viewStackCausaciones.selectedIndex = 5;
+		     		} 
+		     	}
+		     	
+		     }
+		     
+		     private function getProvisionesSeleccionadas():Array{
+			   	var arrayRetorno:Array = new Array();
+		       	for each(var x:* in CausacionesMl.getInstance().listaProvisiones){
+		     		
+		     		if(x.seleccionado){
+		     			var valorIdVO:ValorIdVO = new ValorIdVO().ValorIdVOConstructor(x.id,x.valor);
+		     			arrayRetorno.push(valorIdVO);	
+		     		}
+		     					     		
+		     	}
+		     	return arrayRetorno;
+		     	
+		     }
+		     
+		     private function clickGurdarCausacion():void{
+		     	CausacionesMl.crearCausacion();
+		     }
+		     /******************************************************/
+		     	 var  guardarCausacion:Boolean = false;
+		     	 [Bindable] public var op:int;
+                private function menuHandler(event:MenuEvent):void  {
+					
+                	op = event.item.@data;
+                	var matenerDatos:Boolean;
+                	
+                	modificarItemsMenuBar(4);
+                	menuBarCollection = new XMLListCollection(menubarXMLInicio);
+                	
+                	switch(op){
+                		case 1://AGREGAR BONIFICACIONES
+                		if(CausacionesMl.getInstance().currentTipoCausacion == 2)
+                		{	
+                		    if(dgCausaciones.selectedItem != null)
+                			{
+                				if(viewStackCausaciones.selectedIndex==0)
+                				{
+                					matenerDatos = false;	
+                					CausacionesMl.getInstance().getDeduccionesSelecciondas(dgCausaciones.selectedIndex);	
+                					CausacionesMl.getInstance().getProvisionesSelecciondas(dgCausaciones.selectedIndex);
+                				}
+                				else
+                				{
+                					matenerDatos = true;
+                				}
+                				
+                				viewStackCausaciones.selectedIndex = 2;
+                			}
+                			else
+                			{
+                		    	Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+              			    }
+		           		}else
+		           		{
+               			    menuHandlerPS(event);
+              		    }
+                		
+                		break;
+                			
+                		case 2://Provisiones
+                			if(CausacionesMl.getInstance().currentTipoCausacion==2)
+                			{
+	                			if(dgCausaciones.selectedItem != null)
+	                			{
+	                				if(viewStackCausaciones.selectedIndex==0)
+	                				{
+	                					matenerDatos = false;
+	                					CausacionesMl.getInstance().getDeduccionesSelecciondas(dgCausaciones.selectedIndex);	
+	                					CausacionesMl.getInstance().getProvisionesSelecciondas(dgCausaciones.selectedIndex);	
+	                				}
+	                				else
+	                				{
+	                					matenerDatos = true;
+	                				}
+	                				
+	                				viewStackCausaciones.selectedIndex = 3;
+	                				fijarValoresArrayProvisiones();
+	                			}
+	                			else
+	                				Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+	                		}
+	                		else
+	                		{
+	                			menuHandlerPS(event);
+	                		}
+                			break;
+                		case 3://AGREGAR DEDUCCIONES
+                			if(CausacionesMl.getInstance().currentTipoCausacion==2)
+                			{
+	                			if(dgCausaciones.selectedItem != null)
+	                			{
+	                				if(viewStackCausaciones.selectedIndex==0)
+	                				{
+	                					matenerDatos = false;
+	                					CausacionesMl.getInstance().getDeduccionesSelecciondas(dgCausaciones.selectedIndex);	
+	                					CausacionesMl.getInstance().getProvisionesSelecciondas(dgCausaciones.selectedIndex);
+	                				}
+	                				else
+	                				{
+	                					matenerDatos = true;
+	                				}
+	                				
+	                				viewStackCausaciones.selectedIndex = 4;
+	                			}
+	                			else
+	                				Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+	                		}
+	                		else{
+	                			menuHandlerPS(event);
+	                		}
+                			break;
+                		case 4://LLAMAR PANTALLA GENERAR CAUSACION
+                			
+                			PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_PARAMETROS_GENERAR_CAUSACION;
+		     	 	 		var e:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_TIPO_CONTRATO,null,null,null);
+		     	 	 		CairngormEventDispatcher.getInstance().dispatchEvent(e);
+		     	 	 	break;
+                		case 5://Calcular causacion
+                			if(CausacionesMl.getInstance().currentTipoCausacion==2)
+                			{
+	                			if(ContratoMl.getInstance().listCausacionNomina != null /*&& verificarDatosSeleccionados()*/ ){
+	                   				agregarValoresSeleccionadosToCausNomina();
+	                   				guardarCausacion = true;
+	                   				viewStackCausaciones.selectedIndex = 0;
+	                   				
+	                   				var eventoCalc:CausacionEvent = new CausacionEvent(CausacionEvent.CALCULAR_CAUSACION_NOMINA);
+	                   				CairngormEventDispatcher.getInstance().dispatchEvent(eventoCalc);
+	                   				
+	                   			}
+	                			else{
+	                				Alert.show("No se puede realizar el cÃ¡lculo de la causaciÃ³n. No se encontraron datos.");
+	                			}
+	                		}
+	                		else{
+	                			menuHandlerPS(event);
+	                		}
+                			break;
+                			
+                		case 6://Generar causacion
+                		   		if(CausacionesMl.getInstance().currentTipoCausacion==2)
+                				{
+                					if(ContratoMl.getInstance().listCausacionNomina!=null)
+	                				{
+	                					viewStackCausaciones.selectedIndex = 0;
+	                					clickGurdarCausacion();
+	                				}
+	                				else
+                					{
+                						Alert.show("No se encontrÃ³ ninguna causaciÃ³n para guardar");
+                					}
+                			    }
+		                		else
+		                		{
+		                			menuHandlerPS(event);
+		                		}
+                			
+                			break;
+                			
+                			case 8:///list ps
+	                			 CausacionesMl.getInstance().tipoCausacion = 0;
+	                			 var evzx:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_FECHAS_CAUSADAS,null,null,null);
+	                			 CairngormEventDispatcher.getInstance().dispatchEvent(evzx);
+                			 
+                			break;
+                			
+                			case 9:///list Nomina
+                			
+                			 	CausacionesMl.getInstance().tipoCausacion = 1;
+                			    var evzxa:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_FECHAS_CAUSADAS,null,null,null);
+	                			CairngormEventDispatcher.getInstance().dispatchEvent(evzxa);
+                			    
+                			break;
+                			
+                			case 10://AGREGAR OTROS MAS LANZA EL FORMULARIO
+                				 
+                				if(CausacionesMl.getInstance().currentTipoCausacion==2)
+                				{ 
+	                				if(dgCausaciones.selectedItem!=null)
+	                				{
+	                					if(dgOtrosMas!=null)
+	                						dgOtrosMas.selectedItem = null;
+	                					
+	                					modificarItemsMenuBar(3);		 
+	                					PopUpManager.createPopUp(this,frmOtrosMasView,true);
+	                					viewStackCausaciones.selectedIndex = 6;
+	                					
+	                				}
+	                				else
+		                				Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+		                		}
+		                		else
+		                		{
+		                			menuHandlerPS(event);
+		                		}
+                			break;
+                				
+                			case 11://MODIFICAR OTROS MAS
+                				
+                				if(CausacionesMl.getInstance().currentTipoCausacion==2)
+                				{ 
+	                				if(dgOtrosMas!=null)
+	                				{
+		                				if(dgOtrosMas.selectedItem!=null)
+		                				{
+		                					modificarItemsMenuBar(3);
+		                					PopUpManager.createPopUp(this,frmOtrosMasView,true);
+		                				}
+		                				else
+			                				Alert.show("Debe seleccionar un item de la grilla","Seleccione item");
+			                		}
+			                	}
+			                	else
+			                	{
+			                		menuHandlerPS(event);
+			                	}
+                			break;
+                			
+                			case 12://ELIMINAR OTROS MAS
+                				if(CausacionesMl.getInstance().currentTipoCausacion==2)
+                				{ 
+	                				if(dgOtrosMas!=null)
+	                				{
+	                					if(dgOtrosMas.selectedItem!=null)
+	                					{
+	                						modificarItemsMenuBar(3);
+	                						eliminarItemOtrosMas();
+	                					}
+	                					else
+		                					Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+	                				}
+	                				else
+		                				Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+		                		}
+		                		else
+		                		{
+		                			menuHandlerPS(event);
+		                		}
+                			break;
+                			
+                			case 13://modificar dias trabajados
+	                			if(CausacionesMl.getInstance().currentTipoCausacion==2)
+	                			{ 
+	                				if(dgCausaciones!=null)
+	                				{
+	                					if(dgCausaciones.selectedItem!=null){
+	                						
+	                					var frmModDias:frmModificarDiasTrabajados = frmModificarDiasTrabajados(PopUpManager.createPopUp(PantallasMl.atsys,frmModificarDiasTrabajados,true));
+	                					PopUpManager.centerPopUp(frmModDias); 
+	                						viewStackCausaciones.selectedIndex = 0;
+	                						
+	                					}
+	                					else
+		                					Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+	                				}
+	                			}
+	                			else
+		                		{
+		                			menuHandlerPS(event);
+		                		}
+                			break;
+                			
+                			case 14://MODIFICAR IBC
+                				if(CausacionesMl.getInstance().currentTipoCausacion==2)
+                				{
+	                				if(dgCausaciones!=null)
+	                				{
+	                					if(dgCausaciones.selectedItem!=null){
+	                						
+	                						var frmModIBC:frmModificarIbc = frmModificarIbc(PopUpManager.createPopUp(PantallasMl.atsys,frmModificarIbc,true));
+	                						PopUpManager.centerPopUp(frmModIBC);
+	                						viewStackCausaciones.selectedIndex = 0;
+	                					}
+	                					else
+		                					Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+	                				}
+	                			}
+	                			else
+	                			{
+	                				menuHandlerPS(event);
+	                			}
+                			break;
+                			
+                			case 15://VER ORTROS MAS
+                				if(CausacionesMl.getInstance().currentTipoCausacion==2)
+                				{
+	                				if(dgCausaciones!=null)
+	                				{
+	                					if(dgCausaciones.selectedItem!=null)
+	                					{
+	                						modificarItemsMenuBar(3);	
+	                						viewStackCausaciones.selectedIndex = 6;
+	                						
+	                					}
+	                					else
+		                					Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+	                				}
+	                			}
+	                			else
+	                			{
+	                				menuHandlerPS(event);
+	                			}
+                			break;
+                			
+                			case 16://lanzar formulario agrgar causacion ps
+                				if(menubarXMLInicio.menuitem[4].menuitem[1].@enabled != false)
+                					menuBarCollection = new XMLListCollection(CausacionesMl.getInstance().menubarXMLProvisionPS);
+                				if(dgCausacionesPs!=null){
+                					if(dgCausacionesPs.selectedItem!=null)
+                					{
+                						if(dgProvisionesPs!=null)
+                							dgProvisionesPs.selectedItem = null;
+                							
+                					 	PopUpManager.createPopUp(this,frmProvisionesPSView,true);
+                					}
+                					else
+	                					Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+                				
+                				}
+                			break;
+                			
+                			case 17://lanzar formulario modificar causacion ps
+                				menuBarCollection = new XMLListCollection(CausacionesMl.getInstance().menubarXMLProvisionPS);
+                				if(dgCausacionesPs!=null){
+                					if(dgCausacionesPs.selectedItem!=null)
+                					{
+                						if(dgProvisionesPs!=null){
+                							PopUpManager.createPopUp(this,frmProvisionesPSView,true);
+                						}		
+                					}
+                					else
+	                					Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+                				
+                				}
+                			break;
+                			
+                			case 18://eliminar item provision PS
+                				menuBarCollection = new XMLListCollection(CausacionesMl.getInstance().menubarXMLProvisionPS);
+                				if(dgCausacionesPs!=null){
+                					if(dgCausacionesPs.selectedItem!=null)
+                					{
+                						if(dgProvisionesPs!=null)
+                						{
+                							if(dgProvisionesPs.selectedItem!=null)
+                							{
+                								eliminarItemProvisionPs();
+                							}
+                							else
+                							{
+                								Alert.show("Debe seleccionar un Item de la grilla","Seleccione Item");
+                							}
+                						}	
+                					}
+                					else
+	                					Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+                				
+                				}
+                			break;
+                	}
+                
+            }
+            
+            private function eliminarItemOtrosMas():void{
+            	
+            	var indexSeleccionado:int = dgCausaciones.selectedIndex;
+       			var indexSeleccionado1:int = dgOtrosMas.selectedIndex;
+       			var objSeleccionado:Object = dgCausaciones.selectedItem;
+       			(objSeleccionado.otrosMases as Array).splice(indexSeleccionado1,1);
+       			(ContratoMl.getInstance().listCausacionNomina as ArrayCollection).setItemAt(objSeleccionado,indexSeleccionado);
+				            	
+            }
+            
+            private function eliminarItemOtrosMasPs():void{
+            	
+            	var indexSeleccionado:int = dgCausacionesPs.selectedIndex;
+       			var indexSeleccionado1:int = dgOtrosMasPs.selectedIndex;
+       			var objSeleccionado:Object = dgCausacionesPs.selectedItem;
+       			(objSeleccionado.otrosMasPses as Array).splice(indexSeleccionado1,1);
+       			(ContratoMl.getInstance().listCausacionps as ArrayCollection).setItemAt(objSeleccionado,indexSeleccionado);
+				            	
+            }
+            
+            private function eliminarItemProvisionPs():void{
+            	
+            	var indexSeleccionado:int = dgCausacionesPs.selectedIndex;
+       			var indexSeleccionado1:int = dgProvisionesPs.selectedIndex;
+       			var objSeleccionado:Object = dgCausacionesPs.selectedItem;
+       			(objSeleccionado.provisionPses as Array).splice(indexSeleccionado1,1);
+       			(ContratoMl.getInstance().listCausacionps as ArrayCollection).setItemAt(objSeleccionado,indexSeleccionado);
+				            	
+            }
+
+            // Event handler to initialize the MenuBar control.
+            public function initCollections():void {
+                menuBarCollection = new XMLListCollection(menubarXMLInicio); 
+            }
+            
+            [Bindable] public var arrayValoresProvisiones:Array;
+            private function fijarValoresArrayProvisiones():void{
+            	arrayValoresProvisiones = new Array();
+            	for (var i:int = 0; i<(CausacionesMl.getInstance().listaProvisiones as ArrayCollection).length;i++)
+            	{
+            		arrayValoresProvisiones.push(0);
+            	}
+           }
+            
+            private function agregarValoresSeleccionadosToCausNomina():void{
+            	            	
+            	var provisiones:Array = new Array();
+            	provisiones = getProvisionesSeleccionadas();
+            	var idsDeducciones:Array = new Array();
+            	idsDeducciones = getDeduccionesSeleccionadas();
+            	
+            	var indexSelect:int = dgCausaciones.selectedIndex;
+            	var objSeleccionado:Object = dgCausaciones.selectedItem;
+            	objSeleccionado.idsDeducciones = idsDeducciones;
+            	objSeleccionado.provisiones = provisiones;
+            	
+            	(ContratoMl.getInstance().listCausacionNomina as ArrayCollection).setItemAt(objSeleccionado,indexSelect);
+            	
+            }
+            private function getDeduccionesSeleccionadas():Array{
+            	var array:Array = new Array();
+            	for each(var x:* in CausacionesMl.getInstance().listaDeducciones){
+            		if(x.seleccionado)   
+            		{
+            			array.push(x.id);
+            		}
+            	}
+            	return array;
+            }
+                       
+            private function verificarDatosSeleccionados():Boolean  
+            {
+            	var retorno:Boolean = false;
+            	for each(var i:* in CausacionesMl.getInstance().listaBonificaciones)
+            	{
+            		if(i.seleccionado==true)
+            		{
+            			retorno = true;
+            			break;
+            		}
+            	}
+            	if(!retorno)
+            	{
+            		for each(var j:* in CausacionesMl.getInstance().listaDeducciones)
+	            	{
+	            		if(j.seleccionado==true)
+	            		{
+	            			retorno = true;
+	            			break;
+	            		}
+	            	}
+	
+            	}
+            	if(!retorno)
+            	{
+            		for each(var k:* in CausacionesMl.getInstance().listaProvisiones)
+	            	{
+	            		if(k.seleccionado==true)
+	            		{
+	            			retorno = true;
+	            			break;
+	            		}
+	            	}
+            		
+            	}
+            	
+            	return retorno;	
+            }
+            
+            private function handlerAlertSaveCausacion(event:CloseEvent):void{
+            
+	            switch(event.detail){
+	            	
+		             case Alert.YES:
+		                clickGurdarCausacion();
+		                viewStackCausaciones.selectedIndex = 0;
+		             break;
+	            }
+            }
+            
+            private function handlerAlertReturnCausaPpl(event:CloseEvent):void{
+            
+	            switch(event.detail){
+	            	
+		             case Alert.YES:
+		             	if(CausacionesMl.getInstance().currentTipoCausacion==2){
+		                	viewStackCausaciones.selectedIndex = 0;
+		               	}
+		              	else{
+		              		viewStackCausaciones.selectedIndex = 5;
+		              	}
+		             break;
+	            }
+            }
+            
+            public function modificarItemsMenuBar(op:int):void{
+            	switch(op){
+            		case 1:
+            			menubarXMLInicio.menuitem[0].@enabled = true;
+            			menubarXMLInicio.menuitem[1].@enabled = false;
+            			menubarXMLInicio.menuitem[2].@enabled = true;
+            			menubarXMLInicio.menuitem[3].@enabled = true;
+            			
+            		break;
+            		
+            		case 2:
+            		     		
+            			menubarXMLInicio.menuitem[0].@enabled = false;
+            			menubarXMLInicio.menuitem[1].@enabled = true;
+            			menubarXMLInicio.menuitem[2].@enabled = true;
+            			menubarXMLInicio.menuitem[3].@enabled = false;
+            			 
+            		break;
+            		
+            		case 3://Modificar menu bar otros mas
+            			menubarXMLInicio.menuitem[6].menuitem[1].@enabled = true;
+            			menubarXMLInicio.menuitem[6].menuitem[2].@enabled = true;
+            			menubarXMLInicio.menuitem[6].menuitem[3].@enabled = true;
+            		break;
+            		
+            		case 4:
+            			menubarXMLInicio.menuitem[6].menuitem[1].@enabled = false;
+            			menubarXMLInicio.menuitem[6].menuitem[2].@enabled = false;
+            			menubarXMLInicio.menuitem[6].menuitem[3].@enabled = false;
+            		break;
+            		
+            		case 5://bloquear estado modificasr ibc
+            				menubarXMLInicio.menuitem[8].@enabled = false;
+            				
+            		break;
+            		case 6://Activar estado modificasr ibc
+            				menubarXMLInicio.menuitem[8].@enabled = true;
+            				
+            		break;
+            		case 7://cuendo se selecciona ver causaciones
+            			menubarXMLInicio.menuitem[1].@enabled = false;
+            			menubarXMLInicio.menuitem[2].@enabled = false;
+            			menubarXMLInicio.menuitem[4].menuitem[1].@enabled = false;
+            			menubarXMLInicio.menuitem[4].menuitem[2].@enabled = false;
+            			menubarXMLInicio.menuitem[4].menuitem[3].@enabled = false;
+            			menubarXMLInicio.menuitem[6].menuitem[1].@enabled = false;
+            			menubarXMLInicio.menuitem[6].menuitem[2].@enabled = false;
+            			menubarXMLInicio.menuitem[6].menuitem[3].@enabled = false;
+            			menubarXMLInicio.menuitem[7].@enabled = false;
+            			menubarXMLInicio.menuitem[8].@enabled = false;
+            		break;
+            		
+            		case 8://cuando no se ha seleccionado ver causaciones
+            			menubarXMLInicio.menuitem[1].@enabled = true;
+            			menubarXMLInicio.menuitem[2].@enabled = true;
+            			menubarXMLInicio.menuitem[7].@enabled = true;
+            			menubarXMLInicio.menuitem[8].@enabled = true;
+            		break;
+            	
+            	}
+            }
+            
+            private function menuHandlerPS(event:MenuEvent):void{
+            	var op:int =event.item.@data;
+            	switch(op){
+            		
+            		case 1://AGREGAR BONIFICACIONES
+            			if( dgCausacionesPs.selectedItem!=null){
+            				
+            				if(viewStackCausaciones.selectedIndex!=2&&viewStackCausaciones.selectedIndex!=3&&viewStackCausaciones.selectedIndex!=4)
+            				{
+            					//CausacionesMl.getInstance().getBonificacionsSeleccionadasPs(dgCausacionesPs.selectedIndex);
+            					//CausacionesMl.getInstance().getProvisionesSelecciondasPs(dgCausacionesPs.selectedIndex);
+            					CausacionesMl.getInstance().getDeduccionesSelecciondasPs(dgCausacionesPs.selectedIndex);	
+            				}
+           			       	
+           			       	viewStackCausaciones.selectedIndex = 2;
+           			       	
+        			    }else{
+       			    	    Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+       			         }
+            		break;
+            		
+            		case 2://PROVISIONES
+            			if(dgCausacionesPs.selectedItem != null)
+            			{
+            				
+            				if(viewStackCausaciones.selectedIndex!=2&&viewStackCausaciones.selectedIndex!=3&&viewStackCausaciones.selectedIndex!=4)
+            				{
+            					//CausacionesMl.getInstance().getBonificacionsSeleccionadasPs(dgCausacionesPs.selectedIndex);	
+            					//CausacionesMl.getInstance().getProvisionesSelecciondasPs(dgCausacionesPs.selectedIndex);
+            					CausacionesMl.getInstance().getDeduccionesSelecciondasPs(dgCausacionesPs.selectedIndex);
+            					
+            				}
+            				var label_item:Boolean = menubarXMLInicio.menuitem[4].menuitem[1].@enabled;
+            				if(label_item  != false)
+            					menuBarCollection = new XMLListCollection(CausacionesMl.getInstance().menubarXMLProvisionPS);
+            				viewStackCausaciones.selectedIndex = 7;
+            				
+            				            				
+            			}
+            			else
+            				Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+            		break;
+            		
+            		case 3://DEDUCCIONES
+            			if(dgCausacionesPs.selectedItem != null)
+            			{
+            				if(viewStackCausaciones.selectedIndex!=2&&viewStackCausaciones.selectedIndex!=3&&viewStackCausaciones.selectedIndex!=4
+            				&&viewStackCausaciones.selectedIndex!=7&&viewStackCausaciones.selectedIndex!=8)
+            				{
+            					//CausacionesMl.getInstance().getProvisionesSelecciondasPs(dgCausacionesPs.selectedIndex);
+            					CausacionesMl.getInstance().getDeduccionesSelecciondasPs(dgCausacionesPs.selectedIndex);
+            				}
+            					
+            				
+            				viewStackCausaciones.selectedIndex = 4;
+            				
+            			}
+            			else
+            			{
+            				Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+            				
+            			}
+            		break;
+            		
+            		case 4:
+            		
+            		break;
+            		
+            		case 5:
+            		            			
+	            			calcularCausacionesPs();
+	            			viewStackCausaciones.selectedIndex=5;
+	            			
+	            			var evs:CausacionEvent = new CausacionEvent(CausacionEvent.CALCULAR_CAUSACION_PS);
+	            			CairngormEventDispatcher.getInstance().dispatchEvent(evs);
+	            			
+            		break;
+            		
+            		case 6:
+            			if(ContratoMl.getInstance().listCausacionps)
+            			{
+            				var evento:CausacionEvent = new CausacionEvent(CausacionEvent.CREAR_CAUSACIONES_PS);
+            				CairngormEventDispatcher.getInstance().dispatchEvent(evento);
+            			}
+            		break;
+            		
+            		case 15://ver otros mas PS
+            			if(dgCausacionesPs!=null)
+            			{
+            				if(dgCausacionesPs.selectedItem!=null)
+            				{
+            					modificarItemsMenuBar(3);
+            					viewStackCausaciones.selectedIndex = 8;
+            				}
+            				else
+            				{
+            					Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+            				}
+            			}
+            		break;
+            		
+            		case 10:
+            			modificarItemsMenuBar(3);
+            			if(dgOtrosMasPs!=null)
+    						dgOtrosMasPs.selectedItem = null;
+            			PopUpManager.createPopUp(this,frmOtrosMasPSView,true);
+            		break;
+            		
+            		case 11:
+            		
+            			if(dgOtrosMasPs!=null)
+						{
+            				if(dgOtrosMasPs.selectedItem!=null)
+            				{
+            					modificarItemsMenuBar(3);
+            					PopUpManager.createPopUp(this,frmOtrosMasPSView,true);
+            				}
+            				else
+                				Alert.show("Debe seleccionar un item de la grilla","Seleccione item");
+                		}
+            		break;
+            		
+            		case 12:
+            			
+            			if(dgOtrosMasPs!=null)
+        				{
+        					if(dgOtrosMasPs.selectedItem!=null)
+        					{
+        						modificarItemsMenuBar(3);
+        						eliminarItemOtrosMasPs();
+        					}
+        					else
+            					Alert.show("Debe seleccionar un item de la grilla","Seleccione Item");
+        				}
+            			
+            		break;
+            		
+            		case 13:
+            			if(dgCausacionesPs!=null)
+        				{
+        					if(dgCausacionesPs.selectedItem!=null){
+        						
+        					var frmModDias:frmModificarDiasTrabajadosPs = frmModificarDiasTrabajadosPs(PopUpManager.createPopUp(PantallasMl.atsys,frmModificarDiasTrabajadosPs,true));
+        					PopUpManager.centerPopUp(frmModDias); 
+        						viewStackCausaciones.selectedIndex = 5;
+        						
+        					}
+        					else
+            					Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+        				}
+        			
+            		break;
+            		
+            		case 14:
+            			if(dgCausacionesPs!=null)
+        				{
+        					if(dgCausacionesPs.selectedItem!=null){
+        						
+        						var frmModIBC:frmModificarBasicoPs = frmModificarBasicoPs
+        						(PopUpManager.createPopUp(PantallasMl.atsys,frmModificarBasicoPs,true));
+        						PopUpManager.centerPopUp(frmModIBC);
+        						viewStackCausaciones.selectedIndex = 5;
+        					}
+        					else
+            					Alert.show("Debe seleccionar una causaciÃ³n","Seleccione causaciÃ³n");
+        				}
+            		break;
+            	
+            	}
+            }
+            
+            private function calcularCausacionesPs():void{
+            
+            	var objSeleccionado:Object = dgCausacionesPs.selectedItem;
+              	objSeleccionado.idsDeducciones	= getDeduccionesSeleccionadas();
+            	(ContratoMl.getInstance().listCausacionps as ArrayCollection).setItemAt(objSeleccionado,dgCausacionesPs.selectedIndex);
+            	
+            }
+            
+            private function labelFunctionIbc(item:Object,dgcolumn:DataGridColumn):String {
+               	
+	         if(item.afectaIbc	== 1/*Ingreso*/){
+             	return "si";	
+             }
+             else{
+				return "no";
+             
+             }
+         }
+            
+	]]>
+   </mx:Script>
+	
+</mx:VBox>

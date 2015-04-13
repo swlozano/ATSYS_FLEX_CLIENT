@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box verticalAlign="middle" horizontalAlign="center" xmlns:mx="http://www.adobe.com/2006/mxml" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			import VO.ValorIdVO;
+			import MODEL.FacturasMl;
+			import MODEL.UtilidadesMl;
+			
+			
+			private var valorIdVO:ValorIdVO;
+			private function txtChange():void{
+				    
+				    var obj:Object;
+				    
+				    obj = FacturasMl.getInstance().valorIdsRetenciones;
+				    
+					valorIdVO = new ValorIdVO().ValorIdVOConstructor(
+					FacturasMl.getInstance().agregarItemClone.dgretenciones.selectedItem.id,
+					txtValRetenciones.text==""?(0):(parseFloat(txtValRetenciones.text)));
+					FacturasMl.getInstance().valorIdsRetenciones[FacturasMl.getInstance().agregarItemClone.dgretenciones.selectedIndex]=valorIdVO;
+				    
+				    obj = FacturasMl.getInstance().valorIdsRetenciones;
+				    
+				    trace();
+			}
+			private function txtMouseOut():void{
+					
+			}
+		]]>
+	</mx:Script>
+	<mx:TextInput id="txtValRetenciones" change="{txtChange()}" restrict="0.1-9.9" textAlign="center" text="{data.valor}"/>
+</mx:Box>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:ComboBox xmlns:mx="http://www.adobe.com/2006/mxml" dataProvider="{UtilidadesMl.coincidencias}" labelField="coincidenciaLabel"  
+	        	fontSize="10" fontFamily="Verdana" fontWeight="bold" 
+	        	 visible="{UsuariosSysMl.getInstance().cbxCoincidenciaVisible}" height="30">
+	<mx:itemRenderer >
+		<mx:Component>
+			<mx:Label  htmlText="{data.coincidenciaHtml}" width="600" />
+		</mx:Component>
+	</mx:itemRenderer>
+	<mx:Script>
+		<![CDATA[
+			import MODEL.UtilidadesMl;
+			import MODEL.UsuariosSysMl;
+		]]>
+	</mx:Script>
+</mx:ComboBox>

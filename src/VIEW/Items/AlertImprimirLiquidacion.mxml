@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box  xmlns:mx="http://www.adobe.com/2006/mxml" width="350" verticalAlign="middle" horizontalAlign="center" 
+	height="200" borderStyle="solid" cornerRadius="20" borderColor="#8AA0AB" borderThickness="2" backgroundColor="#8AA0AB">
+	<mx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			import mx.printing.FlexPrintJob;
+			import MODEL.LiquidacionMl;
+			
+			[Bindable]
+			[Embed(source="/REC/IMAGENES/printt.png")]
+			public var impri:Class;
+			
+			
+			[Bindable]
+			[Embed(source="REC/IMAGENES/checkalert.png")]
+			public var check:Class;
+			
+			[Bindable]
+			[Embed(source="REC/IMAGENES/checkalert.png")]
+			public var checkal:Class;
+			
+			[Bindable]
+            [Embed(source="/REC/IMAGENES/warn.png")]
+             public var warn:Class;
+			
+			public function imprimirLiquidacion():void{
+            	
+	                    
+	             var printJob:FlexPrintJob = new FlexPrintJob();
+    
+                      if(printJob.start()) { 
+	                    
+	                    
+	                    var Liq:ImprimirLiquidacion = new ImprimirLiquidacion();
+	                    
+	                    addChild(Liq);
+
+                       
+                        Liq.titulo.text ="DOCUMENTO DE LIQUIDACIÓN";
+                        
+                        Liq.dnombre.text="Nombre del Trabajador :";
+                        Liq.nombre.text=LiquidacionMl.getInstance().NomTrabajadorPrint;
+                        
+                        Liq.dced.text ="Identificación :";
+                        Liq.ced.text=LiquidacionMl.getInstance().IdentificacionPrint;
+                        
+                        Liq.dcuenta.text="Cuenta Bancaria :";
+                        Liq.cuenta.text = LiquidacionMl.getInstance().CuentaBancariaPrint;
+                      
+                        Liq.dsueldo.text="Sueldo Básico :";
+                        Liq.sueldo.text = LiquidacionMl.getInstance().SueldoBasicoPrint;
+                        
+                        Liq.daux.text="Auxilio de Transporte :";
+                        Liq.aux.text = LiquidacionMl.getInstance().AuxilioTransportePrint;
+                        
+                        Liq.dfInicio.text="Fecha de Inicio :";
+                        Liq.fInicio.text = LiquidacionMl.getInstance().FechaInicioPrint;
+                        
+                        Liq.dfend.text="Fecha de Terminación :";
+                        Liq.fend.text = LiquidacionMl.getInstance().FechaTerminacionPrint;
+                        
+                        Liq.dDias.text="Dias Trabajados :";
+                        Liq.Dias.text = LiquidacionMl.getInstance().DiasTrabajadosPrint;
+                        
+                        Liq.dfLiq.text="Fecha de Liquidación :";
+                        Liq.fLiq.text = LiquidacionMl.getInstance().FechaLiquidacionPrint;
+                        
+                        Liq.dfPago.text="Fecha de Pago :";
+                        Liq.fPago.text = LiquidacionMl.getInstance().FechaPagoPrint;
+                        
+                        Liq.dprima.text="Prima de Servicios :";
+                        Liq.prima.text = LiquidacionMl.getInstance().PrimaPrint;
+                        
+                        Liq.dvaca.text="Vacaciones :";
+                        Liq.vaca.text = LiquidacionMl.getInstance().VacacionesPrint;
+                        
+                        Liq.dcesan.text="Cesantias :";
+                        Liq.cesan.text = LiquidacionMl.getInstance().CesantiasPrint;
+                        
+                        Liq.dintecesan.text="Intereses Cesantias :";
+                        Liq.intecesan.text = LiquidacionMl.getInstance().InteresesCesantiasPrint;
+                        
+                        Liq.dTotal.text="TOTAL :";
+                        Liq.Total.text = LiquidacionMl.getInstance().TotalLiquidacionPrint;
+                        
+                        Liq.firma1.text="Trabajador";
+                    
+                        Liq.firma2.text="Empleador";
+                       
+                        Liq.firma3.text="Contador";
+                       
+                        Liq.firma4.text="Testigo";
+                        
+                        printJob.addObject(Liq);
+    
+                    
+                        printJob.send();
+   
+                        removeChild(Liq);
+                      }
+            	
+            }
+			
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Spacer height="5"/>
+	
+	<mx:Box verticalAlign="top" horizontalAlign="left" width="95%" height="20">
+		<mx:Label textAlign="left" text="Mensaje de Confirmación" color="#FFFFFF" fontWeight="bold" fontSize="12"/>
+	</mx:Box>
+	
+	<mx:Box verticalAlign="middle" horizontalAlign="center" width="95%" height="70%">
+		<mx:HBox width="100%" height="100%">
+			
+			<mx:Box width="30%" height="100%" verticalAlign="middle" horizontalAlign="right">
+				<mx:Image source="@Embed(source='REC/IMAGENES/checkalert.png')" verticalAlign="middle" horizontalAlign="right"/>
+			</mx:Box>
+			
+			<mx:Box width="70%" height="100%" verticalAlign="middle" horizontalAlign="left">
+				<!--mx:Label textAlign="left" text="Liquidacion ha sido realizada, se ha enviado al modulo de cuentas por pagar" fontSize="11" color="#FFFFFF" fontWeight="bold"/-->
+			    <mx:Text textAlign="left" text="{LiquidacionMl.getInstance().MensajeConfirmacionLiq}" fontSize="11" color="#FFFFFF" fontWeight="bold" width="80%"/>
+			</mx:Box>
+			
+		</mx:HBox>
+	</mx:Box>
+	
+	<mx:HBox width="95%" height="15%">
+		
+		<mx:Box width="50%" height="100%" verticalAlign="middle" horizontalAlign="right">
+			<mx:Button label="OK" click="{PopUpManager.removePopUp(this)}"  height="38" cornerRadius="7"/>
+		</mx:Box>
+		
+		<mx:Box width="50%" height="100%" verticalAlign="middle" horizontalAlign="left">
+			<mx:Button label="IMPRIMIR" click="{imprimirLiquidacion()}" icon="{impri}" height="38" cornerRadius="7"/>
+		</mx:Box>
+		
+	</mx:HBox>
+	
+	<mx:Spacer height="5"/>
+	
+</mx:Box>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

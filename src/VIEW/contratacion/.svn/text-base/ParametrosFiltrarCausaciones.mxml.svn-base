@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	showCloseButton="false" close="returnName()" 
+	layout="absolute" 
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	width="650" height="500" 
+	borderSkin="CSS.SKIN.PopUpSkin" 
+    fontFamily="Verdana" fontSize="12" fontWeight="bold" 
+    color="#FFFFFF" >
+	<mx:Script>   
+        <![CDATA[
+        	import EVENT.ContratoEvent;
+        	import MODEL.ContratoMl;
+        	import EVENT.CausacionEvent;
+        	import mx.collections.ArrayCollection;
+        	import MODEL.CausacionesMl;
+        	import mx.controls.dataGridClasses.DataGridColumn;
+        	import MODEL.CuentasPorPagarMl;
+        	import MODEL.RecursoHumanoMl;
+        	import MODEL.CuentasCobroMl;
+        	import MODEL.UtilidadesMl;
+        	import mx.core.Application;
+        	import MODEL.UsuariosSysMl;
+        	import MODEL.PermisosMl;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.CentroCostoEvent;
+        	import VO.CentroCostroVO;
+        	import mx.controls.Alert;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;   
+           
+            
+           
+            private function returnName():void {
+            	
+                 PopUpManager.removePopUp(this);
+                
+            }
+            
+            public function listarLasCausaciones():void{
+            	
+            	CausacionesMl.getInstance().idsFechasCorte = getPermisosSeleccionados();
+            	
+            	var e:ContratoEvent; 
+            	
+            	ContratoMl.getInstance().CausacionPpl.modificarItemsMenuBar(7);
+            	
+            	if(CausacionesMl.getInstance().tipoCausacion==0){
+            		//causaciones ps
+            		CausacionesMl.getInstance().currentTipoCausacion=1;
+            		ContratoMl.getInstance().CausacionPpl.viewStackCausaciones.selectedIndex=5;
+            		e=new ContratoEvent(ContratoEvent.LISTAR_CAUSACIONPS_POR_FECHACORTE,null,null,null);
+            		CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            		
+            	}else{
+            		   //causaciones nomina
+            		   CausacionesMl.getInstance().currentTipoCausacion=2;
+            		   ContratoMl.getInstance().CausacionPpl.viewStackCausaciones.selectedIndex=0;
+            		   e=new ContratoEvent(ContratoEvent.LISTAR_CAUSACIONOMINA_POR_FECHACORTE,null,null,null);
+            		   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            		
+            	     }
+            	
+              returnName();
+              ContratoMl.getInstance().CausacionPpl.enableOpciones =  true; 
+              
+            }
+            
+            
+            public function getPermisosSeleccionados():Array
+            {
+            	var arrAux:Array = new Array();
+            	
+            	for each( var x:* in CausacionesMl.getInstance().listfechasCorteCausacion)
+            	{
+            		if(x.asignado)
+            		    arrAux.push(x.id);
+            	}
+            	
+            	return arrAux;
+            }
+            
+            
+            
+            public function lblfunctionNombreApellido(item:Object,dgcolumn:DataGridColumn):String{
+            	
+            	var retorno:String;
+            	
+            	retorno = item.nombre+" "+item.apellido;
+            	  
+            	return retorno;
+            }
+            
+            public function lblfunctionfechaCorte(item:Object,dgcolumn:DataGridColumn):String{
+            	
+            	var retorno:String;
+            	
+            	retorno = UtilidadesMl.getInstance().formaterFechas(item.fechaCorte);
+            	  
+            	return retorno;
+            }
+            
+            
+            public function lblfunctionMesCausado(item:Object,dgcolumn:DataGridColumn):String{
+            	
+            	var retorno:String;
+            	
+            	retorno = mes(item.mesCausado);
+            	  
+            	return retorno;
+            }
+            
+            public function lblfunctiontipoCausacion(item:Object,dgcolumn:DataGridColumn):String{
+            	
+            	var retorno:String;
+            	
+            	if(item.tipoCausacion==0)
+            	{
+            	     retorno = "Prestacion Servicios";
+            	}else{
+            		
+            	      retorno = "Nomina"; 
+            	     
+            	     }
+            	
+            	 
+            	return retorno;
+            }
+            
+            public function mes(month:int):String{
+            	
+            	var retorno:String;
+            	
+            	switch(month){
+            		
+            		case 0:
+            		
+            		   retorno ="Enero";
+            		   return retorno;
+            		
+            		break;
+            		
+            		case 1:
+            		  
+            		   retorno ="Febrero";
+            		   return retorno;
+            		
+            		break;
+            		
+            		case 2:
+            		
+            		   retorno ="Marzo";
+            		   return retorno;
+            		
+            		break;
+            		
+            		case 3:
+            		
+            		   retorno ="Abril";
+            		   return retorno;
+            		
+            		break;
+            		
+            		case 4:
+            		
+            		   retorno ="Mayo";
+            		   return retorno;
+            		
+            		break;
+            		
+            		case 5:
+            		
+            		   retorno ="Junio";
+            		   return retorno;
+            		
+            		break;
+            		
+            		case 6:
+            		
+            		   retorno ="Julio";
+            		   return retorno;
+            		
+            		break;
+            		
+            		case 7:
+            		
+            		   retorno ="Agosto";
+            		   return retorno;
+            		
+            		break;
+            		
+            		case 8:
+            		
+            		   retorno ="Septiembre";
+            		   return retorno;
+            		
+            		break;
+            		
+            		case 9:
+            		
+                       retorno ="Octubre";
+            		   return retorno;            		
+            		 
+            		break;
+            		
+            		case 10:
+            		
+            		  retorno ="Noviembre";
+            		   return retorno;
+            		
+            		break;
+            		
+            		case 11:
+            		
+            		   retorno ="Diciembre";
+            		   return retorno;
+            		
+            		break;
+            		
+            	}
+            	
+            	return "";
+            	
+            	
+            }
+            
+            public function checkall():void{
+            
+               //PermisosMl.getInstance().checkarAllPermisos();   
+                    
+               CausacionesMl.getInstance().checkarAllPermisos();     
+                          
+               var cont:int=0;
+               var ar:ArrayCollection = new ArrayCollection();
+               ar=CausacionesMl.getInstance().listfechasCorteCausacion as ArrayCollection;
+               for each(var x:* in CausacionesMl.getInstance().listfechasCorteCausacion){
+               
+                  if(checkbxselecallpermisos.selected){
+                    
+                    x.asignado=true;
+                     
+                  }else{
+                  
+                    x.asignado=false;
+                    
+                  }
+                  ar.getItemAt(cont).asignado=x.asignado;
+               		cont++;
+               }
+               CausacionesMl.getInstance().listfechasCorteCausacion=ar;
+               
+              
+            }
+            
+             
+        ]]>
+    </mx:Script>
+    
+    
+    
+    <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >      
+    
+           <mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+		 		<mx:Canvas width="100%" height="100%" id="canvas1"  fontSize="13">
+		 			<mx:Label  id="lblAddCmenor" text="FILTRAR LISTADO DE CAUSACIONES" color="#FFFFFF" fontWeight="bold" fontSize="13"
+		 	     	x="{(canvas1.width/2)-(lblAddCmenor.width/2)}" y="12"/>	
+		 		</mx:Canvas>
+		   </mx:Box>
+    
+    
+        <mx:Box id="box2" height="83%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+			    
+			        <mx:Spacer height="10"/>
+			        
+				    <mx:Box verticalAlign="middle" horizontalAlign="center" width="100%" fontWeight="bold" >
+				        	    
+		        	    <mx:HBox width="99%" verticalAlign="middle" horizontalAlign="center">
+		        	       <mx:Label text="SELECCIONAR TODOS" color="#FFFFFF" fontSize="11" fontWeight="bold"/>
+		        	       <mx:CheckBox selected="false" change="{checkall()}" id="checkbxselecallpermisos" />	
+		        	    </mx:HBox>
+		        	    
+					</mx:Box>
+				        
+				    <mx:Box width="95%" height="95%" verticalAlign="middle" horizontalAlign="center">
+						
+						<mx:DataGrid id="dgFechasCorte" dataProvider="{CausacionesMl.getInstance().listfechasCorteCausacion}" width="96%" height="95%" >
+						        <mx:columns>
+					        	  	 <mx:DataGridColumn labelFunction="lblfunctionfechaCorte" dataField="fechaCorte" headerText="Fecha Corte"  textAlign="center" />
+					        	     <mx:DataGridColumn dataField="yearCausado" headerText="Año Causado" textAlign="center"/>
+					        	     <mx:DataGridColumn labelFunction="lblfunctionMesCausado" headerText="Mes Causado" dataField="mesCausado" textAlign="center"/>
+					        	     <mx:DataGridColumn labelFunction="lblfunctiontipoCausacion" headerText="Tipo Causación" textAlign="center"/>
+					        	     <mx:DataGridColumn dataField="id" headerText="Asignado" textAlign="center">
+					        	       <mx:itemRenderer >
+									      <mx:Component>
+									         <mx:CheckBox  click="data.asignado=!data.asignado"  
+									         selected="{data.asignado}"  horizontalCenter="true"/>
+									      </mx:Component>   
+								       </mx:itemRenderer>
+					        	     </mx:DataGridColumn>
+						        </mx:columns>
+						 </mx:DataGrid>
+						
+					</mx:Box>
+  
+		
+        </mx:Box>
+        
+        <mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+		    <mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+		      
+		      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+		      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+		      		<mx:Image source="{UtilidadesMl.getInstance().rutaback2}" toolTip="Atras" />	
+		      	</mx:Box>
+		      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+		      		<mx:Image id="ok" source="{UtilidadesMl.getInstance().rutaCheck}" click="{listarLasCausaciones()}" toolTip="Aceptar"   />	
+		      	</mx:Box>
+		      	
+		      </mx:HBox>
+		      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+		      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+		      			<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar" 
+		      				/>	
+		      		</mx:Box>
+		      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+		      			<mx:Image source="{UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" />	
+		      		</mx:Box>
+		      		
+		    	</mx:HBox>
+		    </mx:HBox>
+				 	
+	 </mx:Box>	
+        	
+        	
+    </mx:VBox>
+</mx:TitleWindow>

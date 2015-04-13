@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	creationComplete="{creationCompleteHandler()}" close="returnName()" 
+	layout="absolute" width="450" height="420" 
+	showCloseButton="false" cornerRadius="15" borderColor="#000000" 
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	initialize="{formatearMoneda()}" 
+	color="#FFFFFF" fontSize="12">
+	
+	<mx:Script>
+        <![CDATA[
+        	import MODEL.PantallasMl;
+        	import EVENT.PersonaEvent;
+        	import MODEL.PersonaMl;
+        	import mx.controls.Alert;
+        	import mx.core.Application;
+        	import mx.collections.ArrayCollection;
+        	import MODEL.PermisosMl;
+        	import MODEL.UtilidadesMl;
+        	import mx.formatters.CurrencyFormatter;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import VO.CajaMenorVO;
+        	import EVENT.CajaMenorEvent;
+        	import MODEL.UsuariosSysMl;
+        	import MODEL.CajaMenorMl;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           
+           
+           [Embed(source="/REC/IMAGENES/warn2.png")]
+		    public var alerta:Class;
+            [Bindable]
+            public var formIsValid:Boolean=true;
+            [Bindable]
+            public var formIsEmpty:Boolean=false;
+            
+            private var focussedFormControl:DisplayObject;
+           
+           
+           private function formatearMoneda():void
+           {    
+           	   	UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosConfCMenor,1,-1 ,true);
+           }
+            
+           
+            private function returnName():void {
+                 PopUpManager.removePopUp(this);
+                 CajaMenorMl.getInstance().selectableCmenor=true;
+                 PermisosMl.getInstance().CloseMainMenu.enabled=true;
+		         UsuariosSysMl.getInstance().mostrarSubMenu=true;
+            }
+            
+            
+            
+           
+            
+            public function modificarCajaMenor():void{
+            	
+            	var arrayRetorno:Array = new Array();
+            	
+            	
+            	
+	               if(formIsValid){	
+	                       
+	                       var ob_:Object=CajaMenorMl.getInstance().cajaMenorPpl.dgCajaMenor.selectedItem;
+	                       
+	                       if(dgUsCajamenor==null){
+             	
+			                   //arrayRetorno = CajaMenorMl.getInstance().cajaMenorPpl.dgCajaMenor.selectedItem.notificacionCajaMenors as Array;
+			               
+			                    for each(var x:* in CajaMenorMl.getInstance().cajaMenorPpl.dgCajaMenor.selectedItem.notificacionCajaMenors){
+			                    	
+			                    	arrayRetorno.push(x.usuarioSys.id);
+			                    	
+			                    }
+			                    
+			                  
+			                  }else{
+	                       
+	                                arrayRetorno = getUsuariosToNotificarSeleccionadosMod();
+	                                
+	                               }
+			               modMontoIncioCjMenor.text = UtilidadesMl.getInstance().combertirDecimalToEntero(modMontoIncioCjMenor.text);
+			               modValMinNotifyCjMenor.text = UtilidadesMl.getInstance().combertirDecimalToEntero(modValMinNotifyCjMenor.text);
+			               modMntoMinReCjMenor.text = UtilidadesMl.getInstance().combertirDecimalToEntero(modMntoMinReCjMenor.text);
+			               
+			               var cajamenor:CajaMenorVO=new CajaMenorVO(CajaMenorMl.getInstance().cajaMenorPpl.dgCajaMenor.selectedItem.id,cbxModResponsable.selectedItem.id,modNomCjMenor.text,parseFloat(modMontoIncioCjMenor.text),parseFloat(modValMinNotifyCjMenor.text),parseFloat(modMntoMinReCjMenor.text),arrayRetorno,0,0,0,false);
+			               var event:CajaMenorEvent = new CajaMenorEvent(CajaMenorEvent.CONFIGURAR_CAJA_MENOR,cajamenor);
+			               CairngormEventDispatcher.getInstance().dispatchEvent(event);
+			           	   returnName();
+	           	   
+                  }
+            
+            }
+           
+           public function getUsuariosToNotificarSeleccionadosMod():Array
+            {
+            	
+            	UsuariosSysMl.getInstance().idUsuNotificacion = new Array();
+            	
+            	for each( var x:* in UsuariosSysMl.getInstance().listUs)
+            	{
+            		if(x.asignado)
+            			UsuariosSysMl.getInstance().idUsuNotificacion.push(x.id);
+            	}
+            	
+            	return UsuariosSysMl.getInstance().idUsuNotificacion;
+            }
+            
+           
+            private function validateForm(event:Event):void{
+            
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(modnameValidator);
+               validate(modMontoInicioValidator);
+               validate(modValorminValidator);
+               validate(modMontoMinValidator);
+               validate(respvalidator);
+               
+            }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+            private function creationCompleteHandler():void
+            {
+            	
+               CajaMenorMl.getInstance().Clon_pantallamodificarCajaMenor = this; 	
+               resetFocus();
+            }   
+          
+            private function clearFormHandler():void
+            {
+              
+               formIsEmpty=true;
+               resetFocus();
+            }
+           
+            private function resetFocus():void
+            {
+                focusManager.setFocus(modNomCjMenor);
+            }
+            
+            /*private function llamarCbx():void
+            {
+                txtModResponsable.setVisible(false);
+                cbxModResponsable.setVisible(true);
+            }
+            
+            private function cambiarSelecCbx():void
+            {
+                cbxModResponsable.setVisible(false);
+                txtModResponsable.setVisible(true);
+                var borrar:Object = cbxModResponsable.selectedItem;
+                CajaMenorMl.getInstance().txtModResponsableText = cbxModResponsable.selectedItem.nombre + " " +  cbxModResponsable.selectedItem.apellido;
+                
+            }*/
+            
+            public function checkall():void{
+            
+                UsuariosSysMl.getInstance().checarallCheckbox(); 
+                          
+               var cont:int=0;
+               var ar:ArrayCollection = new ArrayCollection();
+               ar=UsuariosSysMl.getInstance().listUs as ArrayCollection;
+               for each(var x:* in UsuariosSysMl.getInstance().listUs){
+               
+                  if(checkbxselecallresponsables.selected){
+                    
+                    x.asignado=true;
+                     
+                  }else{
+                  
+                    x.asignado=false;
+                    
+                  }
+                  ar.getItemAt(cont).asignado=x.asignado;
+               		cont++;
+               }
+               UsuariosSysMl.getInstance().listUs=ar;
+               
+              
+            }
+            
+            
+            //////////////////////////////
+            
+           public function validarVal(valor:String,txt:TextInput):void{
+            	
+             var f:String = modValMinNotifyCjMenor.text;
+             
+             f =  UtilidadesMl.getInstance().combertirDecimalToEntero(f);
+             
+             
+            	
+             if(modValMinNotifyCjMenor.text!="" ){	
+            	
+            	if(parseFloat(valor) < parseFloat(f)){
+            		
+            	   	 Alert.show("El Monto de Inicio debe ser MAYOR al valor mínimo de notificación","Mensaje de alerta",0,null,null,alerta,0);
+            	     txt.text="";
+            	     modValMinNotifyCjMenor.text="";
+            		
+            	}
+            	
+             }
+            	
+            }
+            
+            
+            public function validarMontos(valor:String,txt:TextInput):void{
+            	
+             var f:String = modMontoIncioCjMenor.text;
+             
+             f =  UtilidadesMl.getInstance().combertirDecimalToEntero(f);
+             
+             
+            	
+             if(modMontoIncioCjMenor.text!="" ){	
+            	
+            	if(parseFloat(valor) >= parseFloat(f)){
+            		
+            	   	 Alert.show("El Monto de Inicio debe ser MAYOR al valor mínimo de notificación","Mensaje de alerta",0,null,null,alerta,0);
+            	     txt.text="";
+            		
+            	}
+            	
+             }else{
+             	
+                    Alert.show("Ingrese primero el Monto de Inicio","Mensaje de alerta",0,null,null,alerta,0);
+            	     txt.text="";    
+                  
+                  }	
+            	
+            }
+            
+            private function ComprobarExistenciaPersona():void{
+            	
+            	PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_MOD_COMPROBAR_EXISTENCIA_PERSONA;
+            	PersonaMl.getInstance().cedulaToComprobar = cbxModResponsable.selectedItem.cedula;
+            	var o:Object = cbxModResponsable.selectedItem;
+            	var i:int = PersonaMl.getInstance().cedulaToComprobar;
+            	var e:PersonaEvent = new PersonaEvent(PersonaEvent.COMPROBAR_EXISTENCIA_PERSONAS,null);
+            	CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            	
+            }
+            
+            public function lblfunction_nombreApe(item:Object):String{
+            	
+            	var retorno:String;
+            	
+            	retorno = item.nombre +" "+ item.apellido;
+            	
+            	return retorno; 
+            	
+            }
+            
+            ////////////////////////////////////////////////////////
+        ]]>
+    </mx:Script>
+    
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Nombre de la Caja Menor por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="modnameValidator"
+        source="{modNomCjMenor}" 
+        property="text"
+        minLength="2"
+        maxLength="100"
+    />
+    
+       
+     <mx:NumberValidator
+   	
+     minValue="100"
+    lowerThanMinError="!!El monto de Inicio tiene que ser mayor¡¡"
+   	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Monto de Inicio por favor¡¡"
+   	maxValue="999999999"
+   	exceedsMaxError="!!Monto excedido"
+   	property="text"
+   	id="modMontoInicioValidator"
+   	source="{modMontoIncioCjMenor}" 
+   	
+   	/>
+   	
+   	<mx:NumberValidator
+   	
+	    minValue="0"
+	    lowerThanMinError="!!Seleccione un Responsable de la lista¡¡"
+	   	property="selectedIndex"
+	   	id="respvalidator"
+	   	source="{cbxModResponsable}" 
+   	
+   	/>
+  
+   	<mx:NumberValidator
+   	
+   	minValue="100"
+    lowerThanMinError="!!El valor mínimo para notificación es muy bajo¡¡"
+   	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Valor minimo para notificación por favor¡¡"
+   	maxValue="999999999"
+   	exceedsMaxError="!!Monto excedido"
+   	property="text"
+    id="modValorminValidator"
+   	source="{modValMinNotifyCjMenor}" 
+   	
+   	/>
+   
+   
+   
+   
+  <mx:NumberValidator
+   	
+   	minValue="100"
+    lowerThanMinError="!!El monto mínimo de Reintegro es muy bajo¡¡"
+   requiredFieldError="!!Este campo es Obligatorio. Ingrese el Monto Minimo de Reintegro por favor¡¡"
+   	maxValue="999999999"
+   	exceedsMaxError="!!Monto excedido"
+   	property="text"
+    id="modMontoMinValidator"
+   	 source="{modMntoMinReCjMenor}" 
+   	
+   	/>  
+       
+     <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >    
+                    
+                    <mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+		 				<mx:Canvas width="100%" height="100%" id="canvas1"  fontSize="13">
+		 					<mx:Label  id="lblAddCmenor" text="CONFIGURAR CAJA MENOR" color="#FFFFFF" fontWeight="bold" fontSize="13"
+		 	     			x="{(canvas1.width/2)-(lblAddCmenor.width/2)}" y="12"/>	
+		 				</mx:Canvas>
+		 			</mx:Box>
+                    
+            <mx:Box id="box2" height="79%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+             
+              <mx:ViewStack width="100%" id="viewStack1" height="100%" selectedIndex="{UtilidadesMl.getInstance().current}">      
+                    
+               <mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+                   
+                   <mx:Form  verticalScrollPolicy="off" width="96%" height="60%">
+				    	
+				    	<mx:FormItem label="NOMBRE" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11" fontStyle="normal"> 	
+					  	    <mx:TextInput change="validateForm(event)" id="modNomCjMenor" text="{CajaMenorMl.getInstance().cajaMenorPpl.dgCajaMenor.selectedItem.nombre}" width="75%" maxChars="20"/>  	  	
+					  	</mx:FormItem>
+					  	
+					  	 <mx:Spacer height="20" />
+					  	
+					  	<mx:FormItem label="MONTO DE INICIO"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11" fontStyle="normal"> 	
+					  	    <mx:TextInput focusIn="{modMontoIncioCjMenor.text=UtilidadesMl.getInstance().combertirDecimalToEntero(modMontoIncioCjMenor.text)}" focusOut="{modMontoIncioCjMenor.text=UtilidadesMl.getInstance().formaterMoneda(modMontoIncioCjMenor.text)}" restrict="0-9" text="{UtilidadesMl.getInstance().formaterMoneda(CajaMenorMl.getInstance().cajaMenorPpl.dgCajaMenor.selectedItem.montoInicio)}" change="validateForm(event),validarVal(modMontoIncioCjMenor.text,modMontoIncioCjMenor)" id="modMontoIncioCjMenor"  width="75%" />  	  	
+					  	</mx:FormItem>
+				    	
+				    	 <mx:Spacer height="20" />
+				    	
+				    	<mx:FormItem label="VALOR MÍNIMO DE NOTIFICACIÓN" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11" fontStyle="normal"> 	
+					  	    <mx:TextInput focusIn="{modValMinNotifyCjMenor.text=UtilidadesMl.getInstance().combertirDecimalToEntero(modValMinNotifyCjMenor.text)}" focusOut="{modValMinNotifyCjMenor.text=UtilidadesMl.getInstance().formaterMoneda(modValMinNotifyCjMenor.text)}" restrict="0-9" text="{UtilidadesMl.getInstance().formaterMoneda(CajaMenorMl.getInstance().cajaMenorPpl.dgCajaMenor.selectedItem.valorMinimoNotificacion)}" change="validateForm(event),validarMontos(modValMinNotifyCjMenor.text,modValMinNotifyCjMenor)" id="modValMinNotifyCjMenor"  width="75%"/>  	  	
+					  	</mx:FormItem>
+					  	
+					  	 <mx:Spacer height="20" />
+					  	
+					  	<mx:FormItem label="MONTO MÍNIMO DE REINTEGRO" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11"> 	
+					  	    <mx:TextInput focusIn="{modMntoMinReCjMenor.text=UtilidadesMl.getInstance().combertirDecimalToEntero(modMntoMinReCjMenor.text)}" focusOut="{modMntoMinReCjMenor.text=UtilidadesMl.getInstance().formaterMoneda(modMntoMinReCjMenor.text)}"  restrict="0-9" text="{UtilidadesMl.getInstance().formaterMoneda(CajaMenorMl.getInstance().cajaMenorPpl.dgCajaMenor.selectedItem.montoMinimoReintegro)}" change="validateForm(event)" id="modMntoMinReCjMenor"  width="75%"/>  	  	
+					  	</mx:FormItem>
+					  	
+					  	 <mx:Spacer height="20" />
+					  	
+					  	<mx:FormItem label="RESPONSABLE DE CAJA MENOR" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">
+					  		<mx:Canvas width="100%">
+					  			<mx:ComboBox change="{ComprobarExistenciaPersona(),validateForm(event)}" id="cbxModResponsable" toolTip="{cbxModResponsable.selectedItem.nombre +' '+cbxModResponsable.selectedItem.apellido}" labelFunction="lblfunction_nombreApe"  maxWidth="{modMontoIncioCjMenor.width}" minWidth="{modMontoIncioCjMenor.width}" dataProvider="{UsuariosSysMl.getInstance().listUsCbx}" 
+					  			selectedIndex="{CajaMenorMl.getInstance().cbxModResponsableSeletectIndex}"   />	
+					  			<!--mx:TextInput id="txtModResponsable"  editable="false" text="{CajaMenorMl.getInstance().txtModResponsableText}" 
+					  				width="75%" click="{llamarCbx()}"/-->
+					  		</mx:Canvas>
+					  		
+					  	</mx:FormItem>
+					 	
+					 </mx:Form> 	
+                	
+               </mx:Box>    
+				    
+				    <mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+					     <mx:Spacer height="7" />
+					      
+					      
+					      <mx:Box verticalAlign="middle" horizontalAlign="center"  fontWeight="bold" >
+					     	  <mx:Label text="CORREOS DE NOTIFICACIÓN" color="#FFFFFF" fontSize="11" fontWeight="bold"/>
+					     </mx:Box>
+					     
+	  				      <mx:Box verticalAlign="middle" horizontalAlign="center"  fontWeight="bold" >
+				  	      	    <mx:HBox>
+	  	      	    	 			<mx:Label text="SELECCIONAR TODOS LOS CORREOS" color="#FFFFFF" fontSize="11" fontWeight="bold"/>
+	  	      	       				<mx:CheckBox selected="false" id="checkbxselecallresponsables" change="checkall()" />	
+	  	      	    			</mx:HBox>
+	  	                   </mx:Box>
+	  	                   
+					  	   <mx:DataGrid width="90%" height="88%" id="dgUsCajamenor" dataProvider="{UsuariosSysMl.getInstance().listUs}"  textAlign="center"  fontSize="10">
+					  	      <mx:columns>
+				                     <mx:DataGridColumn headerText="Nombres" dataField="nombre" textAlign="center" />
+				                     <mx:DataGridColumn headerText="Apellidos" dataField="apellido" textAlign="center" />
+								     <mx:DataGridColumn headerText="Asignado" dataField="id" width="80" textAlign="center">	  	     
+					  	                        <mx:itemRenderer>
+										    	           <mx:Component>
+										    	            <mx:CheckBox  click="data.asignado=!data.asignado"  
+										    	            	selected="{data.asignado}"  horizontalCenter="true"/>
+										    	           </mx:Component>   
+										    	</mx:itemRenderer>
+									 </mx:DataGridColumn> 
+							 </mx:columns>
+					  	   </mx:DataGrid>
+							  	   
+				      </mx:Box>
+				      <mx:Box>
+	     				            	
+	     				            </mx:Box>
+				      
+		    </mx:ViewStack>	
+
+ 		</mx:Box>
+					  	
+		<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+	    <mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+	      
+	      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+	      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+	      		<mx:Image source="{UtilidadesMl.getInstance().backEnable==true?(UtilidadesMl.getInstance().rutaback):UtilidadesMl.getInstance().rutaback2}"
+	      			  mouseOver="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosConfCMenor,1,viewStack1.selectedIndex,false)}" toolTip="Atras" />	
+	      	</mx:Box>
+	      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+	      		<mx:Image id="ok" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  toolTip="Aceptar" enabled="{formIsValid}" click="{modificarCajaMenor()}" />	
+	      	</mx:Box>
+	      	
+	      </mx:HBox>
+	      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+	      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+	      			<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar" 
+	      				/>	
+	      		</mx:Box>
+	      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+	      			<mx:Image source="{UtilidadesMl.getInstance().nextEnable==true?(UtilidadesMl.getInstance().next):UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" mouseOver="{formIsEmpty=true,UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosConfCMenor,1,viewStack1.selectedIndex,true)}"/>	
+	      		</mx:Box>
+	      		
+	    	</mx:HBox>
+	    </mx:HBox>
+				 	
+	 </mx:Box>		    	
+					  	
+				    	
+				  
+				    
+	  </mx:VBox>			    
+    
+</mx:TitleWindow>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/ATSYS_WEB/!svn/ver/63/ATSYS_WEB/src/COMMAND/Oficio
+END
+AddOficioCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Oficio/AddOficioCommand.as
+END
+ModificarOficioCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Oficio/ModificarOficioCommand.as
+END
+ListarOficioCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ATSYS_WEB/!svn/ver/63/ATSYS_WEB/src/COMMAND/Oficio/ListarOficioCommand.as
+END
+EliminarOficioCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/ATSYS_WEB/!svn/ver/63/ATSYS_WEB/src/COMMAND/Oficio/EliminarOficioCommand.as
+END

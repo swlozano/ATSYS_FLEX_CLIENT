@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box verticalAlign="middle" horizontalAlign="center" xmlns:mx="http://www.adobe.com/2006/mxml" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			import MODEL.UsuariosSysMl;
+			import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import EVENT.RecursoHumanoEvent;
+			import MODEL.RecursoHumanoMl;
+			import MODEL.FacturasMl;
+			import mx.collections.ArrayCollection;
+			
+			private function clickItem():void{
+				
+				//UsuariosSysMl.getInstance().mostrarSubMenu = false;
+				
+				RecursoHumanoMl.getInstance().RecursoHumanoPpl.mnudown.enabled=false;
+				
+				RecursoHumanoMl.getInstance().idRechumano = RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.id;
+				
+				var e:RecursoHumanoEvent = new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_CUENTA_BANCARIA,null,null);
+				CairngormEventDispatcher.getInstance().dispatchEvent(e);
+				
+				RecursoHumanoMl.getInstance().RecursoHumanoPpl.viewStckPpl.selectedIndex = 1;
+			}	
+			
+		]]>
+	</mx:Script>
+  <mx:LinkButton textAlign="center" label="Cuentas Bancarias" toolTip="Ver Cuentas Bancarias de este Rec Humano" 
+  	 color="#0006FF" 
+  	textDecoration="underline" fontWeight="normal"
+  	  id="item" click="{clickItem()}
+  	  " fontSize="9"/>
+
+</mx:Box>

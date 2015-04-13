@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="absolute" width="510" 
+	creationComplete="{CuentasPorPagarMl.getInstance().Clon_ModificarCuentasXpagar = this}"
+	showCloseButton="false" height="520"
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	  x="{(Application.application.width/2)-(this.width/2)}"
+	  y = "{(Application.application.height/2)-(this.height/2)}" 
+	  color="#FFFFFF">
+	<mx:Script>
+        <![CDATA[
+        	import EVENT.CuentasPorPagarEvent;
+        	import VO.CuentaPorPagarVO;
+        	import MODEL.PantallasMl;
+        	import MODEL.CuentasPorPagarMl;
+        	import VIEW.otros.CbxCoincidencia;
+        	import mx.core.Application;
+        	import MODEL.PermisosMl;
+        	import VO.RecursoHumanoVO;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.RecursoHumanoEvent;
+        	import VO.ContinenteVO;
+        	import mx.collections.ArrayCollection;
+        	import MODEL.RecursoHumanoMl;
+        	import mx.controls.Alert;
+        	import MODEL.PersonaMl;
+        	import MODEL.UtilidadesMl;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           
+            
+           
+            [Bindable]
+		    [Embed(source="REC/IMAGENES/siguiente.png")]
+		    public var next:Class;
+		    
+		    [Bindable]
+		    [Embed(source="REC/IMAGENES/add.png")]
+		    public var add:Class;
+		    
+		    [Bindable]
+		    [Embed(source="REC/IMAGENES/atras.png")]
+		    public var back:Class;
+		    
+		    [Bindable]
+		    [Embed(source="/REC/IMAGENES/ConfLogout.png")]
+			public var salir:Class;
+                        
+            [Bindable]
+            public var formIsValid:Boolean=true;
+            
+            [Bindable]
+            public var formIsValidAfiliaciones:Boolean=false;
+            
+            [Bindable]
+            public var formIsValidDocs:Boolean=false;
+            
+            [Bindable]
+            public var formIsEmpty:Boolean=true;
+            
+            [Bindable]
+            public var AllformsAreValid:Boolean=false;
+            
+            private var focussedFormControl:DisplayObject;
+            
+             /////////////////////
+            
+            [Bindable]
+            public var idrechumano:int;
+            
+            [Bindable]
+            public	var idPersona:int;
+            		
+            [Bindable]
+            public	var idcuentaBanco:int;
+            		
+            [Bindable]
+            public	var idbanco:int;
+            		
+            [Bindable]
+            public	var idtipoCuentaBanco:int;
+            		
+            [Bindable]
+            public	var numeroCuenta:String;
+            
+            
+            [Bindable]
+            public var idGenerador:int;
+            		
+            [Bindable]
+            public var idcampo:int;
+            
+            /////////////////////////////
+            
+            public function modificarCuentaXPagar():void{
+            	
+            	if(formIsValid){
+            		
+            		/*var idrechumano:int;
+            		var idPersona:int;
+            		var idcuentaBanco:int;
+            		var idbanco:int;
+            		var idtipoCuentaBanco:int;
+            		var numeroCuenta:String;
+            		
+            		
+            		var idGenerador:int;
+            		var idcampo:int;*/
+            		
+            		
+            		if(Application.application.currentView==13){
+            			
+            			idGenerador = 5;
+            			CuentasPorPagarMl.getInstance().idTipoCuentaToListar = idGenerador;
+            			idcampo = -1;
+            		}
+            		
+            		
+            		if(viewstackRecPersona.selectedIndex==0){
+            			 
+            			CuentasPorPagarMl.getInstance().idRecHumanoToListar = cbxNombreRec.selectedItem.id;
+            			CuentasPorPagarMl.getInstance().idPersonaToListar = -1; 
+            			 
+            			idcuentaBanco = cbxCuentasRecHumano.selectedItem.id;
+            			idrechumano = cbxNombreRec.selectedItem.id;
+            			
+            			idPersona = -1;
+            			idbanco = -1;
+            			idtipoCuentaBanco = -1;
+            			numeroCuenta = "";
+            			
+            		}else{
+            			   
+            			   CuentasPorPagarMl.getInstance().idRecHumanoToListar = -1;
+            			   CuentasPorPagarMl.getInstance().idPersonaToListar = cbxNombrePersona.selectedItem.id;
+            			   
+            		       idrechumano = -1;
+            		       idcuentaBanco = -1;
+            		       
+            		       idPersona = cbxNombrePersona.selectedItem.id;
+            		       idbanco =  cbxbancos.selectedItem.id;
+            		       idtipoCuentaBanco = cbxtipocuenta.selectedItem.id;
+            		       numeroCuenta = txtnumcuenta.text; 
+            		     
+            		     }
+            		
+            		CuentasPorPagarMl.getInstance().idEstadoToListar = cbxestadoCuenta.selectedItem.id;
+            		txtvalor.text = UtilidadesMl.getInstance().combertirDecimalToEntero(txtvalor.text);
+            		
+            		var cuenta:CuentaPorPagarVO;
+            		
+            		  
+            		
+            		cuenta = new CuentaPorPagarVO(CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem.idCuentaPorPagar,
+            		new Date(DfFechaOrigen.text),
+            		idrechumano,
+            		idPersona,
+            		txtareaConcept.text,
+            		idcuentaBanco,
+            		idbanco,
+            		idtipoCuentaBanco,
+            		numeroCuenta,
+            		parseFloat(txtvalor.text),
+            		cbxestadoCuenta.selectedItem.id,
+            		idGenerador,
+            		idcampo,
+            		new Date(DfFechapago.text));
+            		
+            		var ev:CuentasPorPagarEvent = new CuentasPorPagarEvent(CuentasPorPagarEvent.MODIFICAR_CUENTA_X_PAGAR,cuenta);
+            		CairngormEventDispatcher.getInstance().dispatchEvent(ev);
+            		
+            		return_name();
+            		
+            		
+            	}
+            	
+            }
+            
+            
+            
+            private function validateForm(event:Event):void{
+             
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               
+               if(CuentasPorPagarMl.getInstance().bandera){
+               	
+               	  validate(cbxRecValidator);
+               	
+               }
+               
+               if(viewstackRecPersona.selectedIndex==1){
+               	
+               	   validate(NumCuentaValidator);
+               	
+               }
+               
+               validate(conceptValidator);
+               validate(ValValidator);
+               validate(fechaOrigenValidator);
+               validate(fechaPagoValidator);
+               
+            }
+            
+                        
+            private function validate(validator:Validator):Boolean{
+               
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+            public function listarCuentasRecHumano():void{
+            	
+            	RecursoHumanoMl.getInstance().idRechumano = cbxNombreRec.selectedItem.id;
+            	
+            	var i:int = RecursoHumanoMl.getInstance().idRechumano;
+            	
+            	PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_AGREGAR_CUENTAS_X_PAGAR_CBANCO;
+            	
+            	var evx:RecursoHumanoEvent = new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_CUENTA_BANCARIA,null,null);
+            	CairngormEventDispatcher.getInstance().dispatchEvent(evx);
+            	
+            }
+            
+            private function return_name():void{
+            	
+            	PopUpManager.removePopUp(this);
+            	
+            }
+            
+            public function lbl_function_nombre(item:Object):String{
+            	
+            	var nombreape:String;
+            	
+            	nombreape = item.nombre+" "+item.apellido;
+            	
+            	return nombreape;
+            }
+            
+            public function cambiarEstadoFrmisvalid():void{
+              
+              if(viewstackRecPersona.selectedIndex==1){
+              	
+	            	if(txtnumcuenta!=null){
+	            		
+	            		 if(txtnumcuenta.text==""){
+	            		 	
+	            		 	formIsValid=false;
+	            		 	
+	            		 }	            		
+	            	}
+            	
+              }
+            	
+            }
+            
+        ]]>
+    </mx:Script>
+    
+        
+       <mx:NumberValidator
+       	
+	       	requiredFieldError="!!Seleccione Un Recurso Humano de la Lista"
+	        lowerThanMinError="Seleccione Un Recurso Humano de la Lista"
+	   	    minValue="0"
+	     	property="selectedIndex"
+	   	    source="{cbxNombreRec}"
+	   	    id="cbxRecValidator"
+
+       	/>
+
+        <mx:StringValidator 
+	    	
+	    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Concepto de La Cuenta por Pagar por favor¡¡"
+	    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+	    	tooLongError="!!Demasiados caracteres¡¡"
+	        id="conceptValidator"
+	        source="{txtareaConcept}" 
+	        property="text"
+	        minLength="2"
+	        maxLength="100"
+       />        
+        
+        <mx:StringValidator 
+	    	
+	    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Número de la Cuenta de Banco por favor¡¡"
+	    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+	    	tooLongError="!!Demasiados caracteres¡¡"
+	        id="NumCuentaValidator"
+	        source="{txtnumcuenta}" 
+	        property="text"
+	        minLength="2"
+	        maxLength="100"
+       
+       />
+        
+       <mx:StringValidator 
+	    	
+	    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Valor de La Cuenta por Pagar por favor¡¡"
+	    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+	    	tooLongError="!!Demasiados caracteres¡¡"
+	        id="ValValidator"
+	        source="{txtvalor}" 
+	        property="text"
+	        minLength="2"
+	        maxLength="100"
+       
+       /> 
+       
+       <!--mx:StringValidator 
+	    	
+	    	requiredFieldError="!!Este campo es Obligatorio. Ingrese La fecha de Origen por favor¡¡"
+	        id="fechaOrigenValidator"
+	        source="{DfFechaOrigen}" 
+	        property="text"
+       
+       /> 
+
+       <mx:StringValidator 
+	    	
+	    	requiredFieldError="!!Este campo es Obligatorio. Ingrese La fecha de Pago por favor¡¡"
+	        id="fechaPagoValidator"
+	        source="{DfFechapago}" 
+	        property="text"
+       
+       /--> 
+       
+       <mx:DateValidator
+    
+		    requiredFieldError="!!Este campo es Obligatorio. Ingrese La fecha de Origen por favor¡¡"
+		    formatError="!!Error en el Formato de la fecha"
+	        wrongLengthError="!!Fecha Inválida"
+	        
+	        invalidCharError="!!La fecha contiene caracteres Inválidos"
+	        wrongDayError="!!El dia de la Fecha es Inválido"
+	        wrongMonthError="!!El mes de la Fecha es Inválido"
+	     	wrongYearError="!!El año de la Fecha es Inválido"
+	     	
+		    id="fechaOrigenValidator"
+		    source="{DfFechaOrigen}" 
+		    property="text"
+    	
+      /> 
+      
+      <mx:DateValidator
+    
+		    requiredFieldError="!!Este campo es Obligatorio. Ingrese La fecha de Pago por favor¡¡"
+		    formatError="!!Error en el Formato de la fecha"
+	        wrongLengthError="!!Fecha Inválida"
+	        
+	        invalidCharError="!!La fecha contiene caracteres Inválidos"
+	        wrongDayError="!!El dia de la Fecha es Inválido"
+	        wrongMonthError="!!El mes de la Fecha es Inválido"
+	     	wrongYearError="!!El año de la Fecha es Inválido"
+	     	
+		    id="fechaPagoValidator"
+	        source="{DfFechapago}" 
+	        property="text"
+    	
+      />
+        
+    	
+	    <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+	       
+	       <mx:Box  width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+		 	 <mx:Canvas width="100%" height="100%" id="canvas1"  fontSize="13">
+		 		<mx:Label  id="lblAddCmenor" text="MODIFICAR CUENTA POR PAGAR" color="#FFFFFF" fontWeight="bold" fontSize="13"
+		 	     x="{(canvas1.width/2)-(lblAddCmenor.width/2)}" y="12"/>	
+		 	 </mx:Canvas>
+		   </mx:Box>
+	       
+	      <mx:Box id="box2" height="81%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center"> 
+	       
+	        <mx:ViewStack id="VstackRecHumano"  width="100%" height="100%" selectedIndex="{UtilidadesMl.getInstance().current}">
+	    		
+	    		<mx:Box width="100%" height="100%" label="aj" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+	    			 <mx:Form width="96%" height="100%">
+	    				
+	    				<mx:Spacer height="15"/>
+	    				
+	    				<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	    			            <mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+	    			            	<mx:Label text="CAMBIAR" fontWeight="bold" fontSize="11"/>
+	    			            </mx:Box>
+	    			            <mx:Box verticalAlign="middle" horizontalAlign="left" width="50%">
+	    			            	
+	    			            	<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	    			            	   <mx:RadioButtonGroup id="rbgrup"/>   
+	    			            	   <mx:Box verticalAlign="middle" width="50%" horizontalAlign="right">
+	    			            	      <mx:RadioButton change="{rh.selected==true?(frmitemNom.text='NOMBRE DEL REC HUMANO'):(frmitemNom.text='NOMBRE DE LA PERSONA'),viewstackRecPersona.selectedIndex=0,cbxNombreRec.visible=true,cbxNombrePersona.visible=false}" selected="true" id="rh" groupName="rbgrup" label="Recurso Humano"/>  	
+	    			            	   </mx:Box>
+	    			            	   	
+	    			            	   <mx:Box horizontalAlign="left" verticalAlign="middle" width="50%">
+	    			            	   	 <mx:RadioButton change="{Persona.selected==false?(frmitemNom.text='NOMBRE DEL REC HUMANO'):(frmitemNom.text='NOMBRE DE LA PERSONA'),viewstackRecPersona.selectedIndex=1,cbxNombrePersona.visible=true,cbxNombreRec.visible=false}" id="Persona" groupName="rbgrup" label="Persona"/>
+	    			            	   </mx:Box>	
+	    			            	   	
+	    			            	</mx:HBox>
+	    			            	
+	    			            	
+	    			            </mx:Box>
+	    			            			
+	    					</mx:HBox>
+	    				
+	    			    <mx:Spacer height="5"/>
+	  	                
+	  	                <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	                	  
+	  	                	<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+	  	                		 <mx:Label id="frmitemNom" text="NOMBRE DEL REC HUMANO" color="#FFFFFF" fontWeight="bold" fontSize="11"/>
+	  	                	</mx:Box>
+	  	                	
+	  	                	<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+	  	                	   
+	  	                	   <mx:Canvas width="100%">
+	  	                	   
+	  	                	       <mx:ComboBox selectedIndex="{CuentasPorPagarMl.getInstance().indiceRecHumano}"  toolTip="{cbxNombreRec.selectedItem.nombre+' '+cbxNombreRec.selectedItem.apellido}" labelFunction="lbl_function_nombre" dataProvider="{RecursoHumanoMl.getInstance().listRecursoHumano}" visible="true"  id="cbxNombreRec"  change="{validateForm(event),listarCuentasRecHumano()}" maxWidth="180" minWidth="180" color="#000000"/>	
+	  	                	       <mx:ComboBox selectedIndex="{CuentasPorPagarMl.getInstance().indicePersona}" toolTip="{cbxNombrePersona.selectedItem.nombreRs}" labelField="nombreRs" dataProvider="{PersonaMl.getInstance().listPersonas}" visible="false" id="cbxNombrePersona" maxWidth="180" minWidth="180"/>
+	  	                	       
+	  	                	   </mx:Canvas>  
+	  	                	   
+	  	                	</mx:Box>
+	  	                	
+	  	                </mx:HBox>
+	  	                
+	  	                <mx:Spacer height="13"/>
+	  	                
+	  	                <mx:Box width="100%"  height="100" horizontalAlign="center" verticalAlign="middle">
+	  	                	
+	  	                	<mx:ViewStack id="viewstackRecPersona" change="{cambiarEstadoFrmisvalid()}" selectedIndex="0" width="100%" height="100%">
+	  	                		
+	  	                		<mx:Box verticalAlign="middle" horizontalAlign="center" width="100%">
+	  	                		
+                                     <mx:Box height="{hbx1.height}" width="100%" verticalAlign="middle" horizontalAlign="center" backgroundColor="#1B75A4">
+                                     	 
+                                     </mx:Box>	  	                		
+	  	                		
+		  	                		 <mx:HBox id="hbx1" verticalAlign="middle" horizontalAlign="center" width="100%">
+		  	                		 	
+		  	                		 	<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+		  	                		 		<mx:Label text="NÚMERO DE CUENTA" fontWeight="bold" fontSize="11" color="#FFFFFF"/>
+		  	                		 	</mx:Box>
+		  	                		 	
+		  	                		 	<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+		  	                		 	    <mx:ComboBox selectedIndex="{CuentasPorPagarMl.getInstance().indiceCuentaBanco}" labelField="numero"  dataProvider="{RecursoHumanoMl.getInstance().listCuentas}" id="cbxCuentasRecHumano"  maxWidth="180" minWidth="180" color="#000000"/>
+		  	                		 	</mx:Box>
+  		  	                		 	
+		  	                		 </mx:HBox>
+	                                 
+	                                 <mx:Box height="{hbx1.height}" width="100%" verticalAlign="middle" horizontalAlign="center" backgroundColor="#1B75A4">
+                                     	 
+                                     </mx:Box>	  	                		
+
+	                                     	                		 
+	  	                		</mx:Box>
+	  	                		
+	  	                		 <mx:Box verticalAlign="middle" horizontalAlign="center" width="100%">
+	  	                		 
+	  	                		     <mx:HBox verticalAlign="middle" horizontalAlign="center" width="100%">
+	  	                		 	
+		  	                		 	<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+		  	                		 		<mx:Label text="BANCO" fontWeight="bold" fontSize="11" color="#FFFFFF"/>
+		  	                		 	</mx:Box>
+		  	                		 	
+		  	                		 	<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+		  	                		 	    <mx:ComboBox  selectedIndex="{CuentasPorPagarMl.getInstance().indiceBanco}" dataProvider="{RecursoHumanoMl.getInstance().listBancos}" labelField="nombre" id="cbxbancos"  maxWidth="180" minWidth="180" color="#000000"/>
+		  	                		 	</mx:Box>
+		  	                		 	
+		  	                		 </mx:HBox>
+		  	                		 
+		  	                		 <mx:HBox verticalAlign="middle" horizontalAlign="center" width="100%">
+	  	                		 	
+		  	                		 	<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+		  	                		 		<mx:Label text="TIPO DE CUENTA" fontWeight="bold" fontSize="11" color="#FFFFFF"/>
+		  	                		 	</mx:Box>
+		  	                		 	
+		  	                		 	<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+		  	                		 	    <mx:ComboBox selectedIndex="{CuentasPorPagarMl.getInstance().indiceTipoCuenta}" labelField="nombre" dataProvider="{RecursoHumanoMl.getInstance().listtipoCuenta}" id="cbxtipocuenta" maxWidth="180" minWidth="180" color="#000000"/>
+		  	                		 	</mx:Box>
+		  	                		 	
+		  	                		 </mx:HBox>
+	  	                		     
+	  	                		     <mx:HBox verticalAlign="middle" horizontalAlign="center" width="100%">
+	  	                		 	
+		  	                		 	<mx:Box width="50%" verticalAlign="middle" horizontalAlign="right">
+		  	                		 		<mx:Label text="NÚMERO DE CUENTA" fontSize="11" color="#FFFFFF" fontWeight="bold"/>
+		  	                		 	</mx:Box>
+		  	                		 	
+		  	                		 	<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+		  	                		 	    <mx:TextInput text="{CuentasPorPagarMl.getInstance().numeroCuenta}" change="{validateForm(event)}" id="txtnumcuenta" width="75%" fontSize="10"/>
+		  	                		 	</mx:Box>
+		  	                		 	
+		  	                		 </mx:HBox>
+	  	                		     
+	  	                		 </mx:Box>
+	  	                		  
+	  	                	</mx:ViewStack>
+	  	                	
+	  	                </mx:Box>
+	  	               
+	  	               <mx:Spacer height="13"/>
+	  	               
+	  	               <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	               	  
+	  	               	   <mx:Box verticalAlign="top" horizontalAlign="right" width="50%">
+	  	               	   	
+	  	               	   	  <mx:Label text="CONCEPTO" fontWeight="bold" fontSize="11" color="#FFFFFF"/>
+	  	               	   	
+	  	               	   </mx:Box>
+	  	               	   
+	  	               	   <mx:Box verticalAlign="middle" horizontalAlign="left" width="50%">
+	  	               	   	
+	  	               	   	   <mx:TextArea text="{CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem.concepto}" width="75%" change="{validateForm(event)}" id="txtareaConcept" height="80" fontSize="10" color="#000000"/>
+	  	               	   	
+	  	               	   </mx:Box>
+	  	               	  
+	  	               </mx:HBox>
+	  	               
+	  	               <mx:Spacer height="13"/>
+	  	               
+	  	               <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	               	  
+	  	               	   <mx:Box verticalAlign="top" horizontalAlign="right" width="50%">
+	  	               	   	
+	  	               	   	  <mx:Label text="ESTADO DE LA CUENTA" fontWeight="bold" fontSize="11" color="#FFFFFF"/>
+	  	               	   	
+	  	               	   </mx:Box>
+	  	               	   
+	  	               	   <mx:Box verticalAlign="middle" horizontalAlign="left" width="50%">
+	  	               	   	
+	  	               	   	   <mx:ComboBox selectedIndex="{CuentasPorPagarMl.getInstance().indiceEstado}" labelField="nombre" dataProvider="{CuentasPorPagarMl.getInstance().listEstadoCpp}" id="cbxestadoCuenta"  maxWidth="180" minWidth="180" color="#000000"/>
+	  	               	   	
+	  	               	   </mx:Box>
+	  	               	  
+	  	               </mx:HBox>
+	  	               
+	  	               <mx:Spacer height="13"/>
+	  	               
+	  	               <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	               	  
+	  	               	   <mx:Box verticalAlign="top" horizontalAlign="right" width="50%">
+	  	               	   	
+	  	               	   	  <mx:Label text="VALOR" fontWeight="bold" fontSize="11" color="#FFFFFF"/>
+	  	               	   	
+	  	               	   </mx:Box>
+	  	               	   
+	  	               	   <mx:Box verticalAlign="middle" horizontalAlign="left" width="50%">
+	  	               	   	
+	  	               	   	   <mx:TextInput text="{txtvalor.text = UtilidadesMl.getInstance().formaterMoneda(CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem.valor)}" focusIn="{txtvalor.text = UtilidadesMl.getInstance().combertirDecimalToEntero(txtvalor.text)}" focusOut="{txtvalor.text = UtilidadesMl.getInstance().formaterMoneda(txtvalor.text)}" change="{validateForm(event)}" id="txtvalor" restrict="0-9" width="75%"/>
+	  	               	   	
+	  	               	   </mx:Box>
+	  	               	  
+	  	               </mx:HBox>
+	  	               
+  	  	               
+  	  	               <mx:Spacer height="13"/>
+  	  	               
+                      <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	               	  
+	  	               	   <mx:Box verticalAlign="top" horizontalAlign="right" width="50%">
+	  	               	   	
+	  	               	   	  <mx:Label text="FECHA DE ORIGEN (MM/DD/AA)" fontWeight="bold" fontSize="11" color="#FFFFFF"/>
+	  	               	   	
+	  	               	   </mx:Box>
+	  	               	   
+	  	               	   <mx:Box verticalAlign="middle" horizontalAlign="left" width="50%">
+	  	               	   	
+	  	               	   	   <mx:DateField editable="true" text="{DfFechaOrigen.text = UtilidadesMl.getInstance().formatearACampoFecha(CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem.fechaOrigen)}" change="{validateForm(event)}" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" id="DfFechaOrigen" width="75%" color="#000000" fontSize="11"/>
+	  	               	   	
+	  	               	   </mx:Box>
+	  	               	  
+	  	               </mx:HBox>
+	  	               
+	  	               <mx:Spacer height="13"/>
+	  	               
+	  	               <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	               	  
+	  	               	   <mx:Box verticalAlign="top" horizontalAlign="right" width="50%">
+	  	               	   	
+	  	               	   	  <mx:Label text="FECHA DE PAGO (MM/DD/AA)" fontWeight="bold" fontSize="11" color="#FFFFFF"/>
+	  	               	   	
+	  	               	   </mx:Box>
+	  	               	   
+	  	               	   <mx:Box verticalAlign="middle" horizontalAlign="left" width="50%">
+	  	               	   	
+	  	               	   	   <mx:DateField editable="true" text="{CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem.fechaPago!=null?(DfFechapago.text = UtilidadesMl.getInstance().formatearACampoFecha(CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem.fechaPago)):('')}" change="{validateForm(event)}" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" id="DfFechapago" width="75%" color="#000000" fontWeight="normal" fontSize="11"/>
+	  	               	   	
+	  	               	   </mx:Box>
+	  	               	  
+	  	               </mx:HBox>
+	  	               		
+	  	              <mx:Spacer height="13"/>
+	    			
+	    			</mx:Form>
+	    			
+	    		</mx:Box>
+	    		  
+	    	   </mx:ViewStack>
+	    	</mx:Box>
+	    	
+			  <mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+			    <mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+			      
+			      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+			      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+			      		<mx:Image source="{UtilidadesMl.getInstance().rutaback2}" toolTip="Atras" />	
+			      	</mx:Box>
+			      	
+			      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+			      		<mx:Image id="ok" click="{modificarCuentaXPagar()}" source="{formIsValid == true?(UtilidadesMl.getInstance().rutaCheck):(UtilidadesMl.getInstance().rutaCheck2)}"  toolTip="Aceptar" />	
+			      	</mx:Box>
+			      	
+			      </mx:HBox>
+			      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+			      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+			      			<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{return_name()}" toolTip="Cancelar" 
+			      				/>	
+			      		</mx:Box>
+			      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+			      			<mx:Image source="{UtilidadesMl.getInstance().next2}"  toolTip="Siguiente"/>	
+			      		</mx:Box>
+			      		
+			    	</mx:HBox>
+			    </mx:HBox>
+						 	
+			 </mx:Box>
+	    	
+	    	
+	    </mx:VBox>
+	    
+	   
+</mx:TitleWindow>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                           

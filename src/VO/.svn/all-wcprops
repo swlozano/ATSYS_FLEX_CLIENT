@@ -1,0 +1,263 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/ATSYS_WEB/!svn/ver/103/ATSYS_WEB/src/VO
+END
+OficioVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/OficioVO.as
+END
+CoincidenciaVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/CoincidenciaVO.as
+END
+DetalleFacturaFx.as
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/DetalleFacturaFx.as
+END
+FichaVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/FichaVO.as
+END
+UsuarioAlternoVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/UsuarioAlternoVO.as
+END
+ValorFormaPagoFxVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/ValorFormaPagoFxVO.as
+END
+FechaPagoVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/FechaPagoVO.as
+END
+IvaVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/IvaVO.as
+END
+ValorFormaPagoVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/ValorFormaPagoVO.as
+END
+OtroMasNomina.as
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/ATSYS_WEB/!svn/ver/85/ATSYS_WEB/src/VO/OtroMasNomina.as
+END
+CentroCostroVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/CentroCostroVO.as
+END
+FacturaVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/ATSYS_WEB/!svn/ver/103/ATSYS_WEB/src/VO/FacturaVO.as
+END
+MovimientoVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/MovimientoVO.as
+END
+ContratoVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/ContratoVO.as
+END
+RecursoHumanoVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/RecursoHumanoVO.as
+END
+TerminarContratoVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/TerminarContratoVO.as
+END
+ValorFijoPsVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/ATSYS_WEB/!svn/ver/85/ATSYS_WEB/src/VO/ValorFijoPsVO.as
+END
+CajaMenorVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/CajaMenorVO.as
+END
+ValorIdVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/ValorIdVO.as
+END
+Tributaria.as
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/ATSYS_WEB/!svn/ver/57/ATSYS_WEB/src/VO/Tributaria.as
+END
+LiquidacionVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/LiquidacionVO.as
+END
+CausacionPs.as
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/ATSYS_WEB/!svn/ver/85/ATSYS_WEB/src/VO/CausacionPs.as
+END
+FechasCorteCausacionesVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ATSYS_WEB/!svn/ver/38/ATSYS_WEB/src/VO/FechasCorteCausacionesVO.as
+END
+ItemFacturaVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/ItemFacturaVO.as
+END
+ConsultarMovimientosVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/ConsultarMovimientosVO.as
+END
+OtrosMasPs.as
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/ATSYS_WEB/!svn/ver/85/ATSYS_WEB/src/VO/OtrosMasPs.as
+END
+CausacionPsVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/ATSYS_WEB/!svn/ver/17/ATSYS_WEB/src/VO/CausacionPsVO.as
+END
+UsuariosSysVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/UsuariosSysVO.as
+END
+CuentaPorPagarVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/CuentaPorPagarVO.as
+END
+CausacionEmpresa.as
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/ATSYS_WEB/!svn/ver/57/ATSYS_WEB/src/VO/CausacionEmpresa.as
+END
+RetencionesVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/RetencionesVO.as
+END
+ReporteFacturaVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/ATSYS_WEB/!svn/ver/45/ATSYS_WEB/src/VO/ReporteFacturaVO.as
+END
+ProvisionPs.as
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/ATSYS_WEB/!svn/ver/85/ATSYS_WEB/src/VO/ProvisionPs.as
+END
+RolSysVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/RolSysVO.as
+END
+CuentaBancariaVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/CuentaBancariaVO.as
+END
+FechasPagoVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/FechasPagoVO.as
+END
+PermisosVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/PermisosVO.as
+END
+CausacionNomina.as
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/ATSYS_WEB/!svn/ver/57/ATSYS_WEB/src/VO/CausacionNomina.as
+END
+AbonoFacturaVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/AbonoFacturaVO.as
+END
+CausacionVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/CausacionVO.as
+END
+ContinenteVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/ContinenteVO.as
+END
+PersonaVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/PersonaVO.as
+END
+CausacionNominaVO.as
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/VO/CausacionNominaVO.as
+END

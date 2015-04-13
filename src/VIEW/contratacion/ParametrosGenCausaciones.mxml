@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	showCloseButton="false" close="returnName()" 
+	layout="absolute" 
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	width="400" height="220" 
+	borderSkin="CSS.SKIN.PopUpSkin" 
+    fontFamily="Verdana" fontSize="12" fontWeight="bold" 
+    color="#FFFFFF" >
+	<mx:Script>
+        <![CDATA[
+        	import MODEL.CausacionesMl;
+        	import EVENT.ContratoEvent;
+        	import VO.CausacionVO;  
+        	import MODEL.ContratoMl;
+        	import MODEL.UtilidadesMl;
+        	import mx.core.Application;
+        	import MODEL.UsuariosSysMl;
+        	import MODEL.PermisosMl;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.CentroCostoEvent;
+        	import VO.CentroCostroVO;
+        	import mx.controls.Alert;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           
+            [Bindable]
+            public var formIsValid:Boolean=false;
+            [Bindable]
+            public var formIsEmpty:Boolean=true;
+            
+            
+             [Bindable]
+			public var ArrayMensualPeriodos:Array = [
+			{mes:'Enero', id:0},
+			{mes:'Febrero', id:1},
+			{mes:'Marzo', id:2},
+			{mes:'Abril', id:3},
+			{mes:'Mayo', id:4},
+			{mes:'Junio', id:5},
+			{mes:'Julio', id:6},
+			{mes:'Agosto', id:7},
+			{mes:'Septiembre', id:8},
+			{mes:'Octubre', id:9},
+			{mes:'Noviembre', id:10},
+			{mes:'Diciembre', id:11},
+			];
+            
+            private var focussedFormControl:DisplayObject;
+           
+            private function returnName():void {
+            	
+                 PopUpManager.removePopUp(this);
+                 PermisosMl.getInstance().CloseMainMenu.enabled=true;
+		         UsuariosSysMl.getInstance().mostrarSubMenu=true;
+            }
+            
+           
+            
+            public function generarCausaciones():void{
+            	
+                if(formIsValid){
+                	
+	            	var mes:int;
+	            	var year:int;
+	            	var causacion:CausacionVO;
+	            	var e:ContratoEvent;
+	           // 	mes = anocausacion.selectedDate.getMonth();
+	            //	year = anocausacion.selectedDate.getFullYear();
+	            	
+	            	year = parseInt(txtyear.text);
+	            	mes = cbxmes.selectedItem.id;
+	            	
+	            	CausacionesMl.getInstance().mesCausacion = mes;
+	            	CausacionesMl.getInstance().yearCausacion = year;
+	            	CausacionesMl.getInstance().tipoContrato = cbxtipocontrato.selectedItem.id; 
+	               	CausacionesMl.getInstance().currentTipoCausacion = cbxtipocontrato.selectedItem.id;
+	            	ContratoMl.getInstance().CausacionPpl.modificarItemsMenuBar(8);
+	            	
+	            	if(cbxtipocontrato.selectedItem.id==1){
+
+						//causacion ps
+						ContratoMl.getInstance().CausacionPpl.modificarItemsMenuBar(5);
+	            		causacion = new CausacionVO(0,0,mes,year);
+	            		e = new ContratoEvent(ContratoEvent.CONSULTAR_EXISTENCIA_CAUSACIONES,null,null,causacion);
+	            		CairngormEventDispatcher.getInstance().dispatchEvent(e);
+	            		returnName();
+	            		ContratoMl.getInstance().CausacionPpl.viewStackCausaciones.selectedIndex = 5; 
+	            	
+	            	}else{
+	            	
+	            			//causacion Nomina
+	            			ContratoMl.getInstance().CausacionPpl.modificarItemsMenuBar(6);
+			            	causacion= new CausacionVO(0,1,mes,year);
+			            	e = new ContratoEvent(ContratoEvent.CONSULTAR_EXISTENCIA_CAUSACIONES,null,null,causacion);
+			            	CairngormEventDispatcher.getInstance().dispatchEvent(e);
+                            returnName(); 
+                           	ContratoMl.getInstance().CausacionPpl.viewStackCausaciones.selectedIndex = 0;
+                         }
+                    
+                }
+            }
+            
+            private function validateForm(event:Event):void{
+            
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(comboNatValidator);
+               validate(txtyearValidator);
+            }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+           
+           
+            
+        ]]>
+    </mx:Script>
+    
+	    
+	    <mx:NumberValidator
+	   	
+	   	lowerThanMinError="Seleccione un Tipo de Pago"
+	   	minValue="0"
+	   	property="selectedIndex"
+	   	source="{cbxtipocontrato}"
+	   	id="comboNatValidator"
+	   	
+	   	/>
+        
+        <mx:NumberValidator
+	   	    
+	   	    requiredFieldError="!!Este campo es requerido...Ingrese el año a Causar Por favor¡¡"
+		   	lowerThanMinError="!!AÑO MUY BAJO¡¡..ESCOJA UN AÑO SUPERIOR"
+		   	exceedsMaxError="!!DESBORDE¡¡..ESCOJA UN AÑO ANTERIOR"
+		   	minValue="1950"
+		   	maxValue="2300"
+		   	property="text"
+		   	source="{txtyear}"
+		   	id="txtyearValidator"
+	   	
+	   	/>
+    
+        <!--mx:DateValidator
+     
+        requiredFieldError="!!Este campo es Obligatorio. Ingrese el AÑO de Costo por favor¡¡"
+        formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+     	id="fechaNacValidator"
+     	source="{anocausacion}"
+     	property="text"
+     	
+	    /-->
+   
+    
+    <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >      
+    
+           <mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+		 		<mx:Canvas width="100%" height="100%" id="canvas1"  fontSize="13">
+		 			<mx:Label  id="lblAddCmenor" text="PARAMETROS GENERACIÓN CAUSACIONES" color="#FFFFFF" fontWeight="bold" fontSize="13"
+		 	     	x="{(canvas1.width/2)-(lblAddCmenor.width/2)}" y="12"/>	
+		 		</mx:Canvas>
+		   </mx:Box>
+    
+        <mx:Box id="box2" height="59%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+			    
+			    <mx:Form width="95%" height="50%">
+			    	
+			    	<mx:FormItem label="TIPO DE CONTRATO"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11"> 	
+				    	 <mx:ComboBox labelField="tipoContrato" dataProvider="{ContratoMl.getInstance().listTipoContrato}" prompt="Seleccione" change="validateForm(event)" id="cbxtipocontrato" width="75%" color="#000000" fontSize="10"/>  	  	
+				    </mx:FormItem>
+				    
+			    		<mx:Spacer height="10"/>
+				  	
+				  	<mx:FormItem label="AÑO"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11"> 	
+				    	 <!--mx:DateField monthNames="{UtilidadesMl.getInstance().arrayMeses}" dayNames="[-,-,-,-,-,-,-]"  change="validateForm(event)" id="anocausacion" width="75%" color="#000000" fontSize="10"/-->
+				    	 <mx:TextInput change="{validateForm(event)}" width="30%" id="txtyear" restrict="0-9" maxChars="4" fontSize="10"/>   	  	
+				    </mx:FormItem>
+				    
+				    <mx:Spacer height="10"/>
+				    
+				    <mx:FormItem label="MES"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11"> 	
+				    	 <!--mx:DateField monthNames="{UtilidadesMl.getInstance().arrayMeses}" dayNames="[-,-,-,-,-,-,-]"  change="validateForm(event)" id="anocausacion" width="75%" color="#000000" fontSize="10"/-->
+				    	 <mx:ComboBox id="cbxmes" dataProvider="{ArrayMensualPeriodos}" labelField="mes" width="75%" color="#000000" fontSize="10"/>  	  	
+				    </mx:FormItem>
+				  	
+			    </mx:Form>
+        
+        </mx:Box>
+        
+        <mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+		    <mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+		      
+		      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+		      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+		      		<mx:Image source="{UtilidadesMl.getInstance().rutaback2}" toolTip="Atras" />	
+		      	</mx:Box>
+		      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+		      		<mx:Image id="ok" click="{generarCausaciones()}" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  toolTip="GENERAR" enabled="{formIsValid}"  />	
+		      	</mx:Box>
+		      	
+		      </mx:HBox>
+		      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+		      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+		      			<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar" 
+		      				/>	
+		      		</mx:Box>
+		      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+		      			<mx:Image source="{UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" />	
+		      		</mx:Box>
+		      		
+		    	</mx:HBox>
+		    </mx:HBox>
+				 	
+	 </mx:Box>	
+        	
+        	
+    </mx:VBox>
+</mx:TitleWindow>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box verticalAlign="middle" horizontalAlign="center" xmlns:mx="http://www.adobe.com/2006/mxml" horizontalScrollPolicy="off" verticalScrollPolicy="off" color="#0066CC">
+	<mx:Script>
+		<![CDATA[
+			import MODEL.UtilidadesMl;
+			
+			public function validarFecha(item:Object):String{
+				
+				var retorno:String;
+				
+				if(item.fechaFin!=null){
+					
+					retorno= UtilidadesMl.getInstance().formaterFechas(item.fechaFin);
+					
+				}else{
+					
+				       retorno ="";
+				      
+				     }
+				     return retorno;
+				
+			}
+			
+		]]>
+	</mx:Script>
+  <mx:Label textAlign="center" text="{validarFecha(data.fechaFin)}"  color="#0066CC"/>
+</mx:Box>

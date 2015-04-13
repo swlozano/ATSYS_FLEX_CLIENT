@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow  xmlns:mx="http://www.adobe.com/2006/mxml" 
+	initialize="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosModificarUsers,1,-1 ,true)}"
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	layout="absolute" width="400" height="365"
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	showCloseButton="false">
+	
+	<mx:Script>
+        <![CDATA[
+        	import MODEL.UtilidadesMl;
+        	import mx.core.Application;
+        	import MODEL.PermisosMl;
+        	import mx.collections.ArrayCollection;
+        	import mx.controls.Alert;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import MODEL.RolSysMl;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import VO.UsuariosSysVO;
+        	import EVENT.UsuariosSysEvent;
+        	import MODEL.UsuariosSysMl;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           
+         
+            [Bindable]
+			[Embed(source="/REC/IMAGENES/warn2.png")]
+			public var alerta:Class;
+			[Bindable]
+            public var formIsValid:Boolean=true;
+            [Bindable]
+            public var formIsEmpty:Boolean=true;
+            
+            private var focussedFormControl:DisplayObject;
+            
+            [Bindable]
+            public var PantallaUsuarioswidth:Number = 3.19;
+            [Bindable]
+            public var PantallaUsuariosheight:Number = 1.758;
+            
+          
+            
+            public function modifiUsuarios():void{
+            	
+               if(formIsValid){
+            
+                	  var usuariosSys:UsuariosSysVO = new UsuariosSysVO(UsuariosSysMl.getInstance().usuariosPpl.dgUsuarios.selectedItem.id,modNomusu.text,modApeusu.text,parseInt(modCedusu.text,0),modLogusu.text,modPasusu.text,modEmailusu.text,getRolesSeleccionados2(),false);
+          			  var event:UsuariosSysEvent = new UsuariosSysEvent(UsuariosSysEvent.MODIFICAR_USUARIOS,usuariosSys);
+           			  CairngormEventDispatcher.getInstance().dispatchEvent(event);
+           			  returnName();
+		                    
+		             }
+            }
+            
+            private function returnName():void {
+                 PopUpManager.removePopUp(this);
+                 UsuariosSysMl.getInstance().selectableUs=true;
+                 PermisosMl.getInstance().CloseMainMenu.enabled=true;
+		         UsuariosSysMl.getInstance().mostrarSubMenu=true;
+            }
+            
+            public function getRolesSeleccionados2():Array
+            {
+            	RolSysMl.getInstance().idRolesSelect = new Array();
+            	
+            	for each( var x:* in RolSysMl.getInstance().listRol)
+            	{
+            		if(x.asignado)
+            			RolSysMl.getInstance().idRolesSelect.push(x.id);
+            	}
+            	
+            	return RolSysMl.getInstance().idRolesSelect;
+            }
+            
+            private function validateForm(event:Event):void{
+            
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(nameValidator);
+               validate(apeValidator);
+               validate(cedValidator);
+               validate(emailValidator);
+               validate(logValidator);
+               validate(pasValidator);
+               //*65230000.+pasValidator);
+            }
+               
+               
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+            private function creationCompleteHandler():void
+            {
+               resetFocus();
+            }   
+            
+            
+            private function resetFocus():void
+            {
+                focusManager.setFocus(modNomusu);
+            }
+            
+            public function ocultarPass():void{
+            
+            	if(modPasusu.displayAsPassword){
+            		modPasusu.displayAsPassword=false;
+          		}else{
+               		  modPasusu.displayAsPassword=true;
+           			 }
+            }
+            public function checkall():void{
+            
+               RolSysMl.getInstance().checarallCheckbox();              
+               var cont:int=0;
+               var ar:ArrayCollection = new ArrayCollection();
+               ar=RolSysMl.getInstance().listRol as ArrayCollection;
+               for each(var x:* in RolSysMl.getInstance().listRol){
+               
+                  if(checkbxselecallroles.selected){
+                    
+                    x.asignado=true;
+                     
+                  }else{
+                  
+                    x.asignado=false;
+                    
+                  }
+                  ar.getItemAt(cont).asignado=x.asignado;
+               		cont++;
+               }
+               RolSysMl.getInstance().listRol=ar;
+               
+              
+            }
+
+        ]]>
+    </mx:Script>
+
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Nombre por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="nameValidator"
+        source="{modNomusu}" 
+        property="text"
+        minLength="2"
+        maxLength="50"
+    />
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Apellido por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="apeValidator"
+        source="{modApeusu}" 
+        property="text"
+        minLength="2"
+        maxLength="50"
+    />
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese la Cedula por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 5 caracteres mínimo para ser válido¡¡"
+        id="cedValidator"
+        source="{modCedusu}" 
+        property="text"
+        minLength="5"
+        
+    />
+    <mx:EmailValidator
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Correo Eléctronico por favor¡¡"
+    	invalidCharError="!!Hay caracteres inválidos en tu e-mail¡¡"
+    	invalidDomainError="!!CORREO ELECTRÓNICO INVÁLIDO¡¡"
+    	invalidPeriodsInDomainError="!!CORREO ELECTRÓNICO INVÁLIDO¡¡"
+    	missingPeriodInDomainError="!!CORREO ELECTRÓNICO INVÁLIDO¡¡"
+    	missingAtSignError="!!CORREO ELECTRÓNICO INVÁLIDO¡¡¡¡"
+    	missingUsernameError="!!CORREO ELECTRÓNICO INVÁLIDO¡¡¡¡"
+        id="emailValidator"
+        source="{modEmailusu}" 
+        property="text"
+    />
+    <mx:StringValidator  
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Login por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 1 caracteres mínimo para ser válido¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="logValidator"
+        source="{modLogusu}" 
+        property="text"
+        minLength="1"
+        maxLength="50"
+    />
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese la contraseña por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 1 caracteres mínimo para ser válido¡¡"
+        id="pasValidator"
+        source="{modPasusu}" 
+        property="text"
+        minLength="1"
+        
+    />      
+     <!--mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Repita la contraseña por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 1 caracteres mínimo para ser válido¡¡"
+        id="confpasValidator"
+        source="{modConfPasusu}" 
+        property="text"
+        minLength="1"
+    
+    /-->
+	        
+	<mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+
+		<mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+			<mx:Canvas width="100%" height="100%" id="canvas1" >
+				<mx:Label  id="lblAddUs" text="{UtilidadesMl.getInstance().tituloPantalla}" color="#FFFFFF" fontWeight="bold" fontSize="13"
+ 		 		x="{(canvas1.width/2)-(lblAddUs.width/2)}" y="12"/>	
+			</mx:Canvas>
+		</mx:Box>
+ 
+		<mx:Box id="box2" height="76%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+			<mx:ViewStack width="100%" id="viewStack1" height="100%" selectedIndex="{UtilidadesMl.getInstance().current}">
+				<mx:Box width="100%" height="90%" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+					<mx:Form   verticalScrollPolicy="off"  width="93%" height="70%"  >
+  
+					<mx:FormItem label="NOMBRE"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11"> 	
+						<mx:TextInput change="validateForm(event)" maxChars="20" id="modNomusu" width="75%" text="{UsuariosSysMl.getInstance().usuariosPpl.dgUsuarios.selectedItem.nombre}"/>  	  	
+					</mx:FormItem>
+   						<mx:Spacer  height="10"/>
+					  <mx:FormItem label="APELLIDOS"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">  	      	  	
+					  	 <mx:TextInput maxChars="40" change="validateForm(event)" id="modApeusu" text="{UsuariosSysMl.getInstance().usuariosPpl.dgUsuarios.selectedItem.apellido}"  width="75%"/>
+					  </mx:FormItem>
+  						<mx:Spacer  height="10"/>
+					  <mx:FormItem label="CÉDULA"   fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">
+					  	 <mx:TextInput  change="validateForm(event)" id="modCedusu" restrict="0-9"  text="{UsuariosSysMl.getInstance().usuariosPpl.dgUsuarios.selectedItem.cedula}" width="75%"/>
+					  </mx:FormItem>
+  						<mx:Spacer  height="10"/>
+					  <mx:FormItem label="E-MAIL"   fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">
+					  	 <mx:TextInput maxChars="100" change="validateForm(event)" id="modEmailusu"  text="{UsuariosSysMl.getInstance().usuariosPpl.dgUsuarios.selectedItem.correoElectronico}"  width="75%"/>
+					  </mx:FormItem>
+  						<mx:Spacer  height="10"/>
+					  <mx:FormItem label="LOGIN"   fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">
+					  	 <mx:TextInput  restrict="1234567890,a-z,A-Z" maxChars="20" change="validateForm(event)" id="modLogusu"   text="{UsuariosSysMl.getInstance().usuariosPpl.dgUsuarios.selectedItem.login}" width="75%"/>
+					  </mx:FormItem>
+   						<mx:Spacer  height="10"/>
+					  <mx:FormItem label="           CONTRASEÑA"   fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">
+					  	 <mx:TextInput  restrict="1234567890,a-z,A-Z" maxChars="20" change="validateForm(event)" toolTip="Click sobre este campo para {modPasusu.displayAsPassword == false?('ocultar'):'visualizar'} la contraseña" click="{ocultarPass()}" displayAsPassword="true" id="modPasusu" text="{UsuariosSysMl.getInstance().usuariosPpl.dgUsuarios.selectedItem.contrasena}"  width="75%"/>
+					  </mx:FormItem>
+  						<!--mx:Spacer  height="10"/>
+  					  <mx:FormItem label="CONFIRMAR CONTRASEÑA"   fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">
+					  	 <mx:TextInput restrict="1234567890,a-z,A-Z" maxChars="20" change="validateForm(event)" displayAsPassword="true" id="modConfPasusu"  width="75%"/>
+					  </mx:FormItem-->
+					</mx:Form>
+				</mx:Box>
+				<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+					<mx:Spacer height="10" />
+					<mx:Box verticalAlign="middle" horizontalAlign="center"  fontWeight="bold" >
+						<mx:HBox  width="99%" verticalAlign="middle" horizontalAlign="center">
+						   <mx:Label text="SELECCIONAR TODOS LOS ROLES" color="#FFFFFF" fontSize="11" fontWeight="bold"/>
+						   <mx:CheckBox selected="false" id="checkbxselecallroles" change="checkall()" />	
+						</mx:HBox>
+					</mx:Box>
+					<mx:DataGrid width="90%" height="88%" dataProvider="{RolSysMl.getInstance().listRol}"  >
+	  	      	  		<mx:columns>
+						   <mx:DataGridColumn headerText="Nombre del Rol" dataField="nombre" textAlign="center" />
+						   <mx:DataGridColumn  headerText="Asignado" dataField="id"  textAlign="center">
+						    	<mx:itemRenderer >
+						    	           <mx:Component>
+						    	            <mx:CheckBox  click="data.asignado=!data.asignado"  
+						    	            	selected="{data.asignado}"  horizontalCenter="true"/>
+						    	           </mx:Component>   
+						    	</mx:itemRenderer>
+						   </mx:DataGridColumn>
+			  	 		</mx:columns>
+	  	      	  	</mx:DataGrid>
+				</mx:Box>
+				<mx:Box>
+	     				            	
+	     				            </mx:Box>
+			</mx:ViewStack>			
+		</mx:Box>
+
+		<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+			<mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+				<mx:HBox height="100%" width="50%" verticalAlign="middle">
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+						<mx:Image source="{UtilidadesMl.getInstance().backEnable==true?(UtilidadesMl.getInstance().rutaback):UtilidadesMl.getInstance().rutaback2}"
+  	  					mouseOver="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosModificarUsers,1,viewStack1.selectedIndex,false)}" toolTip="Atras" />	
+					</mx:Box>
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+						<mx:Image id="ok" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  toolTip="Aceptar" enabled="{formIsValid}" click="{modifiUsuarios()}" />	
+					</mx:Box>
+  				</mx:HBox>
+				<mx:HBox height="100%" width="50%" verticalAlign="middle">
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+						<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar"/>	
+					</mx:Box>
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+						<mx:Image source="{UtilidadesMl.getInstance().nextEnable==true?(UtilidadesMl.getInstance().next):UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" mouseOver="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosModificarUsers,1,viewStack1.selectedIndex,true)}"/>	
+					</mx:Box>
+  				</mx:HBox>
+			</mx:HBox>
+		</mx:Box>
+	</mx:VBox>
+</mx:TitleWindow>
+
+
+
+
+
+
+

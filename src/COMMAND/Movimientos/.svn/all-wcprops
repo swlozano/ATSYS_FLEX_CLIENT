@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Movimientos
+END
+AddMovimientoCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Movimientos/AddMovimientoCommand.as
+END
+ConsultarMovimientosPersonasCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Movimientos/ConsultarMovimientosPersonasCommand.as
+END
+ConsultarMovimientosCajaMenorCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Movimientos/ConsultarMovimientosCajaMenorCommand.as
+END
+ConsultarMovimientosCentroCostoCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Movimientos/ConsultarMovimientosCentroCostoCommand.as
+END
+EliminarMovimientoCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Movimientos/EliminarMovimientoCommand.as
+END
+ModificarMovimientosCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Movimientos/ModificarMovimientosCommand.as
+END
+ListarMovimientosCajaMenorCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Movimientos/ListarMovimientosCajaMenorCommand.as
+END

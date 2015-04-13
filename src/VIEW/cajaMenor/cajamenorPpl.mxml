@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<mx:VBox width="100%" height="100%" xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="crearPantalla()"  styleName="glassPods" verticalAlign="middle" horizontalAlign="center" xmlns:menu="VIEW.menu.*">
+
+	
+	<mx:Box width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom">
+	    <mx:Box width="95%" height="95%" >
+			<mx:DataGrid width="100%" selectable="{CajaMenorMl.getInstance().selectableCmenor}" dataProvider="{CajaMenorMl.getInstance().listCajamenor}" height="100%" id="dgCajaMenor"  alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15">
+				<mx:columns>
+					<mx:DataGridColumn headerText="Nombre" dataField="nombre" textAlign="center"/>
+					<mx:DataGridColumn headerText="Monto Inicio" dataField="montoInicio" itemRenderer="VIEW.Items.CajaMenor.ItemMontoInicio"  width="120" textAlign="center"/>
+					<mx:DataGridColumn headerText="Saldo" dataField="valor" width="120" itemRenderer="VIEW.Items.CajaMenor.ItemValor"   textAlign="center" />
+					<mx:DataGridColumn headerText="Valor Mínimo Notificación" dataField="valorMinimoNotificacion" width="250" textAlign="center" itemRenderer="VIEW.Items.CajaMenor.ItemValorMinimoNotificacion"/>
+					<mx:DataGridColumn headerText="Monto Mínimo Reintegro" dataField="montoMinimoReintegro" textAlign="center" itemRenderer="VIEW.Items.CajaMenor.ItemMontoMinimoReintegro" width="250"/>
+				</mx:columns>
+			</mx:DataGrid>
+			
+		</mx:Box>
+	</mx:Box>
+	<menu:MenuAbajo />
+	<mx:Script>
+		<![CDATA[
+			import MODEL.UtilidadesMl;
+			import MODEL.CajaMenorMl;
+			
+	    public function crearPantalla():void
+		{
+			CajaMenorMl.getInstance().cajaMenorPpl = this;
+			
+		}
+			
+		]]>
+	</mx:Script>
+	
+</mx:VBox>
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml" verticalAlign="middle" horizontalAlign="center" >
+	<mx:Script>
+		<![CDATA[
+			import MODEL.UtilidadesMl;
+		]]>
+	</mx:Script>
+	<mx:Label id="lbl" textAlign="center" text="{UtilidadesMl.getInstance().formaterMoneda(data.montoMinimoReintegro)}"/>
+</mx:Box>

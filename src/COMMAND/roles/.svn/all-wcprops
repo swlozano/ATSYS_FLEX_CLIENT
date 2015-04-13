@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/roles
+END
+ListarPermisosCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/roles/ListarPermisosCommand.as
+END
+ListarRolesSysCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/roles/ListarRolesSysCommand.as
+END
+ModificarRolesCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/roles/ModificarRolesCommand.as
+END
+EliminarRolesCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/roles/EliminarRolesCommand.as
+END
+AddRolesSysCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/roles/AddRolesSysCommand.as
+END
+AsignarRolesToUsusCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/roles/AsignarRolesToUsusCommand.as
+END

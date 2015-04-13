@@ -1,0 +1,125 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/ATSYS_WEB/!svn/ver/84/ATSYS_WEB/src/EVENT
+END
+SolicitudesServiciosEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/SolicitudesServiciosEvent.as
+END
+RolesSysEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/RolesSysEvent.as
+END
+FacturaEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/ATSYS_WEB/!svn/ver/40/ATSYS_WEB/src/EVENT/FacturaEvent.as
+END
+MovimientoEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/MovimientoEvent.as
+END
+CuentasCobroEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/CuentasCobroEvent.as
+END
+UsuarioEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/UsuarioEvent.as
+END
+ContratoEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/ATSYS_WEB/!svn/ver/84/ATSYS_WEB/src/EVENT/ContratoEvent.as
+END
+RecursoHumanoEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/RecursoHumanoEvent.as
+END
+CuentasPorPagarEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ATSYS_WEB/!svn/ver/26/ATSYS_WEB/src/EVENT/CuentasPorPagarEvent.as
+END
+CajaMenorEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/CajaMenorEvent.as
+END
+ValorFpagoEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/ATSYS_WEB/!svn/ver/84/ATSYS_WEB/src/EVENT/ValorFpagoEvent.as
+END
+PermisosEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/PermisosEvent.as
+END
+LiquidacionEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/LiquidacionEvent.as
+END
+CentroCostoEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/CentroCostoEvent.as
+END
+AbonoFacturaEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/AbonoFacturaEvent.as
+END
+ConsultasMovimientosEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/ConsultasMovimientosEvent.as
+END
+CausacionEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/ATSYS_WEB/!svn/ver/32/ATSYS_WEB/src/EVENT/CausacionEvent.as
+END
+PersonaEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/PersonaEvent.as
+END
+OficioEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/OficioEvent.as
+END
+UsuariosSysEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/EVENT/UsuariosSysEvent.as
+END

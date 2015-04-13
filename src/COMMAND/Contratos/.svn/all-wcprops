@@ -1,0 +1,107 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/ATSYS_WEB/!svn/ver/84/ATSYS_WEB/src/COMMAND/Contratos
+END
+GenerarCausacionPserviciosCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/ATSYS_WEB/!svn/ver/30/ATSYS_WEB/src/COMMAND/Contratos/GenerarCausacionPserviciosCommand.as
+END
+ListarValorFPagoXContratoCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Contratos/ListarValorFPagoXContratoCommand.as
+END
+ListHistoriContratoCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Contratos/ListHistoriContratoCommand.as
+END
+GuardarNuevasFechasPagoCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/ATSYS_WEB/!svn/ver/84/ATSYS_WEB/src/COMMAND/Contratos/GuardarNuevasFechasPagoCommand.as
+END
+TerminarContratoCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Contratos/TerminarContratoCommand.as
+END
+ListarAdendosCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Contratos/ListarAdendosCommand.as
+END
+ModificarTerminacionContratoCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Contratos/ModificarTerminacionContratoCommand.as
+END
+ListarTipoPagoCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Contratos/ListarTipoPagoCommand.as
+END
+AddContratoCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Contratos/AddContratoCommand.as
+END
+ListarTipoContratoCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Contratos/ListarTipoContratoCommand.as
+END
+ListarRetencionesPagoCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Contratos/ListarRetencionesPagoCommand.as
+END
+ListarTerminacionesContratoPorRespuestaCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Contratos/ListarTerminacionesContratoPorRespuestaCommand.as
+END
+ListarContratoCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ATSYS_WEB/!svn/ver/39/ATSYS_WEB/src/COMMAND/Contratos/ListarContratoCommand.as
+END
+CrearAdendo.as
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Contratos/CrearAdendo.as
+END
+ListarDatosLiquidacionCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/ATSYS_WEB/!svn/ver/3/ATSYS_WEB/src/COMMAND/Contratos/ListarDatosLiquidacionCommand.as
+END
+GenerarCausacionNominaCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/ATSYS_WEB/!svn/ver/55/ATSYS_WEB/src/COMMAND/Contratos/GenerarCausacionNominaCommand.as
+END
+GenerarValoresFormaPagoCommand.as
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/ATSYS_WEB/!svn/ver/84/ATSYS_WEB/src/COMMAND/Contratos/GenerarValoresFormaPagoCommand.as
+END

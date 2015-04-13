@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box verticalAlign="middle" horizontalAlign="center" xmlns:mx="http://www.adobe.com/2006/mxml" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			import MODEL.UtilidadesMl;
+			
+			public function normalizartotal():Number{
+				
+				var ret:String;
+				var aux:Number;
+				
+				if(parseFloat(data.total)<0){
+					
+				   aux = parseFloat(data.total)*-1;	
+					
+				}else{
+					
+				      aux = parseFloat(data.total)*1;	
+				     
+				     }
+				 
+			  return aux;	
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:Label textAlign="center" text="{UtilidadesMl.getInstance().formaterMoneda(normalizartotal())}" />
+</mx:Box>

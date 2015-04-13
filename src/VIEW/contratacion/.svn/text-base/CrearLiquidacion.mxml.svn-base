@@ -1,0 +1,650 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow  xmlns:mx="http://www.adobe.com/2006/mxml" 
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	creationComplete="LiquidacionMl.getInstance().Clon_crearLiquidacion = this"
+	layout="absolute" width="550" height="620"
+	x="{(Application.application.width/2)-(this.width/2)}"
+	y = "{(Application.application.height/2)-(this.height/2)}"
+	initialize="UtilidadesMl.getInstance().backEnable = false,UtilidadesMl.getInstance().nextEnable=true"
+	showCloseButton="false">
+	<mx:Script>
+		<![CDATA[
+			import mx.printing.FlexPrintJob;
+			import VIEW.Items.ImprimirLiquidacion;
+			import MODEL.RecursoHumanoMl;
+			import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import EVENT.LiquidacionEvent;
+			import VO.LiquidacionVO;
+			import MODEL.LiquidacionMl;
+			import VO.RetencionesVO;
+			import mx.managers.PopUpManager;
+			import mx.events.CloseEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.validators.Validator;
+			import MODEL.ContratoMl;
+			import MODEL.UtilidadesMl;
+			import mx.core.Application;
+			
+			[Bindable]
+            public var formIsValid:Boolean=false;
+            [Bindable]
+            public var formIsEmpty:Boolean=true;
+            
+            private var focussedFormControl:DisplayObject;
+			
+			private function returnName():void{
+				
+				PopUpManager.removePopUp(this);
+				LiquidacionMl.getInstance().idtipoListarFormula=1;
+				
+			}
+			  
+			public function crearLiquidacion():void{
+				
+				if(formIsValid){
+					
+					txtsueldoBasico.text = UtilidadesMl.getInstance().combertirDecimalToEntero(txtsueldoBasico.text);
+					
+					var fechaliqu:Date = new Date();
+					var fechapag:Date = new Date();
+					fechaliqu = fechaLiq.selectedDate;
+					fechapag = fechapago.selectedDate;
+					  
+					primaServ.text = UtilidadesMl.getInstance().combertirDecimalToEntero(primaServ.text);
+				    vacas.text = UtilidadesMl.getInstance().combertirDecimalToEntero(vacas.text);
+					cesan.text = UtilidadesMl.getInstance().combertirDecimalToEntero(cesan.text);
+					intecesan.text = UtilidadesMl.getInstance().combertirDecimalToEntero(intecesan.text);
+					
+					var liq:LiquidacionVO = new LiquidacionVO(
+					0,ContratoMl.getInstance().ContratoPpl.dgcontrato.selectedItem.id,
+					cbxcuentas.selectedItem.id,
+					LiquidacionMl.getInstance().indiceCbxPrimaservicios,
+					LiquidacionMl.getInstance().indiceCbxvacasiones,
+					LiquidacionMl.getInstance().indiceCbxcesantias,
+					LiquidacionMl.getInstance().indiceCbxInteresesCesantias,
+					LiquidacionMl.getInstance().DiasTrabajados,
+					parseFloat(primaServ.text),
+					parseFloat(vacas.text),
+					parseFloat(cesan.text),
+					parseFloat(intecesan.text),
+					LiquidacionMl.getInstance().TotalLiq,
+					fechaliqu,fechapag,parseFloat(LiquidacionMl.getInstance().sueldoBasico)
+					,"","","","","");
+					
+					//////////////////PARAMETROS DE IMPRESION DE LA LIQUIDACION
+					
+					LiquidacionMl.getInstance().NomTrabajadorPrint = ContratoMl.getInstance().ContratoPpl.dgcontrato.selectedItem.recursoHumano.nombre; 
+					
+					LiquidacionMl.getInstance().IdentificacionPrint = ContratoMl.getInstance().ContratoPpl.dgcontrato.selectedItem.recursoHumano.cedula;
+					
+					LiquidacionMl.getInstance().CuentaBancariaPrint = cbxcuentas.selectedItem.numero;
+					
+					LiquidacionMl.getInstance().SueldoBasicoPrint = UtilidadesMl.getInstance().formaterMoneda(LiquidacionMl.getInstance().sueldoBasico); 
+					
+					LiquidacionMl.getInstance().AuxilioTransportePrint =  UtilidadesMl.getInstance().formaterMoneda(LiquidacionMl.getInstance().auxtransporte);
+					
+					LiquidacionMl.getInstance().FechaInicioPrint = UtilidadesMl.getInstance().formaterFechas(ContratoMl.getInstance().ContratoPpl.dgcontrato.selectedItem.fechaInicio);   
+					
+					LiquidacionMl.getInstance().FechaTerminacionPrint = UtilidadesMl.getInstance().formaterFechas(LiquidacionMl.getInstance().FechaTerminacion); 
+					
+					LiquidacionMl.getInstance().DiasTrabajadosPrint = LiquidacionMl.getInstance().DiasTrabajados.toString(); 
+					
+					LiquidacionMl.getInstance().FechaLiquidacionPrint = UtilidadesMl.getInstance().formaterFechas(fechaliqu);
+					
+					LiquidacionMl.getInstance().FechaPagoPrint = UtilidadesMl.getInstance().formaterFechas(fechapag);
+					
+					LiquidacionMl.getInstance().PrimaPrint = UtilidadesMl.getInstance().formaterMoneda(primaServ.text);
+					
+					LiquidacionMl.getInstance().VacacionesPrint = UtilidadesMl.getInstance().formaterMoneda(vacas.text);
+					
+					LiquidacionMl.getInstance().CesantiasPrint = UtilidadesMl.getInstance().formaterMoneda(cesan.text);
+					
+					LiquidacionMl.getInstance().InteresesCesantiasPrint = UtilidadesMl.getInstance().formaterMoneda(intecesan.text);
+					
+					LiquidacionMl.getInstance().TotalLiquidacionPrint = UtilidadesMl.getInstance().formaterMoneda(LiquidacionMl.getInstance().TotalLiq.toString());
+					   
+					///////////////////////////////////////////////////////////
+					
+					//this.imprimirLiquidacion();
+					
+					
+					var e:LiquidacionEvent = new LiquidacionEvent(LiquidacionEvent.CREAR_LIQUIDACION,liq);
+					CairngormEventDispatcher.getInstance().dispatchEvent(e);
+					
+					
+					
+					returnName();
+					
+					
+					
+					  
+				}
+				
+			}
+			
+			private function validateForm(event:Event):void{
+             
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(primaValidator);
+               validate(vacaValidator);
+               validate(cesanValidator);
+               validate(interecesanValidator);
+               validate(fechaliqvalidator);
+               validate(fechapagovalidator);
+               
+            }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+               
+            } 
+            
+            private function recalcularTotal():void{
+            	
+            	var a:String;
+            	var b:String;
+            	var c:String;
+            	var d:String;
+            	
+            	a = UtilidadesMl.getInstance().combertirDecimalToEntero(primaServ.text);
+            	b = UtilidadesMl.getInstance().combertirDecimalToEntero(vacas.text);
+            	c = UtilidadesMl.getInstance().combertirDecimalToEntero(cesan.text);
+            	d = UtilidadesMl.getInstance().combertirDecimalToEntero(intecesan.text);
+            	
+            	LiquidacionMl.getInstance().TotalLiq = 
+            	parseFloat(a) + 
+            	parseFloat(b) + 
+            	parseFloat(c) + 
+            	parseFloat(d);
+            	
+            }
+            
+            public function imprimirLiquidacion(sp:Sprite):void{
+            	
+	                    
+	             var printJob:FlexPrintJob = new FlexPrintJob();
+    
+                      if(printJob.start()) { 
+	                    
+	                    
+	                    var Liq:ImprimirLiquidacion = new ImprimirLiquidacion();
+	                    
+	                    sp.addChild(Liq);
+
+                        Liq.titulo.text ="DOCUMENTO DE LIQUIDACIÓN";
+                        
+                        Liq.dnombre.text="Nombre del Trabajador :";
+                        Liq.nombre.text=LiquidacionMl.getInstance().NomTrabajadorPrint;
+                        
+                        Liq.dced.text ="Identificación :";
+                        Liq.ced.text=LiquidacionMl.getInstance().IdentificacionPrint;
+                        
+                        Liq.dcuenta.text="Cuenta Bancaria :";
+                        Liq.cuenta.text = LiquidacionMl.getInstance().CuentaBancariaPrint;
+                      
+                        Liq.dsueldo.text="Sueldo Básico :";
+                        Liq.sueldo.text = LiquidacionMl.getInstance().SueldoBasicoPrint;
+                        
+                        Liq.daux.text="Auxilio de Transporte :";
+                        Liq.aux.text = LiquidacionMl.getInstance().AuxilioTransportePrint;
+                        
+                        Liq.dfInicio.text="Fecha de Inicio :";
+                        Liq.fInicio.text = LiquidacionMl.getInstance().FechaInicioPrint;
+                        
+                        Liq.dfend.text="Fecha de Terminación :";
+                        Liq.fend.text = LiquidacionMl.getInstance().FechaTerminacionPrint;
+                        
+                        Liq.dDias.text="Dias Trabajados :";
+                        Liq.Dias.text = LiquidacionMl.getInstance().DiasTrabajadosPrint;
+                        
+                        Liq.dfLiq.text="Fecha de Liquidación :";
+                        Liq.fLiq.text = LiquidacionMl.getInstance().FechaLiquidacionPrint;
+                        
+                        Liq.dfPago.text="Fecha de Pago :";
+                        Liq.fPago.text = LiquidacionMl.getInstance().FechaPagoPrint;
+                        
+                        Liq.dprima.text="Prima de Servicios :";
+                        Liq.prima.text = LiquidacionMl.getInstance().PrimaPrint;
+                        
+                        Liq.dvaca.text="Vacaciones :";
+                        Liq.vaca.text = LiquidacionMl.getInstance().VacacionesPrint;
+                        
+                        Liq.dcesan.text="Cesantias :";
+                        Liq.cesan.text = LiquidacionMl.getInstance().CesantiasPrint;
+                        
+                        Liq.dintecesan.text="Intereses Cesantias :";
+                        Liq.intecesan.text = LiquidacionMl.getInstance().InteresesCesantiasPrint;
+                        
+                        Liq.dTotal.text="TOTAL :";
+                        Liq.Total.text = LiquidacionMl.getInstance().TotalLiquidacionPrint;
+                        
+                        Liq.firma1.text="Firma Empleado";
+                    
+                        Liq.firma2.text="Firma Empleador";
+                       
+                        Liq.firma3.text="Firma Contador";
+                       
+                        Liq.firma4.text="Firma Gerente";
+                        
+                        printJob.addObject(Liq);
+    
+                    
+                        printJob.send();
+   
+                        sp.removeChild(Liq);
+                      }
+            	
+            }
+            
+            
+		]]> 
+	</mx:Script>
+	        
+	 
+	 <mx:NumberValidator
+	 
+	 requiredFieldError="!!Este Campo es requerido, Ingrese el valor de la prima de Servicios por favor¡¡"
+	 lowerThanMinError="!!No se permiten Valores Negativos"	
+	 minValue="0"
+	 source="{primaServ}"
+	 property="text"
+	 id="primaValidator"
+	 	
+	 />
+	 
+	 <mx:NumberValidator
+	 
+	 requiredFieldError="!!Este Campo es requerido, Ingrese el Valor de las Vacaciones por favor¡¡"
+	 lowerThanMinError="!!No se permiten Valores Negativos"	
+	 minValue="0"
+	 source="{vacas}"
+	 property="text"
+	 id="vacaValidator"
+	 	
+	 />
+	 
+	 <mx:NumberValidator
+	 
+	 requiredFieldError="!!Este Campo es requerido, Ingrese el Valor de las Cesantias por favor¡¡"
+	 lowerThanMinError="!!No se permiten Valores Negativos"	
+	 minValue="0"
+	 source="{cesan}"
+	 property="text"
+	 id="cesanValidator"
+	 	
+	 />
+	 
+	 <mx:NumberValidator
+	 
+	 requiredFieldError="!!Este Campo es requerido, Ingrese el Valor de los Intereses de las Cesantias por favor¡¡"
+	 lowerThanMinError="!!No se permiten Valores Negativos"	
+	 minValue="0"
+	 source="{intecesan}"
+	 property="text"
+	 id="interecesanValidator"
+	 	
+	 />
+	 
+	 <mx:StringValidator
+		 requiredFieldError="!!Este Campo es requerido, Ingrese La fecha de Liquidación por favor¡¡"
+		 source="{fechaLiq}"
+		 property="text"
+		 id="fechaliqvalidator"
+	 />
+	   
+	 <mx:StringValidator
+		 requiredFieldError="!!Este Campo es requerido, Ingrese La fecha pago por favor¡¡"
+		 source="{fechapago}"
+		 property="text"
+		 id="fechapagovalidator"
+	 />       
+		
+	        
+	 <mx:Fade id="fadeIn"  alphaFrom="-20" alphaTo="100" duration="500"/>       
+	        
+	<mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+
+		<mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+			<mx:Canvas width="100%" height="100%" id="canvas1" >
+				<mx:Label showEffect="fadeIn" id="lblAddUs" text="CREAR LIQUIDACIÓN" color="#FFFFFF" fontWeight="bold" fontSize="13"
+ 		 		x="{(canvas1.width/2)-(lblAddUs.width/2)}" y="12"/>	
+			</mx:Canvas>
+		</mx:Box>
+ 
+		<mx:Box id="box2" height="84%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+			  
+			  <mx:Spacer height="10"/>
+			  
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+								
+								<mx:HBox width="100%">
+									
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="NOMBRE DEL TRABAJADOR: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:Label text="{ContratoMl.getInstance().ContratoPpl.dgcontrato.selectedItem.recursoHumano.nombre}" styleName="labelTw"/>
+									</mx:Box>
+										
+								</mx:HBox>
+							
+							</mx:Box>
+							
+							
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+								
+								<mx:HBox width="100%">
+									
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="IDENTIFICACIÓN: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:Label text="{ContratoMl.getInstance().ContratoPpl.dgcontrato.selectedItem.recursoHumano.cedula}" styleName="labelTw"/>
+									</mx:Box>
+										
+								</mx:HBox>
+							
+							</mx:Box>
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+								
+								<mx:HBox width="100%">
+									
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="CUENTA BANCARIA: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:ComboBox minWidth="{primaServ.width}" maxWidth="{primaServ.width}" dataProvider="{RecursoHumanoMl.getInstance().listCuentas}" labelField="numero" id="cbxcuentas" />
+									</mx:Box>
+										
+								</mx:HBox>
+							
+							</mx:Box>
+							
+							<mx:Spacer height="6"/>
+							
+							<mx:HRule width="95%"/>
+							
+							<mx:Spacer height="6"/>
+							
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+								
+								<mx:HBox width="100%">
+									
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="SUELDO BÁSICO: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:Label text="{UtilidadesMl.getInstance().formaterMoneda(LiquidacionMl.getInstance().sueldoBasico)}"  id="txtsueldoBasico"  color="#FFFFFF"/>
+									</mx:Box>
+										
+								</mx:HBox>
+							
+							</mx:Box>
+							
+							
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="AUXILIO DE TRANSPORTE: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:Label text="{UtilidadesMl.getInstance().formaterMoneda(LiquidacionMl.getInstance().auxtransporte)}"    id="txtauxilioTransporte"  color="#FFFFFF"/>
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+							
+							
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="FECHA DE INICIO: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+									   <mx:Label text="{UtilidadesMl.getInstance().formaterFechas(ContratoMl.getInstance().ContratoPpl.dgcontrato.selectedItem.fechaInicio)}" styleName="labelTw"/>	
+				  					</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+							
+							  
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="FECHA DE TERMINACIÓN: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:Label  text="{UtilidadesMl.getInstance().formaterFechas(LiquidacionMl.getInstance().FechaTerminacion)}" styleName="labelTw"/>
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+							
+							
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="DIAS TRABAJADOS: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:Label  id="txtdias"  text="{LiquidacionMl.getInstance().DiasTrabajados}"  styleName="labelTw"  color="#FFFFFF"/>
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="FECHA DE LIQUIDACIÓN: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:DateField change="{validateForm(event)}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" dayNames="{UtilidadesMl.getInstance().arrayDias}"  id="fechaLiq"    styleName="labelTw"  color="#000000" width="75%" fontSize="10" fontWeight="normal"/>
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="FECHA PAGO: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:DateField change="{validateForm(event)}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" dayNames="{UtilidadesMl.getInstance().arrayDias}"  id="fechapago"    styleName="labelTw"  color="#000000" width="75%" fontSize="10" fontWeight="normal"/>
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+							
+							
+							<mx:Spacer height="6"/>
+							
+							<mx:HRule width="95%"/>
+							
+							<mx:Spacer height="6"/>
+
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								    
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="PRIMA DE SERVICIOS: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<!--mx:ComboBox selectedIndex="{LiquidacionMl.getInstance().indiceCbxPrimaservicios}" dataProvider="{LiquidacionMl.getInstance().listFormulasPrimasServicios}" labelField="nombre" id="cbxprimaServicios" width="75%"/-->
+									    <mx:TextInput restrict="0-9" change="{validateForm(event),recalcularTotal()}" id="primaServ" width="75%" focusOut="{primaServ.text = UtilidadesMl.getInstance().formaterMoneda(primaServ.text)}" focusIn="{primaServ.text =UtilidadesMl.getInstance().combertirDecimalToEntero(primaServ.text)}" text="{UtilidadesMl.getInstance().formaterMoneda(LiquidacionMl.getInstance().liquidacionGenerada.primaServicios)}" styleName="labelTw" color="#000000" fontSize="10"/>	
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+						    
+						    
+						    
+						    <mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								    
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="VACACIONES: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<!--mx:ComboBox selectedIndex="{LiquidacionMl.getInstance().indiceCbxvacasiones}" dataProvider="{LiquidacionMl.getInstance().listFormulasVacaciones}" labelField="nombre" id="cbxvacaciones" width="75%"/-->
+									     <mx:TextInput restrict="0-9" change="{validateForm(event),recalcularTotal()}" id="vacas" width="75%" focusOut="{vacas.text = UtilidadesMl.getInstance().formaterMoneda(vacas.text)}" focusIn="{vacas.text =UtilidadesMl.getInstance().combertirDecimalToEntero(vacas.text)}" text="{UtilidadesMl.getInstance().formaterMoneda(LiquidacionMl.getInstance().liquidacionGenerada.vacaciones)}" styleName="labelTw" color="#000000" fontSize="10"/>	
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								    
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="CESANTIAS: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<!--mx:ComboBox selectedIndex="{LiquidacionMl.getInstance().indiceCbxcesantias}" dataProvider="{LiquidacionMl.getInstance().listFormulasCesantias}" labelField="nombre" id="cbxcesantias" width="75%"/-->
+									    <mx:TextInput restrict="0-9" change="{validateForm(event),recalcularTotal()}" focusOut="{cesan.text = UtilidadesMl.getInstance().formaterMoneda(cesan.text)}" focusIn="{cesan.text =UtilidadesMl.getInstance().combertirDecimalToEntero(cesan.text)}" id="cesan" width="75%" text="{UtilidadesMl.getInstance().formaterMoneda(LiquidacionMl.getInstance().liquidacionGenerada.cesantias)}" styleName="labelTw" color="#000000" fontSize="10"/>
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+							
+							<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								    
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="INTERESES CESANTIAS: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<!--mx:ComboBox selectedIndex="{LiquidacionMl.getInstance().indiceCbxInteresesCesantias}" dataProvider="{LiquidacionMl.getInstance().listFormulasInteresesCesantias}" labelField="nombre" id="cbxInteresescesantias" width="75%"/-->
+									    <mx:TextInput restrict="0-9" change="{validateForm(event),recalcularTotal()}" focusOut="{intecesan.text = UtilidadesMl.getInstance().formaterMoneda(intecesan.text)}" focusIn="{intecesan.text =UtilidadesMl.getInstance().combertirDecimalToEntero(intecesan.text)}" id="intecesan" width="75%" text="{UtilidadesMl.getInstance().formaterMoneda(LiquidacionMl.getInstance().liquidacionGenerada.interesesCesantias)}" styleName="labelTw" color="#000000" fontSize="10"/>
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+						    
+						  
+						  <mx:Spacer height="6"/>
+							
+						  <mx:HRule width="95%"/>
+							
+					      <mx:Spacer height="6"/>
+					      
+					      <mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" >
+							
+								<mx:HBox width="100%">
+								    
+									<mx:Box width="50%"  verticalAlign="middle" horizontalAlign="right">
+										<mx:Label text="TOTAL LIQUIDACIÓN: " styleName="labelTw"/>	
+									</mx:Box>
+									
+									<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+										<mx:TextInput editable="false" width="75%" id="total" text="{UtilidadesMl.getInstance().formaterMoneda(LiquidacionMl.getInstance().TotalLiq)}" styleName="labelTw" color="#000000" fontSize="10"/>	
+									</mx:Box>
+										
+								</mx:HBox>
+								
+							</mx:Box>
+						  
+							<mx:Spacer height="6"/>
+			</mx:Box>				
+
+
+
+		<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+			<mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+				
+				<mx:HBox height="100%" width="50%" verticalAlign="middle">
+					
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+						<mx:Image source="{UtilidadesMl.getInstance().rutaback2}"
+  	  					 toolTip="Atras" />	
+					</mx:Box>
+					
+					<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+						<mx:Image id="ok" click="{crearLiquidacion()}" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  toolTip="Aceptar" enabled="{formIsValid}" />	
+					</mx:Box>
+					
+  				</mx:HBox>
+  				
+				<mx:HBox height="100%" width="50%" verticalAlign="middle">
+					
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+						<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar"/>	
+					</mx:Box>
+					
+					<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+						<mx:Image source="{UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" />	
+					</mx:Box>
+					
+  				</mx:HBox>
+  				
+			</mx:HBox>
+			
+		</mx:Box>
+	
+	</mx:VBox>
+	
+</mx:TitleWindow>
+
+
+
+
+
+
+
+
+

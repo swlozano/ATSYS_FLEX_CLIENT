@@ -1,0 +1,1226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	creationComplete="{creationCompleteHandler()}"  
+	close="returnName()" layout="absolute" width="550" 
+	showCloseButton="false" height="565" 
+	borderSkin="CSS.SKIN.PopUpSkin" 
+	verticalScrollPolicy="off" horizontalScrollPolicy="off"
+	  x="{(Application.application.width/2)-(this.width/2)}"
+	  y = "{(Application.application.height/2)-(this.height/2)}"
+	  initialize="{UtilidadesMl.getInstance().backEnable=false,UtilidadesMl.getInstance().nextEnable=true,permitirGuardar()}" 
+	color="#FFFFFF" xmlns:contratacion="VIEW.contratacion.*">
+	<mx:Script>
+        <![CDATA[ 
+        	import mx.core.Application;
+        	import MODEL.PermisosMl;
+        	import VO.RecursoHumanoVO;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import EVENT.RecursoHumanoEvent;
+        	import VO.ContinenteVO;
+        	import mx.collections.ArrayCollection;
+        	import MODEL.RecursoHumanoMl;
+        	import mx.controls.Alert;
+        	import MODEL.PersonaMl;
+        	import MODEL.UtilidadesMl;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+            
+           
+            [Bindable]
+		    [Embed(source="REC/IMAGENES/siguiente.png")]
+		    public var next:Class;
+		    
+		    [Bindable]
+		    [Embed(source="REC/IMAGENES/update2.png")]
+		    public var update:Class;
+		    
+		    [Bindable]
+		    [Embed(source="REC/IMAGENES/atras.png")]
+		    public var back:Class;
+		    
+		    [Bindable]
+		    [Embed(source="/REC/IMAGENES/ConfLogout.png")]
+			public var salir:Class;
+                        
+            [Bindable]
+            public var formIsValid:Boolean=true;
+            
+            
+            
+            [Bindable]
+            public var formIsValidAfiliaciones:Boolean=true;
+            
+            [Bindable]
+            public var formIsValidDocs:Boolean=true;
+            
+            [Bindable]
+            public var formIsEmpty:Boolean=true;
+            
+            [Bindable]
+            public var AllformsAreValid:Boolean=false;
+            
+            [Bindable]
+            public var CiudadExp:String=RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.cityByIdLugarExpedicion.name;
+            
+            [Bindable]
+            public var CiudadNat:String=RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.cityByIdLugarNacimiento.name;
+            
+            private var focussedFormControl:DisplayObject;
+            
+            
+            public function permitirGuardar():void{
+           	  
+           	 
+           	  
+           	   if(formIsValid == true &&  formIsValidAfiliaciones ==true && formIsValidDocs==true){
+           	   	
+           	   	   AllformsAreValid = true;
+           	   	
+           	   }else{
+           	   	     
+           	   	     AllformsAreValid = false;
+           	   	     
+           	        }
+           	
+            }
+            
+            
+            ////////////////////////////
+            
+            
+            private function cambiarFechaExp():void{
+            	
+            	 if(checklugexp.selected){
+            	 	  
+            	 	  formIsValid = false;
+            	 	  AllformsAreValid=false;
+            	 	  
+            	 	  permitirGuardar();
+            	 	    
+            	 	  modContexpedicionrechumano.enabled=true;
+            	      modPaisexpedicionrechumano.enabled=true;
+            	      modCiudadexpedicionrechumano.enabled=true;
+            	      
+            	      modContexpedicionrechumano.selectedIndex =-1;
+            		
+            		  modContexpedicionrechumano.setVisible(true);
+            		
+            		  modPaisexpedicionrechumano.selectedIndex = -1;
+            		
+            		  modPaisexpedicionrechumano.setVisible(false);
+            		
+            		  modCiudadexpedicionrechumano.selectedIndex = -1;
+            		
+            		  modCiudadexpedicionrechumano.setVisible(false);
+            	 	  
+            	 	  frmItemlugExp.label = "CONTINENTE";
+            		  checklugexp.enabled = false;
+            		
+            		  checklugexp.selected = false;
+            	 	  
+            	      
+            	     }else{
+            	     	  
+            	     	    AllformsAreValid=false;
+            	 	  
+            	 	        permitirGuardar();
+            	     	  
+            	           /* modContexpedicionrechumano.enabled=true;
+            	            modPaisexpedicionrechumano.enabled=true;
+            	            modCiudadexpedicionrechumano.enabled=true;
+            	            
+            	            modContexpedicionrechumano.selectedIndex =-1;
+            		
+            		  		modContexpedicionrechumano.setVisible(true);
+            		
+            		  		modPaisexpedicionrechumano.selectedIndex = -1;
+            		
+            		  		modPaisexpedicionrechumano.setVisible(false);
+            		
+            		  		modCiudadexpedicionrechumano.selectedIndex = -1;
+            		
+            		  		modCiudadexpedicionrechumano.setVisible(false);
+            		  		
+            		  		frmItemlugExp.label = "CONTINENTE";*/
+            		       
+            	            
+            	          }  
+            		
+             }
+       
+            
+            private function cambiarFechaNat():void{
+            	
+            	 if(checklugNat.selected){
+            	 	  
+            	 	  formIsValid = false;
+            	 	  AllformsAreValid=false;
+            	 	  permitirGuardar();
+            	 	  
+            	 	  modContNatrechumano.enabled=true;
+            	      modPaisNatrechumano.enabled=true;
+            	      modCiudadNatrechumano.enabled=true;
+            	      
+            	      modContNatrechumano.selectedIndex =-1;
+            		
+            		  modContNatrechumano.setVisible(true);
+            		
+            		  modPaisNatrechumano.selectedIndex = -1;
+            		
+            		  modPaisNatrechumano.setVisible(false);
+            		
+            		  modCiudadNatrechumano.selectedIndex = -1;
+            		
+            		  modCiudadNatrechumano.setVisible(false);
+            	 	  
+            	 	  frmitemNat.label = "CONTINENTE";
+            		
+            	 	  
+            	      
+            	     }else{
+
+                            formIsValid = false;
+            	 	        AllformsAreValid=false;
+            	 	  
+            	 	        permitirGuardar();
+                                         	     	
+            	            /*modContNatrechumano.enabled=true;
+            	            modPaisNatrechumano.enabled=true;
+            	            modCiudadNatrechumano.enabled=true;
+            	            
+            	            modContNatrechumano.selectedIndex =-1;
+            		
+            		  		modContNatrechumano.setVisible(true);
+            		
+            		  		modPaisNatrechumano.selectedIndex = -1;
+            		
+            		  		modPaisNatrechumano.setVisible(false);
+            		
+            		  		modCiudadNatrechumano.selectedIndex = -1;
+            		
+            		  		modCiudadNatrechumano.setVisible(false);
+            		  		
+            		  		frmitemNat.label = "CONTINENTE";*/
+            		       
+            	            
+            	          }  
+            		
+             }
+            
+           
+            
+            public function modificarRecursoHumano():void{
+            	
+            	permitirGuardar();
+            	
+            if(AllformsAreValid){
+            	
+            	Alert.yesLabel="SI";
+                Alert.noLabel="NO";
+            	Alert.show("RESUMEN DEL RECURSO HUMANO" + "\n"+ "NOMBRE: " +modNomrechumano.text+ "\n" + "APELLIDO: " + modAperechumano.text + "\n" + "CÉDULA: " + modCedrechumano.text + "\n" +"CORREO ELECTRÓNICO: " + modemailrechumano.text +"\n" + "CELULAR: " + modcelrechumano.text +"\n" + "DIRECCIÓN DE DOMICILIO: " + moddomiciliorechumano.text+"\n\n" + "Estas seguro de modificar este Recurso Humano?","Modificar RECURSO HUMANO" ,Alert.YES|Alert.NO,this,CloseHandlerRecHumano,update,0);
+             }
+            
+            }
+            public function crearPantalla():void
+		     {
+			
+			 	RecursoHumanoMl.getInstance().ClonModificarRecursoHumano=this;
+			
+		     }
+            private function CloseHandlerRecHumano(event:CloseEvent):void{
+               
+               switch(event.detail){
+               
+                 case Alert.YES:
+                   
+                   permitirGuardar();
+                   
+                   if(AllformsAreValid){
+                  
+                   var fechaNat:Date = new Date(modFnacimientorechumano.text);
+                   
+                  
+                  if(txtlugarexp.visible==true){
+                  	
+                  	RecursoHumanoMl.getInstance().ModidCiudadExp = RecursoHumanoMl.getInstance().ModidCiudadExp = RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.cityByIdLugarExpedicion.id;
+                    
+                  }else{
+                  	
+                         RecursoHumanoMl.getInstance().ModidCiudadExp = modCiudadexpedicionrechumano.selectedItem.id;
+                       
+                       }
+                   
+                   
+                   if(txtlugarNat.visible==true){
+                   	
+                   	  RecursoHumanoMl.getInstance().ModidCiudadNat = RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.cityByIdLugarNacimiento.id;
+                   	
+                   }else{
+                   	
+                   	      RecursoHumanoMl.getInstance().ModidCiudadNat = modCiudadNatrechumano.selectedItem.id;
+                   	
+                        }
+                   
+                      
+                   var recurso:RecursoHumanoVO = new RecursoHumanoVO(RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.id,modNomrechumano.text,modAperechumano.text,parseInt(modCedrechumano.text),modemailrechumano.text,
+                    modtelrechumano.text,moddomiciliorechumano.text,modcelrechumano.text,fechaNat,modrutrechumano.text,getdocs(modSiPresentRut,RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presentoRut),
+                    getdocs(modSiPresentCed,RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presentoCedula),
+                    getdocs(modSiPresentHv,RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presntoHv),
+                    getdocs(modSiPresentEntrevista,RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presentoEntrevista)
+                   ,RecursoHumanoMl.getInstance().ModidCiudadNat,RecursoHumanoMl.getInstance().ModidCiudadExp,
+                    getafil(modARPrechumano,RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.arp.id),
+                    getafil(modEPSrechumano,RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.eps.id),
+                    getafil(modAFPrechumano,RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.afp.id));
+                   var evento:RecursoHumanoEvent =new RecursoHumanoEvent(RecursoHumanoEvent.MODIFICAR_RECURSO_HUMANO,recurso,null);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(evento);
+                   PopUpManager.removePopUp(this);
+                   RecursoHumanoMl.getInstance().selectableRecursoHumano=true;
+                   PermisosMl.getInstance().habilitarMenus();
+                  }
+                 break;
+               
+               }
+             
+             }
+              
+              
+               
+             private function getafil(cbx:ComboBox,asig:int):int{
+             	
+             	var retorno:int;
+             	
+             	if(cbx==null){
+             		
+             		retorno=asig;
+             		
+             	}else{
+             		
+             	     retorno = cbx.selectedItem.id;  
+             	     
+             	     }
+             	     
+             	     
+                return retorno;	
+             	
+             }  
+               
+             private function getdocs(rb:RadioButton,asig:int):int{
+             	
+             	var retorno:int=0;
+             	
+             	if(rb==null){
+             		
+             		retorno = asig;
+             		
+             	}else if(rb.selected){
+             		
+             	         retorno=1;
+             	         
+             	         }else{
+             	         	
+             	                retorno=0;
+             	              
+             	              } 
+             	
+             	
+             	             	
+             	return retorno;
+             	
+             }
+             
+           
+            
+            private function dataProviderContinentes():ArrayCollection{
+           
+            	var arrayContIngles:Array=new Array(new String("Africa"),new String("Asia"),new String("Antarctica"),new String("Europe"),new String("North America"),new String("Oceania"),new String("South America"));
+            	var arrayContSpa:Array=new Array(new String("Africa"),new String("Asia"),new String("Antartica"),new String("Europa"), new String("Norte America"),new String("Oceania"),new String("Sur America"));
+            	var continente:ContinenteVO;
+            	RecursoHumanoMl.getInstance().continentesArraycolect= new ArrayCollection();
+            	
+            	for(var x:int=0;x<arrayContIngles.length;x++){
+            		
+            		continente = new ContinenteVO(arrayContIngles[x],arrayContSpa[x]);
+            		RecursoHumanoMl.getInstance().continentesArraycolect.addItem(continente);
+            		
+            	}
+            	
+            	return RecursoHumanoMl.getInstance().continentesArraycolect;
+            	
+            } 
+            
+            private function listarPaises(continente:String,ban:Boolean):void{
+            	
+            	RecursoHumanoMl.getInstance().BanderaPaises = ban;
+            	
+            	RecursoHumanoMl.getInstance().nomContinenteToListarPaises = continente;
+            	
+            	var e:RecursoHumanoEvent=new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_PAISES_RECURSO_HUMANO,null,null);
+            	CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            	
+            }
+            
+            private function listarCiudades(pais:String,ban:Boolean):void{
+            	
+            	RecursoHumanoMl.getInstance().BanderaCiudades = ban;
+            	
+            	RecursoHumanoMl.getInstance().codePaisToListarCitys = pais;
+            	var e:RecursoHumanoEvent=new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_CIUDADES_RECURSO_HUMANO,null,null);
+            	CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            	
+            }
+            
+          
+            private function returnName():void {
+            	
+            	Alert.yesLabel="SI";
+                Alert.noLabel="NO";
+                Alert.show("Estas seguro que deseas Salir de la Pantalla Modificar Recurso Humano?","Mensaje de Confirmación",Alert.YES|Alert.NO,this,cerrarSesion,salir,0)
+            
+            }
+            
+            public function cerrarSesion(event:CloseEvent):void{
+              
+              switch(event.detail){
+              
+              case Alert.YES:
+              
+                 PopUpManager.removePopUp(this);
+                 RecursoHumanoMl.getInstance().selectableRecursoHumano=true;
+                 PermisosMl.getInstance().habilitarMenus();
+                      
+               
+              break;
+              } 
+             
+             }
+            
+            private function validateForm(event:Event):void{
+             
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(nameValidator);
+               validate(apeValidator);
+               validate(cedValidator);
+               validate(emailValidator);
+              // validate(telValidator);
+               validate(domiValidator);
+               //validate(celValidator);
+               validate(fechaNacValidator);
+               validate(rutValidator);
+              
+               if(txtlugarexp.visible==false){
+               
+               validate(comboContExpValidator);
+               validate(comboPaisExpValidator);
+               validate(comboCityExpValidator);
+               }
+              
+               if(txtlugarNat.visible==false){
+                 
+               validate(comboContNatValidator);
+               validate(comboPaisNatValidator);
+               validate(comboNatValidator);
+	
+               }
+                           
+               
+               permitirGuardar();
+              
+            }
+            
+            private function validateFormAfiliaciones(event:Event):void{
+             
+               focussedFormControl = event.target as DisplayObject;
+               formIsValidAfiliaciones = true;
+               validateAfil(arpValidator);
+               validateAfil(epsValidator);
+               validateAfil(afpValidator);
+               
+               permitirGuardar();
+              
+            }
+            
+            
+            
+            
+            private function validate(validator:Validator):Boolean{
+               
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+            private function validateAfil(validator:Validator):Boolean{
+               
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValidAfiliaciones = formIsValidAfiliaciones && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+            
+            
+            private function creationCompleteHandler():void
+            {
+             	
+               resetFocus();
+               crearPantalla();
+               
+            }   
+            
+            private function resetFocus():void
+            {
+                focusManager.setFocus(modNomrechumano);
+            }
+            
+            private function llamarCbxARP():void
+            {
+                txtModARP.setVisible(false);
+                modARPrechumano.setVisible(true);
+            }
+            
+            private function cambiarSelecCbxARP():void
+            {
+                modARPrechumano.setVisible(false);
+                txtModARP.setVisible(true);
+                var borrar:Object = modARPrechumano.selectedItem;
+                RecursoHumanoMl.getInstance().txtmodARP = modARPrechumano.selectedItem.nombre;
+            }
+            
+            private function llamarCbxEPS():void
+            {
+                txtModEPS.setVisible(false);
+                modEPSrechumano.setVisible(true);
+            }
+            
+            private function cambiarSelecCbxEPS():void
+            {
+                modEPSrechumano.setVisible(false);
+                txtModEPS.setVisible(true);
+                var borrar:Object = modEPSrechumano.selectedItem;
+                RecursoHumanoMl.getInstance().txtmodEPS = modEPSrechumano.selectedItem.nombre;
+            }
+            
+            private function llamarCbxAFP():void
+            {
+                txtModAFP.setVisible(false);
+                modAFPrechumano.setVisible(true);
+            }
+            
+            private function cambiarSelecCbxAFP():void
+            {
+                modAFPrechumano.setVisible(false);
+                txtModAFP.setVisible(true);
+                var borrar:Object = modAFPrechumano.selectedItem;
+                RecursoHumanoMl.getInstance().txtmodAFP = modAFPrechumano.selectedItem.nombre;
+            }
+            
+            
+            ////////////////////////*////////////////////////////////
+            
+            
+            private function cambiarAcbxContinente():void{
+            	
+            	modContexpedicionrechumano.setVisible(true);
+            	modPaisexpedicionrechumano.setVisible(false);
+            	modCiudadexpedicionrechumano.setVisible(false);
+            	formIsValid = false;
+            	permitirGuardar();
+            	frmItemlugExp.label = "CONTINENTE";
+            	checklugexp.enabled = true;
+            	
+            }
+            
+            private function cambiarAcbxPais():void
+            { 
+            	
+            	txtlugarexp.setVisible(false);
+            	formIsValid = false;
+            	permitirGuardar();
+                modContexpedicionrechumano.setVisible(false);
+                modPaisexpedicionrechumano.setVisible(true);
+                frmItemlugExp.label = "PAÍS";
+                checklugexp.enabled = true;
+                
+           
+            }
+            
+            private function cambiarAcbxCiudad():void
+            {
+                modPaisexpedicionrechumano.setVisible(false);
+                modCiudadexpedicionrechumano.setVisible(true);
+                frmItemlugExp.label = "CIUDAD";
+                checklugexp.enabled = true;
+               
+           
+            }
+            
+            /////////////////////////////////////////////////
+            
+            private function cambiarAcbxContinenteNat():void{
+            	
+            	modContNatrechumano.setVisible(true);
+            	modPaisNatrechumano.setVisible(false);
+            	modCiudadNatrechumano.setVisible(false);
+            	frmitemNat.label = "CONTINENTE";
+            	formIsValid = false;
+            	permitirGuardar();
+            	checklugNat.enabled = true;
+            }
+            private function cambiarAcbxPaisNat():void
+            { 
+            	formIsValid = false;
+            	permitirGuardar();
+            	txtlugarNat.setVisible(false);
+                modContNatrechumano.setVisible(false);
+                modPaisNatrechumano.setVisible(true);
+                frmitemNat.label = "PAÍS";
+                checklugNat.enabled = true;
+           
+            }
+            
+            private function cambiarAcbxCiudadNat():void
+            {
+                modPaisNatrechumano.setVisible(false);
+                modCiudadNatrechumano.setVisible(true);
+                frmitemNat.label = "CIUDAD";
+                checklugNat.enabled = true;
+           
+            }
+            
+            
+            
+            public function direccionarAtras(index:int):void{
+              
+              var retorno:int;
+            
+               if(index==0){
+               	
+                  VstackRecHumano.selectedIndex=0; 
+                  UtilidadesMl.getInstance().backEnable=false; 
+                  UtilidadesMl.getInstance().nextEnable=true;
+                  
+               	
+               }else if(index==1){
+               	
+               	        VstackRecHumano.selectedIndex=0;
+               	        UtilidadesMl.getInstance().backEnable=false;
+               	        UtilidadesMl.getInstance().nextEnable=true;
+               	
+               	       }/*else if(index==2){
+               	       	
+               	       	       VstackVfpago.selectedIndex=1;
+               	       	       UtilidadesMl.getInstance().backEnable=true;
+               	       	       UtilidadesMl.getInstance().nextEnable=true;
+               	       	
+               	              }*/
+               	              
+            
+            }
+            
+            public function direccionarAdelante(index:int):void{
+              
+              var retorno:int;
+            
+               if(index==0){
+               	
+                  VstackRecHumano.selectedIndex=1;  
+                  UtilidadesMl.getInstance().backEnable=true; 	 
+                  UtilidadesMl.getInstance().nextEnable=false;
+               	
+               }else if(index==1){
+               	
+               	       VstackRecHumano.selectedIndex=1;
+               	       UtilidadesMl.getInstance().backEnable=true;
+               	       UtilidadesMl.getInstance().nextEnable=false;
+               	
+               	       }/*else if(index==2){
+               	       	
+               	       	       VstackVfpago.selectedIndex=2;
+               	       	       UtilidadesMl.getInstance().backEnable=true;
+               	               UtilidadesMl.getInstance().nextEnable=false;	
+               	              }*/
+               	              
+            
+            }
+            
+        ]]>
+    </mx:Script>
+    
+    <mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione una ARP de la lista"
+   	minValue="0"
+   	property="selectedIndex"
+   	source="{modARPrechumano}"
+   	id="arpValidator"
+   	
+   	/> 
+   	
+   	<mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione una EPS de la lista"
+   	minValue="0"
+   	property="selectedIndex"
+   	source="{modEPSrechumano}"
+   	id="epsValidator"
+   	
+   	/> 
+   	
+   	<mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione una AFP de la lista"
+   	minValue="0"
+   	property="selectedIndex"
+   	source="{modAFPrechumano}"
+   	id="afpValidator"
+   	
+   	/> 
+    
+    
+   <mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione una Continente de la lista"
+   	minValue="0"
+   	property="selectedIndex"
+   	source="{modContexpedicionrechumano}"
+   	id="comboContExpValidator"
+   	
+   	/> 
+    
+    <mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione un País de la lista"
+   	minValue="0"
+   	property="selectedIndex"
+   	source="{modPaisexpedicionrechumano}"
+   	id="comboPaisExpValidator"
+   	
+   	/>
+    
+   <mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione una Ciudad de la lista"
+   	minValue="0"
+   	property="selectedIndex"
+   	source="{modCiudadexpedicionrechumano}"
+   	id="comboCityExpValidator"
+   	
+   	/>
+   	
+   	
+   	<mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione una Continente de la lista"
+   	minValue="0"
+   	property="selectedIndex"
+   	source="{modContNatrechumano}"
+   	id="comboContNatValidator"
+   	
+   	/> 
+    
+    <mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione un País de la lista"
+   	minValue="0"
+   	property="selectedIndex"
+   	source="{modPaisNatrechumano}"
+   	id="comboPaisNatValidator"
+   	
+   	/>
+   	
+   	
+   	<mx:NumberValidator
+   	
+   	lowerThanMinError="Seleccione una Ciudad de la lista"
+   	minValue="0"
+   	property="selectedIndex"
+   	source="{modCiudadNatrechumano}"
+   	id="comboNatValidator"
+   	
+   	/>
+   	
+   	
+    
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Nombre  por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="nameValidator"
+        source="{modNomrechumano}" 
+        property="text"
+        minLength="2"
+        maxLength="100"
+    />
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Apellido  por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="apeValidator"
+        source="{modAperechumano}" 
+        property="text"
+        minLength="2"
+        maxLength="100"
+    />
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese la Cédula  por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 7 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="cedValidator"
+        source="{modCedrechumano}" 
+        property="text"
+        minLength="7"
+        maxLength="30"
+    />
+    <mx:EmailValidator
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Correo Eléctronico por favor¡¡"
+    	invalidCharError="!!Hay caracteres inválidos en tu e-mail¡¡"
+    	invalidDomainError="!!CORREO ELECTRÓNICO INVÁLIDO¡¡"
+    	invalidPeriodsInDomainError="!!CORREO ELECTRÓNICO INVÁLIDO¡¡"
+    	missingPeriodInDomainError="!!CORREO ELECTRÓNICO INVÁLIDO¡¡"
+    	missingAtSignError="!!CORREO ELECTRÓNICO INVÁLIDO¡¡"
+    	missingUsernameError="!!CORREO ELECTRÓNICO INVÁLIDO¡¡"
+        id="emailValidator"
+        source="{modemailrechumano}" 
+        property="text"
+    />
+    <!--mx:PhoneNumberValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese un Número de Teléfono por favor¡¡"
+    	invalidCharError="!!Caracteres Inválidos en el Número de teléfono¡¡"
+    	wrongLengthError="!!Número Telefónico Inválido¡¡"
+    	id="telValidator"
+    	source="{modtelrechumano}"
+    	property="text"
+    	
+    /-->
+    
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese la Dirección de Domicilio  por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 5 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="domiValidator"
+        source="{moddomiciliorechumano}" 
+        property="text"
+        minLength="5"
+        maxLength="100"
+    />
+    <!--mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese un Número de Celular  por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 10 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="celValidator"
+        source="{modcelrechumano}" 
+        property="text"
+        minLength="10"
+        maxLength="10"
+    /-->
+    
+    <mx:DateValidator
+     
+        requiredFieldError="!!Este campo es Obligatorio. Ingrese la Fecha de Nacimiento por favor¡¡"
+        formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+     	id="fechaNacValidator"
+     	source="{modFnacimientorechumano}"
+     	property="text"
+     	
+    />
+    	
+    <mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese RUT del Recurso Humano  por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 10 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="rutValidator"
+        source="{modrutrechumano}" 
+        property="text"
+        minLength="10"
+        maxLength="50"
+    />
+    
+     
+    	
+	    <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+	     
+	     <!--BOX UP-->
+	     
+			       <mx:Box  width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+				 	 <mx:Canvas width="100%" height="100%" id="canvas1"  fontSize="13">
+				 		<mx:Label   id="lblAddCmenor" text="MODIFICAR RECURSO HUMANO" color="#FFFFFF" fontWeight="bold" fontSize="13"
+				 	     x="{(canvas1.width/2)-(lblAddCmenor.width/2)}" y="12"/>	
+				 	 </mx:Canvas>
+				   </mx:Box>
+	    
+         <!--BOX UP-->
+	    	
+	    <mx:Box  id="box2" height="79%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center"> 	
+	    	
+	    	 <mx:ViewStack  id="VstackRecHumano"  width="100%" height="100%" selectedIndex="{UtilidadesMl.getInstance().current}">
+	    		
+	    		<mx:Box  width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_1">
+	    			
+	    			<mx:Form width="96%" height="100%">
+	    				
+	    				<mx:Spacer height="10"/>
+	    				
+	    				<mx:FormItem   label="NOMBRE" fontWeight="bold" color="#FFFFFF" width="100%"  fontSize="11"> 	
+		  	                <mx:TextInput id="modNomrechumano" text="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.nombre}" change="validateForm(event)" width="75%" color="#000000" fontSize="10" maxChars="30"/>  	  	
+	  	                </mx:FormItem>
+	  	                
+	  	                <mx:Spacer height="10"/>
+	  	                
+	  	                <mx:FormItem label="APELLIDOS"  fontWeight="bold" color="#FFFFFF" width="100%" borderStyle="none" borderColor="#F4EFEF">  	      	  	
+	  	     				<mx:TextInput text="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.apellido}" id="modAperechumano" change="validateForm(event)"  width="75%" color="#000000" fontSize="10" maxChars="60"/>
+	  					</mx:FormItem>
+	  					
+	  					<mx:Spacer height="10"/>
+	  					
+	  					<mx:FormItem label="CÉDULA"  fontWeight="bold" color="#FFFFFF" width="100%" borderStyle="none" borderColor="#F4EFEF">
+	  	     				<mx:TextInput text="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.cedula}" id="modCedrechumano" restrict="0-9" change="validateForm(event)" width="75%" color="#000000" fontSize="10"/>
+	  					</mx:FormItem>
+	  					
+	  					<mx:Spacer height="10"/>
+	  					
+	  					<mx:Box width="100%" verticalAlign="middle" horizontalAlign="center">	  	     				
+	  	     			
+	  	     			   <mx:HRule width="96%"/>
+	  	     			 
+	  	     			</mx:Box>
+	  					
+	  					<mx:Spacer height="5"/>
+	  					
+	  					<mx:HBox width="100%"   verticalAlign="middle" horizontalAlign="center" fontSize="10" >
+	  					   <mx:Box verticalAlign="middle" horizontalAlign="right">
+	  					   	  <mx:Label text="LUGAR DE EXPEDICIÓN DE CÉDULA" fontWeight="bold" fontSize="10" />
+	  					   </mx:Box>
+      			        	<mx:Box verticalAlign="middle" horizontalAlign="left"  >
+      			        		<mx:CheckBox id="checklugexp" change="{cambiarFechaExp()}"  label="cambiar" enabled="true" color="#FFFFFF"/>
+      			        	</mx:Box>
+	  	    				
+	     				</mx:HBox>
+	  				
+	  					<mx:FormItem label="LUGAR"  id="frmItemlugExp" fontWeight="bold" color="#FFFFFF" width="100%" borderStyle="none" borderColor="#F4EFEF" fontSize="11">
+	  					  <mx:Canvas width="100%">
+	  					    
+	  					    <mx:TextInput width="75%" id="txtlugarexp" click="{cambiarAcbxContinente()}" text="{CiudadExp}"/>
+	  					    
+	  					    <mx:ComboBox  minWidth="{modNomrechumano.width}" maxWidth="{modNomrechumano.width}" id="modContexpedicionrechumano"  labelField="Nombrelatino" dataProvider="{dataProviderContinentes()}"  change="validateForm(event),listarPaises(modContexpedicionrechumano.selectedItem.NombreAnglo,true),modCiudadexpedicionrechumano.selectedIndex=-1,cambiarAcbxPais()" 
+	  					    prompt="Seleccione Continente" visible="false"  color="#000000" fontSize="10"/>
+	  					    
+	  					    <mx:ComboBox minWidth="{modNomrechumano.width}" maxWidth="{modNomrechumano.width}" id="modPaisexpedicionrechumano" visible="false" labelField="name" dataProvider="{RecursoHumanoMl.getInstance().listPaisesExp}" enabled="{modContexpedicionrechumano.selectedIndex>=0}" change="{validateForm(event),listarCiudades(modPaisexpedicionrechumano.selectedItem.code,true),cambiarAcbxCiudad()}"  
+	  					    prompt="Seleccione País" />
+	  					    
+	  					    <mx:ComboBox toolTip="{modCiudadexpedicionrechumano.selectedItem.name}" minWidth="{modNomrechumano.width}" maxWidth="{modNomrechumano.width}" enabled="{modPaisexpedicionrechumano.selectedIndex>=0}" visible="false"  dataProvider="{RecursoHumanoMl.getInstance().listCiudadesExp}" labelField="name" prompt="seleccione Ciudad" id="modCiudadexpedicionrechumano" 
+	  					    change="validateForm(event)"  />
+	  					    
+	  	     			  </mx:Canvas>
+	  	     			</mx:FormItem>	
+	  	     			
+	  	     			<mx:Spacer height="5"/>
+	  	     			
+	  	     			<mx:Box width="100%" verticalAlign="middle" horizontalAlign="center">	  	     				
+	  	     			
+	  	     			   <mx:HRule width="96%"/>
+	  	     			 
+	  	     			</mx:Box>
+	  	     			
+	  	     			<mx:Spacer height="5"/>
+	  	     			
+	  	     			<mx:FormItem label="CORREO ELECTRÓNICO"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">
+	  	     				<mx:TextInput text="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.correoElectronico}" id="modemailrechumano" change="validateForm(event)" width="75%" color="#000000" fontSize="10" maxChars="100"/>
+	  					</mx:FormItem>
+	  					
+	  					<mx:Spacer height="10"/>
+	  					
+	  					<mx:FormItem label="TELÉFONO"  fontWeight="bold" color="#FFFFFF" width="100%"  fontSize="11">
+	  	     				<mx:TextInput text="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.telefono}" id="modtelrechumano" restrict="0-9"  width="75%" color="#000000" fontSize="10" maxChars="20"/>
+	  					</mx:FormItem>
+	  					
+	  					<mx:Spacer height="10"/>
+	  					
+	  					<mx:FormItem label="CELULAR"   fontWeight="bold" color="#FFFFFF" width="100%"  fontSize="11">
+	  					  <mx:TextInput text="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.celular}" id="modcelrechumano" restrict="0-9" width="75%" fontSize="10" color="#000000" maxChars="20"/>
+	  					</mx:FormItem>
+	  					
+	  					<mx:Spacer height="10"/>
+	  					
+	  					<mx:FormItem label="               DIRECCIÓN DE DOMICILIO"   fontWeight="bold" color="#FFFFFF" width="100%"  fontSize="11">
+	  	     				<mx:TextInput text="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.direccionDomicilio}" id="moddomiciliorechumano" change="validateForm(event)" width="75%" color="#000000" fontSize="10" maxChars="40"/>
+	  	     				
+	  					</mx:FormItem>
+	  					
+	  					<mx:Spacer height="10"/>
+	  					
+	  					<mx:FormItem label="RUT"   fontWeight="bold" color="#FFFFFF" width="100%"  fontSize="11">
+	  	     				<mx:TextInput text="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.rut}"  id="modrutrechumano"   change="validateForm(event)" width="75%" fontSize="10" color="#000000" maxChars="30"/>
+	  					</mx:FormItem>
+	  					
+	  					<mx:Spacer height="10"/>
+	  					
+	  					<mx:FormItem label="FECHA DE NACIMIENTO (MM/DD/AA)"  fontWeight="bold" color="#FFFFFF" width="100%"  fontSize="11">
+	  	     				
+	  	     					<mx:DateField editable="true" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" text="{UtilidadesMl.getInstance().formatearACampoFecha(RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.fechaNacimiento)}" id="modFnacimientorechumano"  change="{validateForm(event)}" width="75%" color="#000000" fontSize="10"/>
+	  	     				
+	  					</mx:FormItem>
+	  					
+	  					<mx:Spacer height="10"/>
+	  					
+	  					<mx:Box width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	     				<mx:HRule width="95%"/>
+	  	     			</mx:Box>
+	  					
+	  					<mx:Spacer height="5"/>
+	  					
+	  					<mx:HBox width="100%"   verticalAlign="middle" horizontalAlign="center" fontSize="10" >
+	  					   <mx:Box verticalAlign="middle" horizontalAlign="right">
+	  					   	  <mx:Label text="LUGAR DE NACIMIENTO" fontWeight="bold" fontSize="10" />
+	  					   </mx:Box>
+      			        	<mx:Box verticalAlign="middle" horizontalAlign="left"  >
+      			        		<mx:CheckBox id="checklugNat" change="{cambiarFechaNat()}"  label="cambiar" enabled="true" color="#FFFFFF"/>
+      			        	</mx:Box>
+	     				</mx:HBox>
+	     				
+	     				<mx:Spacer height="5"/>
+	     				
+	     				<mx:FormItem label="LUGAR"   fontWeight="bold" color="#FFFFFF" width="100%" borderStyle="none" borderColor="#F4EFEF" fontSize="11" id="frmitemNat">
+	  	     			   
+	  	     			   <mx:Canvas width="100%">
+	  	     			   
+	  	     			     <mx:TextInput click="{cambiarAcbxContinenteNat()}" id="txtlugarNat" width="75%" text="{CiudadNat}"  color="#000000" fontSize="10"/>
+	  	     			   
+	  	     			     <mx:ComboBox id="modContNatrechumano" dataProvider="{dataProviderContinentes()}" visible="false" labelField="Nombrelatino" change="validateForm(event),listarPaises(modContNatrechumano.selectedItem.NombreAnglo,false),modCiudadNatrechumano.selectedIndex=-1,cambiarAcbxPaisNat()"
+	  	     			     	 prompt="Seleccione Continente" minWidth="{modNomrechumano.width}" maxWidth="{modNomrechumano.width}"/>
+	  	     			     	 
+	  	     			     <mx:ComboBox id="modPaisNatrechumano" labelField="name" visible="false" dataProvider="{RecursoHumanoMl.getInstance().listPaisesNat}" enabled="{modContNatrechumano.selectedIndex>=0}" change="validateForm(event),listarCiudades(modPaisNatrechumano.selectedItem.code,false),cambiarAcbxCiudadNat()"  
+	  	     			     	prompt="Seleccione País" minWidth="{modNomrechumano.width}" maxWidth="{modNomrechumano.width}"/>	  
+	  	     			     	
+	  	     			     <mx:ComboBox toolTip="{modCiudadNatrechumano.selectedItem.name}" id="modCiudadNatrechumano" enabled="{modPaisNatrechumano.selectedIndex>=0}" visible="false" dataProvider="{RecursoHumanoMl.getInstance().listCiudadesNat}" 
+	  	     			     	labelField="name" change="validateForm(event)" prompt="Seleccione Ciudad" minWidth="{modNomrechumano.width}" maxWidth="{modNomrechumano.width}"/>	
+	  	     			     	  
+	  	     		        </mx:Canvas>
+	  	     			</mx:FormItem>	
+	  	     			
+	  	     			<mx:Spacer height="5"/>
+	  	     		   
+	  	     		   <mx:Box width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	     				<mx:HRule width="95%"/>
+	  	     			</mx:Box>
+	  	     			
+	  	     			<mx:Spacer height="5"/>
+	  	     			
+	    			</mx:Form>
+	    			
+	    		</mx:Box>
+	    		
+	    		<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center" id="box2_2">
+	    		
+	    			<mx:Form width="100%" height="100%">
+	    			  
+	    			  <mx:VBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+	     		       
+	     		          <mx:Box width="100%" height="50%" verticalAlign="middle" horizontalAlign="center" >
+	     		       
+	     		                     <mx:Spacer height="10"/>
+	     		                          
+	     		                           <mx:Box width="100%"   verticalAlign="middle" horizontalAlign="center" fontSize="10" color="#FFFFFF" >
+			  	    			   				<mx:Label text="AFILIACIONES" fontWeight="bold" fontSize="12" />
+			     		       			   </mx:Box> 
+	     		                          
+						     		       <mx:Box width="100%"   verticalAlign="middle" horizontalAlign="center" fontSize="10" color="#FFFFFF" >
+			  	    			  			 <mx:Label text="ARP DEL RECURSO HUMANO" fontWeight="bold" fontSize="10" />
+			     		       			   </mx:Box>
+				     		    
+						     		       <mx:FormItem label="                                 ARP"   fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">
+						  	     				<mx:Canvas width="100%" color="#000000" fontSize="10">
+						  	     						<mx:ComboBox toolTip="{modARPrechumano.selectedItem.nombre}" selectedIndex="{RecursoHumanoMl.getInstance().cbxARPselectedIndex}" change="{validateFormAfiliaciones(event)}" labelField="nombre"  dataProvider="{RecursoHumanoMl.getInstance().listArp}" id="modARPrechumano" 
+						  	     						visible="false" maxWidth="303" minWidth="303" close="{cambiarSelecCbxARP()}"/>
+						  	     						<mx:TextInput width="75%" id="txtModARP" editable="false" text="{RecursoHumanoMl.getInstance().txtmodARP}"
+						  	     							click="{llamarCbxARP()}" color="#000000" fontSize="10"/>
+						  	     				</mx:Canvas>
+						  				   </mx:FormItem>
+				  				   
+							  			   <mx:Spacer height="10" />
+							  			   
+							  			   <mx:Box width="100%"   verticalAlign="middle" horizontalAlign="center" fontSize="10" color="#FFFFFF" >
+			  	    			   			  <mx:Label text="EPS DEL RECURSO HUMANO" fontWeight="bold" fontSize="10" />
+			     		       			   </mx:Box>
+				     		       
+						     		       <mx:FormItem label="                                 EPS"  cornerRadius="20" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">
+						  	     			   <mx:Canvas width="100%" color="#000000" fontSize="10">
+					       			               <mx:ComboBox change="{validateFormAfiliaciones(event)}" id="modEPSrechumano"  labelField="nombre" dataProvider="{RecursoHumanoMl.getInstance().listEps}"  
+					       			      	       visible="false" toolTip="{modEPSrechumano.selectedItem.nombre}" maxWidth="303" minWidth="303" close="{cambiarSelecCbxEPS()}"/>
+					       			      	       <mx:TextInput width="75%" id="txtModEPS" editable="false" text="{RecursoHumanoMl.getInstance().txtmodEPS}"
+					       			      	       	click="{llamarCbxEPS()}" color="#000000" fontSize="10"/>     
+						  	     			      	  
+						  				       </mx:Canvas>
+						  				   </mx:FormItem>
+				  				   
+				  				   <mx:Spacer height="10" width="100%"/>
+				  				   
+				  				   <mx:Box width="100%" verticalAlign="middle" horizontalAlign="center" fontSize="10" color="#FFFFFF" >
+			  	    			      <mx:Label text="AFP DEL RECURSO HUMANO" fontWeight="bold" fontSize="10" />
+			     		           </mx:Box>
+				     		       
+				     		       <mx:FormItem label="                                 AFP"   fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">
+				  	     			   <mx:Canvas width="100%" color="#000000" fontSize="10">
+				  	     			             <mx:ComboBox change="{validateFormAfiliaciones(event)}" id="modAFPrechumano"  labelField="nombre" dataProvider="{RecursoHumanoMl.getInstance().listAfp}"
+				  	     			             	visible="false" toolTip="{modAFPrechumano.selectedItem.nombre}" maxWidth="303" minWidth="303"  close="{cambiarSelecCbxAFP()}"/>
+				  	     			             <mx:TextInput width="75%" id="txtModAFP" editable="false" text="{RecursoHumanoMl.getInstance().txtmodAFP}"
+				  	     			             	click="{llamarCbxAFP()}" color="#000000" fontSize="10"/>
+				  				        </mx:Canvas>
+				  				   </mx:FormItem>
+	  				   
+	  				          </mx:Box>
+	  				   
+	  				       <!--centroselected="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presentoRut==0?(true):false}"-->
+	  				       
+	  				         <mx:Spacer height="10" width="100%"/>
+	  				      
+	  				      	   <mx:Box width="100%" verticalAlign="middle" horizontalAlign="center">
+	  	     					  <mx:HRule width="95%"/>
+	  	     			 	   </mx:Box>
+	  	     			 		
+	  				       <!--centro selected="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presentoRut==1?(true):false}"-->
+	  				       
+	  				       <mx:Box width="100%" height="50%" verticalAlign="middle" horizontalAlign="center" >
+	  				       	
+	  				       	   <mx:Box width="100%"   verticalAlign="middle" horizontalAlign="center" fontSize="10" color="#FFFFFF" >
+			  	    			   <mx:Label text="DOCUMENTACIÓN" fontWeight="bold" fontSize="12" />
+			     		       </mx:Box>
+			     		       
+			     		       <mx:HBox width="100%" horizontalAlign="center" verticalAlign="middle"  color="#FFFFFF">
+	     		       	      	  <mx:Box width="50%" horizontalAlign="right" verticalAlign="middle">
+	     		       	      	  	<mx:Label text="PRESENTO RUT?" fontWeight="bold" color="#FFFFFF" fontSize="11"/>
+	     		       	      	  </mx:Box>
+	                              <mx:HBox width="50%" horizontalAlign="left" verticalAlign="middle" color="#FFFFFF" fontSize="10">
+	                                <mx:RadioButtonGroup  id="modPresentoRutRecHumano"  />
+	                            	<mx:RadioButton label="SI" groupName="modPresentoRutRecHumano" id="modSiPresentRut"
+	                            	 selected="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presentoRut==1?(true):false}" /> 	
+	   	                            <mx:RadioButton label="NO"  groupName="modPresentoRutRecHumano" id="modNoPresentoRut"
+	   	                            selected="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presentoRut==0?(true):false}"/>
+	                              </mx:HBox>
+	     		       	      </mx:HBox>
+	     		       	      
+	     		       	      <mx:HBox width="100%" horizontalAlign="center" verticalAlign="middle" >
+	     		       	      	  <mx:Box width="50%" horizontalAlign="right" verticalAlign="middle">
+	     		       	      	  	<mx:Label text="PRESENTO CÉDULA?" fontWeight="bold" color="#FFFFFF" fontSize="11"/>
+	     		       	      	  </mx:Box>
+	                              <mx:HBox width="50%" horizontalAlign="left" verticalAlign="middle" fontSize="11" color="#FFFFFF">
+	                                <mx:RadioButtonGroup  id="modPresentoCedRecHumano"  />
+	                            	<mx:RadioButton    label="SI" groupName="modPresentoCedRecHumano" id="modSiPresentCed"
+	                            	selected="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presentoCedula==1?(true):false}"/> 	
+	   	                            <mx:RadioButton  label="NO" groupName="modPresentoCedRecHumano" id="modNoPresentoCed"
+	   	                            selected="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presentoCedula==0?(true):false}"/>
+	                              </mx:HBox>
+	     		       	      </mx:HBox>
+	     		       	      
+	     		       	      <mx:HBox width="100%" horizontalAlign="center" verticalAlign="middle" >
+	     		       	      	  <mx:Box width="50%" horizontalAlign="right" verticalAlign="middle">
+	     		       	      	  	<mx:Label text="PRESENTO HOJA DE VIDA?" fontWeight="bold" color="#FFFFFF" fontSize="11"/>
+	     		       	      	  </mx:Box>
+	                              <mx:HBox width="50%" horizontalAlign="left" verticalAlign="middle" color="#FFFFFF" fontSize="11">
+	                                <mx:RadioButtonGroup  id="modPresentoHVRecHumano"  />
+	                            	<mx:RadioButton  label="SI" groupName="modPresentoHVRecHumano" id="modSiPresentHv"
+	                            	selected="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presntoHv==1?(true):false}"/> 	
+	   	                            <mx:RadioButton  label="NO" groupName="modPresentoHVRecHumano" id="modNoPresentoHv"
+	   	                            selected="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presntoHv==0?(true):false}"/>
+	                              </mx:HBox>
+	     		       	      </mx:HBox>
+	     		       	      
+	     		       	      <mx:HBox width="100%" horizontalAlign="center" verticalAlign="middle" >
+	     		       	      	  <mx:Box width="50%" horizontalAlign="right" verticalAlign="middle">
+	     		       	      	  	<mx:Label text="PRESENTO ENTREVISTA?" fontWeight="bold" color="#FFFFFF" fontSize="11"/>
+	     		       	      	  </mx:Box>
+	                              <mx:HBox width="50%" horizontalAlign="left" verticalAlign="middle" color="#FFFFFF" fontSize="11">
+	                                <mx:RadioButtonGroup  id="modPresentoEntrevistaRecHumano"  />
+	                            	<mx:RadioButton   label="SI" groupName="modPresentoEntrevistaRecHumano" id="modSiPresentEntrevista"
+	                            	selected="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presentoEntrevista==1?(true):false}"/> 	
+	   	                            <mx:RadioButton  label="NO" groupName="modPresentoEntrevistaRecHumano" id="modNoPresentoEntrevista"
+	   	                            selected="{RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presentoEntrevista==0?(true):false}"/>
+	                              </mx:HBox>
+	     		       	      </mx:HBox>
+			     		       
+	  				       	
+	  				       </mx:Box>
+	  				   
+	     		    	</mx:VBox>  
+	     		    	
+	     		    </mx:Form>
+	     		    
+	    		</mx:Box>
+	    		<mx:Box>
+	     				            	
+	            </mx:Box>
+	    		
+	    	</mx:ViewStack>
+	    	
+	      </mx:Box>	
+	    
+	      <mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+			    <mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+			      
+			      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+			      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+			      		<mx:Image source="{UtilidadesMl.getInstance().backEnable==true?(UtilidadesMl.getInstance().rutaback):UtilidadesMl.getInstance().rutaback2}"
+			      			  mouseOver="{direccionarAtras(VstackRecHumano.selectedIndex)}" toolTip="Atras" />	
+			      	</mx:Box>
+			      	
+			      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+			      		<mx:Image id="ok" source="{AllformsAreValid == true?(UtilidadesMl.getInstance().rutaCheck):(UtilidadesMl.getInstance().rutaCheck2)}"  toolTip="Aceptar"  click="{modificarRecursoHumano()}" />	
+			      	</mx:Box>
+			      	
+			      </mx:HBox>
+			      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+			      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+			      			<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar" 
+			      				/>	
+			      		</mx:Box>
+			      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+			      			<mx:Image source="{UtilidadesMl.getInstance().nextEnable==true?(UtilidadesMl.getInstance().next):UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" mouseOver="{direccionarAdelante(VstackRecHumano.selectedIndex)}"/>	
+			      		</mx:Box>
+			      		
+			    	</mx:HBox>
+			    </mx:HBox>
+						 	
+			 </mx:Box>
+	    
+	    	
+	    </mx:VBox>
+	    
+	    
+	     
+
+</mx:TitleWindow>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

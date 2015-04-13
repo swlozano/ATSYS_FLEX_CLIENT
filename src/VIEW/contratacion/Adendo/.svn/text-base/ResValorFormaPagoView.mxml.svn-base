@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	close="returnName()" 
+	layout="absolute" 
+	x="450" y="250" 
+	width="522" 
+	height="582" 
+	showCloseButton="true" 
+	cornerRadius="15"  
+	title="Valores y formas de pago # {ContratoMl.getInstance().Contador}" borderAlpha="50" 
+	fontSize="12" fontWeight="bold" 
+	borderColor="#006699" color="#FFFFFF" backgroundAlpha="1.0">
+	<mx:Script>
+        <![CDATA[
+        	import VIEW.contratacion.ContratoPpl;
+        	import mx.controls.Alert;
+        	import MODEL.PantallasMl;
+        	import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        	import VO.FechasPagoVO;
+        	import EVENT.ValorFpagoEvent;
+        	import mx.events.ValidationResultEvent;
+        	import mx.validators.Validator;
+        	import MODEL.UtilidadesMl;
+        	import MODEL.ContratoMl;
+        	import mx.events.CloseEvent;       
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+            
+            
+            [Embed(source="/REC/IMAGENES/warn2.png")]
+		    public var alerta:Class;
+            
+                private function returnName():void {
+                 PopUpManager.removePopUp(this);
+                }
+            
+            [Bindable]
+            public var formIsValid:Boolean=false; 
+            
+            private var focussedFormControl:DisplayObject;
+            
+            
+            private function validateForm(event:Event):void{
+            
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(fechInPagoValidator);
+            }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            }
+            
+            public function generarFechasPago():void{
+            	
+               PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_FECHAS_DE_PAGO_ADENDO;
+               	
+             var a:String =   fechaInicioPago.text;	
+               	
+               var fechasPago:FechasPagoVO = new FechasPagoVO(fechaInicioPago.selectedDate,ContratoMl.getInstance().nuevaFechaInicioAdendoContrato,ContratoMl.getInstance().nuevaFechaFinAdendoContrato,ContratoMl.getInstance().periodoPago);
+    		   var e:ValorFpagoEvent = new ValorFpagoEvent(ValorFpagoEvent.LISTAR_FECHAS_PAGO,fechasPago,null);
+    		   CairngormEventDispatcher.getInstance().dispatchEvent(e); 
+               returnName();	
+               	
+            }
+            
+            private function validarfecha(fecharef:Date,fechavalidar:Date,dfield:DateField,mensaje:String):void{
+            	
+            	
+            	if(dfield.text!=""){
+            		
+            		if(fechavalidar <= fecharef){
+            			
+            		   Alert.show(mensaje,"Mensaje de alerta",0,null,null,alerta,0);
+            		   formIsValid=false;
+            	       dfield.text="";
+            			
+            		}
+            		
+            	}
+            	
+            	
+            }
+            
+            private function restringirDiasFechaInicioPago(f_init:Date,date:DateField):void{
+            	 
+	             if(date.text!=""){ 
+	             	
+	            	if(f_init.date!= 1 && f_init.date!=16){
+	            		
+	            		Alert.show("El dia de la fecha de Inicio del Pago debe ser 1 o 16","Mensaje de alerta",0,null,null,alerta,0);
+	            		date.text="";
+	            		  
+	            	}
+	            	
+	             }
+            	
+            }
+            
+            
+        ]]>
+    </mx:Script>
+    
+    <mx:DateValidator
+    
+	    requiredFieldError="!!La Fecha de Inicio de Pago es Requerida¡¡"
+	    formatError="!!Error en el Formato de la fecha"
+        wrongLengthError="!!Fecha Inválida"
+        
+        invalidCharError="!!La fecha contiene caracteres Inválidos"
+        wrongDayError="!!El dia de la Fecha es Inválido"
+        wrongMonthError="!!El mes de la Fecha es Inválido"
+     	wrongYearError="!!El año de la Fecha es Inválido"
+	    property="text"
+	    source="{fechaInicioPago}"
+	    id="fechInPagoValidator"
+    	
+    />
+    
+    <mx:Box width="100%" 
+    	height="100%" 
+    	verticalAlign="middle" 
+    	horizontalAlign="center">
+    	
+    	<mx:Box width="99%" height="98%" backgroundColor="#006699" verticalAlign="middle" horizontalAlign="center">
+    		<mx:Spacer height="10" />
+    		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="right">
+    				<mx:Label text="TIPO DE PAGO"/>
+    			</mx:Box> 
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="left">
+    				<mx:TextInput text="{ContratoMl.getInstance().tipodePago}" width="90%" editable="false" color="black"  fontWeight="normal" fontSize="10"/>
+    			</mx:Box>
+    		</mx:HBox>
+    		
+    		<mx:Spacer height="10" />
+    		
+    		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="right">
+    				<mx:Label text="OBJETO FORMA PAGO"/>
+    			</mx:Box> 
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="left">
+    				<mx:TextArea editable="false" text="{ContratoMl.getInstance().Concepto}" width="90%" height="78"  color="black"/>
+    			</mx:Box>
+    		</mx:HBox>
+    		
+    		<mx:Spacer height="10" />
+    		
+    		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="right">
+    				<mx:Label text="OBSERVACIÓN"/>
+    			</mx:Box> 
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="left">
+    				<mx:TextArea editable="false" text="{ContratoMl.getInstance().Observacion}" width="90%" height="78"  color="black"/>
+    			</mx:Box>
+    		</mx:HBox>
+    		
+    		<mx:Spacer height="10" />
+    		    		
+    		 <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="right">
+    				<mx:Label text="PERIODO DE PAGO"/>
+    			</mx:Box> 
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="left">
+    				<mx:TextInput editable="false" text="{ContratoMl.getInstance().periodoPago}" width="90%"  color="black"/>
+    				
+    			</mx:Box>
+    		</mx:HBox>
+    		
+    		<mx:Spacer height="10" />   		
+    		    		
+    		 <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="right">
+    				<mx:Label text="FECHA INICIO DEL PAGO"/>
+    			</mx:Box> 
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="left">
+    				<mx:TextInput width="90%" id="finite" editable="false" text="{finite.text=UtilidadesMl.getInstance().formaterFechas(ContratoMl.getInstance().fechaInicioPago)}" color="black"/>
+    				
+    			</mx:Box>
+    		</mx:HBox>
+    		
+    		<mx:Spacer height="10" />   		
+    		
+    		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="right">
+    				<mx:Label text="BASICO O IBC"/>
+    			</mx:Box> 
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="left">
+    				<mx:Label text="{ContratoMl.getInstance().esIbc==1?('SI'):('NO')}"/>
+    			</mx:Box>
+    		</mx:HBox>
+    		
+    		<mx:Spacer height="10" />
+    		    		
+    		 <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="right">
+    				<mx:Label text="VALOR DEL PAGO"/>
+    			</mx:Box> 
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="left">
+    				<mx:TextInput editable="false" text="{UtilidadesMl.getInstance().formaterMoneda(ContratoMl.getInstance().valorDelPago)}" width="90%"  color="black"/>
+    			
+    			</mx:Box>
+    		</mx:HBox>
+    		
+    		<mx:Spacer height="10" />
+    		
+    		<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="right">
+    				<mx:Label text="FECHA INICIO DE PAGO (MM/DD/AA)"/>
+    			</mx:Box> 
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="left">
+    				<mx:DateField editable="true" change="{validateForm(event),restringirDiasFechaInicioPago(fechaInicioPago.selectedDate,fechaInicioPago),validarfecha(new Date(ContratoMl.getInstance().Clon_AdendoView.fechaInicio.text),fechaInicioPago.selectedDate,fechaInicioPago,'La Nueva fecha inicial del pago NO puede ser menor que la Nueva fecha de Inicio del contrato')}" id="fechaInicioPago" width="90%" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" color="black" fontWeight="normal" fontSize="10"/>
+    			
+    			</mx:Box>
+    		</mx:HBox>
+    		
+    		<mx:Spacer height="10" />
+    		    		
+    		<mx:HBox 
+    			width="100%" 
+    			verticalAlign="middle" 
+    			horizontalAlign="center"
+    			>
+    			
+    			<mx:Box width="50%"/>
+    			<mx:Box width="50%" 
+    				verticalAlign="middle" 
+    				horizontalAlign="left">
+    				<mx:Button enabled="{formIsValid}" click="{generarFechasPago()}"  label="Continuar"/>
+    			</mx:Box>
+    			
+    		</mx:HBox>
+    		
+    		
+    	</mx:Box>
+    </mx:Box>
+</mx:TitleWindow>

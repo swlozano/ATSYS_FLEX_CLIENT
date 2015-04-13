@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box verticalAlign="middle" horizontalAlign="center" xmlns:mx="http://www.adobe.com/2006/mxml" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import MODEL.CausacionesMl;
+			import mx.controls.Alert;
+			import MODEL.ContratoMl;
+		
+			//ContratoMl.getInstance().CausacionPpl arrayValoresProvisiones[];
+			private function textInputFocusOut():void{
+				
+				if(txtValProvision.text != '')
+				{
+					var index:int = ContratoMl.getInstance().CausacionPpl.dgProvisiones.selectedIndex;
+					var x:Object = CausacionesMl.getInstance().listaProvisiones.getItemAt(index);
+					x.valor = parseFloat(txtValProvision.text);
+					CausacionesMl.getInstance().listaProvisiones.setItemAt(x,index);
+				//ContratoMl.getInstance().CausacionPpl.arrayValoresProvisiones[index] = parseFloat(txtValProvision.text);
+					trace();
+				}
+				else
+				{
+					var index2:int = ContratoMl.getInstance().CausacionPpl.dgProvisiones.selectedIndex;
+					var x2:Object = CausacionesMl.getInstance().listaProvisiones.getItemAt(index2);
+					x2.valor = 0;
+					CausacionesMl.getInstance().listaProvisiones.setItemAt(x2,index2);
+				}
+			}
+			
+			
+		]]>
+	</mx:Script>
+  <!--mx:LinkButton textAlign="center" label="Ver" color="#0006FF" textDecoration="underline" fontWeight="normal"
+  	click="{linkBtnClick()}"/-->
+  	<mx:TextInput height="100%" text="{data.valor}"  width="100%" id="txtValProvision" borderStyle="none" restrict="0-9"  change="{textInputFocusOut() }" />
+</mx:Box>

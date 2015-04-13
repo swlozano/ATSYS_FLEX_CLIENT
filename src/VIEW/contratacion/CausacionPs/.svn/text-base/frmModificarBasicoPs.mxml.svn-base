@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="absolute" width="372" height="130" verticalAlign="middle" horizontalAlign="center"
+	showCloseButton="true" close="{PopUpManager.removePopUp(this)}" title="MODIFICAR IBC" fontSize="12" color="#FFFFFF" fontWeight="bold" borderColor="#006699" borderAlpha="50" cornerRadius="15">
+		<mx:Script>
+			<![CDATA[
+				import mx.controls.Alert;
+				import MODEL.ContratoMl;
+				import mx.collections.ArrayCollection;
+				import mx.managers.PopUpManager;
+				
+				private function clickBtnAceptar():void
+				{
+					if(txtIbc.text!="")
+					{
+						var indexSeleccionado:int  =  ContratoMl.getInstance().CausacionPpl.dgCausacionesPs.selectedIndex;
+						var objSeleccionado:Object = ContratoMl.getInstance().CausacionPpl.dgCausacionesPs.selectedItem;
+											
+						objSeleccionado.basico = parseInt(txtIbc.text);
+						(ContratoMl.getInstance().listCausacionps as ArrayCollection).setItemAt(objSeleccionado,indexSeleccionado);
+						
+					}
+					PopUpManager.removePopUp(this);
+				}
+			]]>
+		</mx:Script>
+	<!--mx:Canvas height="100%" width="100%"-->
+	
+		<mx:Box  width="100%" verticalAlign="middle" horizontalAlign="center" height="100%">
+		    <mx:Box  width="98%" verticalAlign="middle" horizontalAlign="center" height="97%" backgroundColor="#006699">
+				<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+					<mx:Box verticalAlign="middle" horizontalAlign="center">
+						<mx:Label text="IBC" fontFamily="Arial" fontSize="13" fontWeight="bold"/>		
+					</mx:Box >
+					<mx:Box verticalAlign="middle" horizontalAlign="center">
+						<mx:TextInput id="txtIbc" restrict="0-9"/>
+					</mx:Box>
+				</mx:HBox>
+				<mx:Spacer height="10"/>
+				<mx:HBox>
+					<mx:Box>
+						<mx:Button label="Aceptar" click="{clickBtnAceptar()}"  fontSize="12" cornerRadius="6"/>
+					</mx:Box>
+				</mx:HBox>
+		   </mx:Box>
+		</mx:Box>
+		
+	<!--/mx:Canvas-->
+</mx:TitleWindow>

@@ -1,0 +1,1529 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"  pageTitle="ATSYS - SERATIC LTDA." borderColor="#011523" 
+	fontFamily="Arial" creationComplete="{creationCompleteIndex(),clonarPantalla()}"  xmlns:contratacion="VIEW.contratacion.*"  
+	xmlns:cajamenor="VIEW.cajaMenor.*" xmlns:views="VIEW.menu.*" xmlns:usuario="VIEW.usuarios.*" xmlns:personas="VIEW.personas.*" 
+	xmlns:facturas="VIEW.facturas.*" xmlns:CuentasPagar="VIEW.CuentasPagar.*" xmlns:CuentasCobro="VIEW.CuentasCobro.*" 
+	preloader="AS.Preloader"
+	backgroundColor="#FFFFFF"
+	
+	xmlns:CONTROL="CONTROL.*" xmlns:SERVICES="SERVICES.*" initialize="{app_init()}">
+        
+	<CONTROL:Controller id="contralador" />  
+	<SERVICES:Services id="servicio" />
+                     
+	<mx:Script>
+		<![CDATA[
+			import EVENT.OficioEvent;
+			import VIEW.Items.AlertImprimirLiquidacion;
+			import EVENT.CuentasPorPagarEvent;
+			import MODEL.CuentasPorPagarMl;
+			import VIEW.CuentasPagar.AgregarCuentaPorPagar;
+			import MODEL.ContratoMl;
+			import VIEW.contratacion.Adendo.AdendoView;
+			import VO.ValorIdVO;
+			import VO.DetalleFacturaFx;
+		//SVN            
+			import VIEW.otros.PanelToolTip;
+			import mx.events.ToolTipEvent;
+			import mx.managers.ToolTipManager;
+			import VO.CajaMenorVO; 
+			import BUSINESS.ContratoDelegate;   
+			import EVENT.ContratoEvent;
+			import MODEL.OficioMl;
+			import MODEL.RecursoHumanoMl; 
+			import EVENT.RecursoHumanoEvent;
+			import EVENT.AbonoFacturaEvent;   
+			import VIEW.facturas.abonarPpl;
+			import VO.ItemFacturaVO;
+			import MODEL.FacturasMl;
+			import EVENT.FacturaEvent;
+			import EVENT.MovimientoEvent;
+			import VIEW.cajaMenor.agregarCuentasBanco;
+			import MODEL.UtilidadesMl;
+			import MODEL.MovimientoMl;
+			import mx.collections.ArrayCollection;
+			import MODEL.PermisosMl;
+			import MODEL.PantallasMl;
+			import VO.UsuariosSysVO;
+			import MODEL.CajaMenorMl;
+			import EVENT.CajaMenorEvent;
+			import EVENT.CentroCostoEvent;
+			import MODEL.CentroCostoMl;
+			import MODEL.PersonaMl;
+			import EVENT.PersonaEvent;
+			import EVENT.PermisosEvent;
+			import MODEL.RolSysMl;
+			 
+			import EVENT.RolesSysEvent;
+			import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import com.adobe.cairngorm.control.CairngormEvent;
+			import EVENT.UsuariosSysEvent;
+			import mx.events.CloseEvent;
+			import MODEL.UsuariosSysMl;
+			
+			//import mx.automation.delegates.controls.AlertFormAutomationImpl;
+			import VIEW.facturas.busquedaFacturas;
+			import VIEW.facturas.agregarfactura;
+			import VIEW.personas.modificarpersonas;
+			import VIEW.personas.agregarPersonas;
+			import VIEW.contratacion.agregarContrato;
+			
+			import VIEW.contratacion.modificaroficio;
+			import VIEW.contratacion.agregaroficio;
+			import VIEW.contratacion.agregarvalorformapago;
+			import VIEW.contratacion.modificarvalorformapago;
+			import VIEW.contratacion.modificarrecursohumano;
+			import VIEW.contratacion.agregarrecursohumano;
+			import VIEW.cajaMenor.busquedaMovimientos;
+			import VIEW.cajaMenor.modificarMovimiento;
+			import VIEW.cajaMenor.agregarMovimiento;
+			import VIEW.cajaMenor.modificarCentrocosto;
+			import VIEW.cajaMenor.agregarCentrocosto;
+			import VIEW.cajaMenor.configurarCajaMenor;
+			import VIEW.cajaMenor.agregarCajaMenor;
+			import VIEW.usuarios.modificarRol;
+			import VIEW.usuarios.agregarRol;
+			import mx.controls.Alert;
+			import VIEW.usuarios.modificarUsuarios;
+			import VIEW.usuarios.agregarUsuarios;
+			import mx.controls.Text;
+			import mx.managers.PopUpManager;
+            import mx.containers.TitleWindow;
+            import flash.geom.Point;
+            
+            [Embed(source="REC/IMAGENES/asys2.swf")]
+            public static const myBusyCursor : Class;
+            StyleManager.getStyleDeclaration("CursorManager").setStyle("busyCursor",myBusyCursor);
+            
+            public var al:Alert;  
+            public var s:String="ar";
+            
+           [Bindable]
+		   [Embed(source="REC/IMAGENES/trash.png")]
+		    public var erase:Class;
+		      
+		    [Bindable]
+			[Embed(source="/REC/IMAGENES/warn2.png")]
+			public var alerta:Class;
+			
+			[Embed(source="/REC/IMAGENES/ConfLogout.png")]
+			public var salir:Class;
+			
+			[Embed(source="/REC/IMAGENES/alertopt.png")]
+			public var alertidea:Class;
+            
+           private function clonarPantalla():void
+           {
+           	    
+           		PantallasMl.atsys = this;
+           }
+            
+           public function app_init():void {
+                 ToolTipManager.showEffect = fadeIn;
+                 ToolTipManager.hideDelay = 100000;
+             } 
+             
+            private function createCustomTip(title:String, body:String, event:ToolTipEvent):void {
+          		 var ptt:PanelToolTip = new PanelToolTip();
+          		 ptt.title = title;
+           		 ptt.bodyText = body;
+           		 event.toolTip = ptt;
+            } 
+             
+            
+            public function showWindow(opc:int):void {
+            	
+            	//123456
+	 	      		UsuariosSysMl.getInstance().opcSubMenuUsuario = -1;
+	 	      		RolSysMl.getInstance().opcSubMenuRol = -1;
+	 	      		CajaMenorMl.getInstance().opcSubMenuCajamenor = -1;
+	 	      	//--------------------
+            	//123
+            	    PantallasMl.ESTADO_PANTALLA = -1;
+            	    
+            	switch(opc){
+            	////ESPACIO PARA PANTALLAS AGREGAR
+            	 case 1:{
+            	 	
+            	 	if(currentView==1){
+            	 		
+            	 	   //PantallasMl.getInstance().CASE_PRINCIPAL=opc;	
+            	 		
+            	 	if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_USUARIOS) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1) 
+            	 		{
+            	 		
+            	 		 var evento:RolesSysEvent = new RolesSysEvent(RolesSysEvent.LISTAR_ROLES,null);
+            	 	     CairngormEventDispatcher.getInstance().dispatchEvent(evento);
+    	 	  
+            	 	     var addusu:agregarUsuarios=agregarUsuarios(PopUpManager.createPopUp( this, agregarUsuarios , false)); 
+            	 	     PopUpManager.centerPopUp(addusu);
+            	 	     PermisosMl.getInstance().deshabilitarMenus();
+            	 		
+            	 		}else{
+            	 		
+            	 		  Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_USUARIOS + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	 		
+            	 		}
+
+            	 	}else if(currentView==2){
+            	 		
+            	 		    if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_ROLES )|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1){
+            	 	     	
+            	 	     	  var eventos:PermisosEvent = new PermisosEvent(PermisosEvent.LISTAR_PERMISOS,null);
+            	 		      CairngormEventDispatcher.getInstance().dispatchEvent(eventos);
+            	 			  var addrol:agregarRol=agregarRol(PopUpManager.createPopUp(this,agregarRol,false));
+            	 	          PopUpManager.centerPopUp(addrol);
+            	 	          PermisosMl.getInstance().deshabilitarMenus();
+            	 	     	  
+            	 	     	}else {
+            	 	     	
+            	 	     	        Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_ROLES + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	 	     	 
+            	 	     	}
+            	 		            	 		                	 	           
+            	 	      }else if(currentView==3){
+            	 	      	   
+            	 	      	          if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_CAJA_MENOR) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1)
+            	 	      	           {
+            	 	      	           	
+            	 	      	           PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_ADD_CAJA_MENOR;
+            	 	      	           var e:CentroCostoEvent = new CentroCostoEvent(CentroCostoEvent.LISTAR_CENTRO_COSTO,null);
+		                               CairngormEventDispatcher.getInstance().dispatchEvent(e);
+		                               
+            	 	      	           }else{
+            	    
+            	                           Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_CAJA_MENOR + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	    
+            	                       }
+            	 	                    
+            	 	                
+            	 	            }else if(currentView==14){
+            	 	                               
+            	 	                   if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_CUENTAS_BANCO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1)
+            	 	      	           {            
+            	 	                      PantallasMl.ESTADO_PANTALLA=PantallasMl.getInstance().PANTALLA_ADD_CUENTA_BANCO;
+            	 	                      var eve:CentroCostoEvent = new CentroCostoEvent(CentroCostoEvent.LISTAR_CENTRO_COSTO,null);
+		                                  CairngormEventDispatcher.getInstance().dispatchEvent(eve);                 	
+            	 	                   }else{
+            	    
+            	                           Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_CUENTA_BANCO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	    
+            	                       }                 	
+            	 	                                           
+            	 	                   }else if(currentView==4){
+            	 	            	
+            	 	                    if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_CENTRO_DE_COSTO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1)
+            	 	                       {
+            	 	                       var addcentrocosto:agregarCentrocosto=agregarCentrocosto(PopUpManager.createPopUp(this,agregarCentrocosto,false));
+            	 	                       PopUpManager.centerPopUp(addcentrocosto);
+            	 	                       PermisosMl.getInstance().deshabilitarMenus();
+            	 	                       
+            	 	                       }else{
+            	 	                             Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_CENTRO_DE_COSTO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	 	                            }
+            	 	                        
+            	 	                  }else if(currentView==5){
+            	 	                  	
+            	 	                  	     if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_MOVIMIENTOS) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1){
+            	 	                  	     	
+            	 	                  	      if(CajaMenorMl.getInstance().listCajasUsuarioEspecifico.length>0){
+            	 	                  	      	MovimientoMl.getInstance().idCajaMenorToBuscarMov = MovimientoMl.getInstance().MovimientoPpl.cbxCajasmenores.selectedItem.id;	
+			     							  MovimientoMl.getInstance().nombreCajaMenorSelecEnMovimientosPpl = MovimientoMl.getInstance().MovimientoPpl.cbxCajasmenores.selectedItem.nombre;
+            	 	                  	      PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_ADD_MOVIMIENTO; 
+            	 	                  	      var e5:CentroCostoEvent = new CentroCostoEvent(CentroCostoEvent.LISTAR_CENTRO_COSTO,null);
+		                                       CairngormEventDispatcher.getInstance().dispatchEvent(e5);
+            	 	                  	      }else{
+            	 	                  	            
+            	 	                  	            Alert.show("Para poder agregar un MOVIMIENTO necesitas CREAR CAJAS MENORES O CUENTAS DE BANCO","Mensaje de alerta",0,null,null,alerta,0);
+            	 	                  	             
+            	 	                  	           }
+            	 	                  	      
+            	 	                  	     }else{
+            	    
+            	                                   Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_MOVIMIENTOS + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	    
+            	                                  }
+            	 	                           
+            	 	                               
+            	 	                        }else if(currentView==6){
+            	 	                        	     
+            	 	                        	      if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_RECURSO_HUMANO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1)
+            	 	                        	      {
+            	 	                        	       PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_AGREGAR_RECURSO_HUMANO;
+            	 	                        	       
+            	 	                        	        var e6:RecursoHumanoEvent=new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_ARP_RECURSO_HUMANO,null,null);
+            	 	                        	        CairngormEventDispatcher.getInstance().dispatchEvent(e6);
+            	 	                        	      
+            	 	                        	      }else{
+            	 	                        	      	    Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_RECURSO_HUMANO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	 	                        	           }
+            	 	                        	      
+            	 	                                    
+            	 	                                     
+            	 	                              }else if(currentView==8){
+            	 	                                    	   
+            	 	                                    	  if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_OFICIO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1)
+            	 	                                           { 
+            	 	                                            var addoficio:agregaroficio=agregaroficio(PopUpManager.createPopUp(this,agregaroficio,false));
+            	 	                                            PopUpManager.centerPopUp(addoficio);
+            	 	                                            PermisosMl.getInstance().deshabilitarMenus();
+            	 	                                            }else{
+            	 	                                                 Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_OFICIO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	 	                                                   }
+            	 	                                           
+            	 	                                           }else if(currentView==9){
+            	 	                                           	       
+            	 	                                           	       if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_CONTRATO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1)
+            	 	                                                    {
+            	 	                                           	           PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_AGREGAR_CONTRATO;
+            	 	                                           	           
+            	 	                                                       var eV9:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_TIPO_CONTRATO,null,null,null);
+            	 	                                                        CairngormEventDispatcher.getInstance().dispatchEvent(eV9);
+            	 	                                                        
+            	 	                                                    
+            	 	                                                    }
+            	 	                                                     else{
+            	 	                                                     	
+            	 	                                                           Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_CONTRATO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	 	                                                         
+            	 	                                                         }
+            	 	                                                  
+            	 	                                                  }else if(currentView==10){
+            	 	                                                  	
+            	 	                                                  	   if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_PERSONAS) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1){
+            	 	                                                  	
+            	 	                                                         var addpersona:agregarPersonas=agregarPersonas(PopUpManager.createPopUp(this,agregarPersonas,false));
+            	 	                                                         PopUpManager.centerPopUp(addpersona);
+            	 	                                                         PermisosMl.getInstance().deshabilitarMenus();
+            	 	                                                        
+            	 	                                                        }else{
+            	 	                                                              
+            	 	                                                                Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_PERSONAS + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+
+            	 	                                                             }
+            	 	                                                          
+            	 	                                                          
+            	 	                                                          }else if(currentView==11){
+            	 	                                                          	
+            	 	                                                          	      
+            	 	                                                          	       if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_FACTURAS) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1)
+            	 	      	           													{   
+            	 	      	           														FacturasMl.getInstance().CURRENT_AGREGAR_MODIFICAR = 1;         
+            	 	      	           														FacturasMl.getInstance().detallesFacturasFx = new ArrayCollection();
+            	 	                      													PantallasMl.ESTADO_PANTALLA=PantallasMl.getInstance().PANTALLA_ADD_FACTURA;
+            	 	                      													var e11:PersonaEvent = new PersonaEvent(PersonaEvent.LISTAR_PERSONAS,null);
+		                                  													CairngormEventDispatcher.getInstance().dispatchEvent(e11);                 	
+            	 	                   													}else{
+            	    
+            	                           														Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_FACTURAS + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	    
+            	                       														  }  
+            	 	                                                                   
+            	 	                                                                  }else if(currentView==13){
+            	 	                                                          	
+            	 	                                                          	      
+			            	 	                                                          	      if(PermisosMl.getInstance().permitirPantalla(PermisosMl.AGREGAR_CUENTAS_POR_PAGAR) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1)
+			            	 	      	           													{  
+			            	 	      	           																			                                  													
+					                                  													PantallasMl.ESTADO_PANTALLA=PantallasMl.getInstance().PANTALLA_AGREGAR_CUENTAS_X_PAGAR;                 	
+					                                  													
+			            	 	                   													    var evx:RecursoHumanoEvent = new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_RECURSO_HUMANO,null,null);
+			            	 	                   													    CairngormEventDispatcher.getInstance().dispatchEvent(evx);
+			            	 	                   													
+			            	 	                   													}else{
+			            	    
+			            	                           														Alert.show(PermisosMl.MSG_PERMISO_AGREGAR_CUENTAS_POR_PAGAR + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+			            	    
+			            	                       														  } 
+			            	 	                                                                   
+			            	 	                                                                  }
+            	 	
+            	 	
+            	 
+            	    
+            	 
+            	 break;
+            	 }
+            	 case 2:{
+            	 	////ESPACIO PARA PANTALLAS MODIFICAR
+                    if(currentView==1){
+                    	
+                    if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_USUARIOS)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1){
+                    	
+                      if(UsuariosSysMl.getInstance().listUs.length==0){	
+                    	
+                    	Alert.show("No hay datos que modificar, Agregue Usuarios para poder hacer esta operación","",0,null,null,alerta,0);
+                    	
+                      }else if(UsuariosSysMl.getInstance().usuariosPpl.dgUsuarios.selectedItem==null){
+            	  		
+                          Alert.show("SELECCIONE UN USUARIO DE LA LISTA PARA MODIFICARLO","",0,null,null,alerta,0);
+                         
+                       }else{
+            	 	      	//123456           	 	      	
+            	 	        UsuariosSysMl.getInstance().opcSubMenuUsuario = opc;
+            	 	        var evento1:RolesSysEvent = new RolesSysEvent(RolesSysEvent.LISTAR_ROLES,null);
+            	 	  		CairngormEventDispatcher.getInstance().dispatchEvent(evento1); 
+            	 	  		//------------------------------------------------------------------------------
+            	 	        var modusu:modificarUsuarios=modificarUsuarios(PopUpManager.createPopUp(this,modificarUsuarios,false));
+            	 	        UsuariosSysMl.getInstance().selectableUs=false;
+            	 	        PopUpManager.centerPopUp(modusu);
+            	 	        PermisosMl.getInstance().deshabilitarMenus();
+                        } 
+                    }else{
+                    
+            	 		  Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_USUARIOS + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+                    
+                    }
+                            
+            	 	     
+            	 	}else if(currentView==2){
+            	 		
+            	 		    if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_ROLES)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1)
+            	 		      {  
+            	 		     
+            	 		      if(RolSysMl.getInstance().listRol.length==0){	
+                    	
+                    	           Alert.show("No hay datos que modificar, Agregue Roles para poder hacer esta operación","",0,null,null,alerta,0);
+                    	
+            	 		        }else if(RolSysMl.getInstance().rolesPpl.dgroles.selectedItem==null){
+            	 		  	   
+            	 		  	      Alert.show("SELECCIONE UN ROL DE LA LISTA PARA MODIFICARLO","",0,null,null,alerta,0);
+            	 		    
+            	 		         }else{
+            	 		
+            	 		            RolSysMl.getInstance().opcSubMenuRol = opc;
+            	 		            var evento2:PermisosEvent = new PermisosEvent(PermisosEvent.LISTAR_PERMISOS,null);
+            	 		            CairngormEventDispatcher.getInstance().dispatchEvent(evento2);
+            	 		     
+            	 	                var modrol:modificarRol=modificarRol(PopUpManager.createPopUp(this,modificarRol,false));
+            	 	                RolSysMl.getInstance().selectableRol=false;    
+            	 	                PopUpManager.centerPopUp(modrol);
+            	 	                PermisosMl.getInstance().deshabilitarMenus();
+            	 	          
+            	 	               }
+            	 	       }else{
+            	 	       
+                                Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_ROLES + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);      
+
+            	 	       }
+            	 	        
+            	 	        
+            	 	        
+            	 	      }else if(currentView==3){
+            	 	      	
+            	 	      	    if(PermisosMl.getInstance().permitirPantalla(PermisosMl.CONFIGURAR_CAJA_MENOR) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1)
+            		              {
+            	 	      	   
+            	 	      	       if(CajaMenorMl.getInstance().listCajamenor.length==0){	
+                    	
+                    	               Alert.show("No hay datos que configurar, Agregue Cajas Menores para poder hacer esta operación","",0,null,null,alerta,0);
+                    	
+            	 	      	        }else if(CajaMenorMl.getInstance().cajaMenorPpl.dgCajaMenor.selectedItem==null){
+            	 	      	        
+            	 	      	         Alert.show("SELECCIONE UNA CAJA MENOR DE LA LISTA PARA MODIFICARLA","",0,null,null,alerta,0);
+            	 	      	       
+            	 	      	           }else{
+            	 	      	       	     	
+            	 	      	       	     	for each(var x:* in CajaMenorMl.getInstance().cajaMenorPpl.dgCajaMenor.selectedItem.notificacionCajaMenors )
+            	 	      	       	     	{
+            	 	      	       	     		if(x.esResponsable == 1 )
+            	 	      	       	     		{	
+            	 	      	       	     			UsuariosSysMl.getInstance().idUsuarioSelecEnCajaMenor = x.usuarioSys.id;
+            	 	      	       	     			CajaMenorMl.getInstance().txtModResponsableText = x.usuarioSys.nombre +  " " + x.usuarioSys.apellido; 
+            	 	      	       	     			break;
+            	 	      	       	     		}	
+            	 	      	       	     	}
+            	 	      	       	     	
+            	 	      	       	     	CajaMenorMl.getInstance().opcSubMenuCajamenor=opc;
+            	 	      	       	     	
+            	 	      	       	     	PantallasMl.ESTADO_PANTALLA=PantallasMl.getInstance().PANTALLA_MODIFICAR_CAJA_MENOR;
+            	 	      	       	     
+            	 	      	       	     	var eaa:UsuariosSysEvent = new UsuariosSysEvent(UsuariosSysEvent.LISTAR_US,null);
+		                                 	CairngormEventDispatcher.getInstance().dispatchEvent(eaa);
+            	 	                     
+            	 	      	                }
+            	 	      	      }else{
+	            	
+	            	                     Alert.show(PermisosMl.MSG_PERMISO_CONFIGURAR_CAJA_MENOR + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+
+	            	                   }
+            	 	      	      
+            	 	             }else if(currentView==14){
+            	 	                              	
+            	 	                       if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_CUENTAS_BANCO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1)               
+            	 	                         {
+            	 	                         
+            	 	                         if(CajaMenorMl.getInstance().listCajamenor.length==0){	
+                    	
+                    	               			Alert.show("No hay datos que modificar, Agregue Cuentas de Banco para poder hacer esta operación","",0,null,null,alerta,0);
+                    	 
+            	 	                          }else if(CajaMenorMl.getInstance().cuentasBancoPpl.dgCuentasBanco.selectedItem==null){
+            	 	      	        
+            	 	      	                       Alert.show("SELECCIONE UNA CUENTA DE BANCO DE LA LISTA PARA MODIFICARLA","",0,null,null,alerta,0);
+            	 	      	       
+            	 	      	                   }else{
+            	 	      	                   	
+            	 	      	                   	      for each(var y:* in CajaMenorMl.getInstance().cuentasBancoPpl.dgCuentasBanco.selectedItem.notificacionCajaMenors )
+            	 	      	       	     	           {
+            	 	      	       	     		         if(y.esResponsable == 1 )
+            	 	      	       	     		         {	
+            	 	      	       	     					UsuariosSysMl.getInstance().idUsuarioSelecEnCajaMenor = y.usuarioSys.id;
+            	 	      	       	     					CajaMenorMl.getInstance().txtModResponsableText = y.usuarioSys.nombre +  " " + y.usuarioSys.apellido; 
+            	 	      	       	     			        break;
+            	 	      	       	     		         }		
+            	 	      	       	     	            }
+            	 	      	       	     	
+            	 	      	       	     	         CajaMenorMl.getInstance().opcSubMenuCajamenor=opc;
+            	 	      	       	     	          //123
+            	 	      	       	     	          PantallasMl.ESTADO_PANTALLA=PantallasMl.getInstance().PANTALLA_MODIFICAR_CUENTA_BANCO;
+            	 	      	       	     
+            	 	      	       	     				var eaaa:UsuariosSysEvent = new UsuariosSysEvent(UsuariosSysEvent.LISTAR_US,null);
+		                                 				CairngormEventDispatcher.getInstance().dispatchEvent(eaaa);
+            	 	      	                   	  
+            	 	      	                        }
+            	 	                         
+            	 	                         } else{
+	            	
+	            	                               Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_CUENTA_BANCO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+
+	            	                               }            
+            	 	                                      
+            	 	              
+            	 	                  }else if(currentView==4){
+            	 	            	
+            	 	            	    if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_CENTRO_DE_COSTO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1){
+            	 	            	
+            	 	            	    if(CentroCostoMl.getInstance().listCentroCosto.length==0){	
+                    	
+                    	               			Alert.show("No hay datos que modificar, Agregue Centros de Costo para poder hacer esta operación","",0,null,null,alerta,0);
+                    	 
+            	 	            	    }else if(CentroCostoMl.getInstance().CentroCostoPpl.dgCentroCosto.selectedItem==null){
+            	 	            	        
+            	 	            	        Alert.show("SELECCIONE UN CENTRO DE COSTO DE LA LISTA PARA MODIFICARLO","",0,null,null,alerta,0);
+            	 	            	     
+            	 	            	     }else{
+            	 	            	   	  
+            	 	            	           var modCentrocosto:modificarCentrocosto=modificarCentrocosto(PopUpManager.createPopUp(this,modificarCentrocosto,false));
+            	 	                           CentroCostoMl.getInstance().selectableCcosto=false;
+            	 	                           PopUpManager.centerPopUp(modCentrocosto);
+            	 	                            PermisosMl.getInstance().deshabilitarMenus();
+            	 	            	         
+            	 	            	          }
+            	 	            	    }else{
+            	 	            	    
+            	 	            	          Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_CENTRO_DE_COSTO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	 	            	         
+            	 	            	         }      
+            	 	            	
+            	 	                  }else if(currentView==5){
+            	 	                  	
+            	 	                  	      if(UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1){
+            	 	                  	       
+            	 	                  	       if(CajaMenorMl.getInstance().listCajasUsuarioEspecifico.length==0){	
+                    	
+                    	               			Alert.show("No hay datos que modificar, Agregue Movimientos para poder hacer esta operación","",0,null,null,alerta,0);
+               
+            	 	                  	        }else if(MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem==null){
+            	 	                  	         
+            	 	                  	           Alert.show("SELECCIONE UN MOVIMIENTO DE LA LISTA PARA MODIFICARLO","",0,null,null,alerta,0);
+            	 	                  	        
+            	 	                  	        }else{
+            	 	                  	       
+            	 	                  	                 if(CajaMenorMl.getInstance().listCajasUsuarioEspecifico.length>0){
+            	 	                  	      				
+            	 	                  	      				PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_MODIFICAR_MOVIMIENTO; 
+            	 	                  	      				var e555:CentroCostoEvent = new CentroCostoEvent(CentroCostoEvent.LISTAR_CENTRO_COSTO,null);
+		                                       				CairngormEventDispatcher.getInstance().dispatchEvent(e555);
+            	 	                  	     				 }else{
+            	 	                  	            
+            	 	                  	            				Alert.show("Para poder agregar un MOVIMIENTO necesitas CREAR CAJAS MENORES O CUENTAS DE BANCO","Mensaje de alerta",0,null,null,alerta,0);
+            	 	                  	             
+            	 	                  	           					}
+            	 	                  	       
+            	 	                  	       
+            	 	                             		
+            	 	                                 }
+            	 	                          
+            	 	                          }else{
+            	 	            	    
+            	 	            	                Alert.show(PermisosMl.MSG_ALERTA_MODIFICAR_MOVIMENTO,"mensaje de alerta",0,null,null,alertidea,0);
+            	 	            	         
+            	 	            	               }   
+            	 	                          
+            	 	                             
+            	 	                        }else if(currentView==6){
+            	 	                        	     
+            	 	                        	     if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_RECURSO_HUMANO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1){
+            	 	            	
+            	 	            	    					if(RecursoHumanoMl.getInstance().listRecursoHumano.length==0){	
+                    	
+                    	               							Alert.show("No hay datos que modificar, Agregue Recursos Humanos para poder hacer esta operación","",0,null,null,alerta,0);
+                    	 
+            	 	            	    							}else if(RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem==null){
+            	 	            	        
+            	 	            	        								Alert.show("SELECCIONE UN RECURSO HUMANO DE LA LISTA PARA MODIFICARLO","",0,null,null,alerta,0);
+            	 	            	     
+            	 	            	     									}else{
+            	 	            	   	                                          
+            	 	            	   	                                           
+            	 	            	   	                                             
+            	 	            	   	                                          
+            	 	            	   	                                            PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_MODIFICAR_RECURSO_HUMANO;
+            	 	                        	       
+            	 	                        	        							var e6M:RecursoHumanoEvent=new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_ARP_RECURSO_HUMANO,null,null);
+            	 	                        	        						    CairngormEventDispatcher.getInstance().dispatchEvent(e6M);
+            	 	            	           									
+            	 	            	         
+            	 	            	          									}
+            	 	            	    				}else{
+            	 	            	    
+            	 	            	          				Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_RECURSO_HUMANO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	 	            	         
+            	 	            	         				}  
+            	 	                        	     
+            	 	                                    
+            	 	                              }else if(currentView==7){
+            	 	                              	
+            	 	                                       var modvalfpago:modificarvalorformapago=modificarvalorformapago(PopUpManager.createPopUp(this,modificarvalorformapago,false));
+            	 	                                       PopUpManager.centerPopUp(modvalfpago);
+            	 	                                          
+            	 	                                    }else if(currentView==8){
+            	 	                                    	
+            	 	                                    	   if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_OFICIO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1){
+            	 	            	
+            	 	            	                              if(OficioMl.getInstance().listOficio.length==0){	
+                    	
+                    	               			                      Alert.show("No hay datos que modificar, Agregue Oficios a Desempeñar para poder hacer esta operación","",0,null,null,alerta,0);
+                    	 
+            	 	            	                               }else if(OficioMl.getInstance().OficioPpl.dgoficio.selectedItem==null){
+            	 	            	        
+            	 	            	                                        Alert.show("SELECCIONE UN OFICIO A DESEMPEÑAR DE LA LISTA PARA MODIFICARLO","",0,null,null,alerta,0);
+            	 	            	     
+            	 	            	                                       }else{
+            	 	            	   	  
+            	 	            	                                            var modoficio:modificaroficio=modificaroficio(PopUpManager.createPopUp(this,modificaroficio,false));
+            	 	                                                            PopUpManager.centerPopUp(modoficio);
+            	 	                           									OficioMl.getInstance().selectableOficio=false;
+            	 	                            								PermisosMl.getInstance().deshabilitarMenus();
+            	 	            	         
+            	 	            	                                            }
+            	 	            	                                  }else{
+            	 	            	    
+            	 	            	                                   Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_OFICIO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	 	            	         
+            	 	            	                                  }  
+            	 	                                    	
+            	 	                                                  
+            	 	                                          }else if(currentView==9){
+            	 	                                          	
+
+               												if(PermisosMl.getInstance().permitirPantalla(PermisosMl.ADENDAR_CONTRATO) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1){		
+
+            	 	                                          	       if(ContratoMl.getInstance().listContrato!=null){
+            	 	                                          	       	   
+            	 	                                          	       	   if(ContratoMl.getInstance().ContratoPpl.dgcontrato.selectedItem!=null){
+            	 	                                          	              
+            	 	                                          	                 if(ContratoMl.getInstance().ContratoPpl.dgcontrato.selectedItem.estado==0){   
+            	 	                                          	              
+				            	 	                                                   var modcontrato:AdendoView=AdendoView(PopUpManager.createPopUp(this,AdendoView,true));
+				            	 	                                                   PopUpManager.centerPopUp(modcontrato);
+            	 	                                          	                 }else{
+            	 	                                          	                 	
+            	 	                                          	                          Alert.show("El contrato debe estar vigente para realizarle un adendo","Mensaje de alerta",0,null,null,alerta,0);
+            	 	                                          	                      
+            	 	                                          	                      }
+            	 	                                          	       	   
+            	 	                                          	       	   }else{
+            	 	                                          	       	   	
+            	 	                                          	       	          Alert.show("SELECCIONE UN CONTRATO DE LA LISTA PARA REALIZAR EL ADENDO","Mensaje de alerta",0,null,null,alerta,0);
+            	 	                                          	       	        
+            	 	                                          	       	        }
+            	 	                                                  
+            	 	                                                  }else{
+            	 	                                                  	
+            	 	                                                        Alert.show("No Hay datos, Agregue al menos un CONTRATO para poder hacer esta operación","Mensaje de alerta",0,null,null,alerta,0);
+
+            	 	                                                       }
+            	 	                                          }else{
+            	 	                                          	
+            	 	                                                 Alert.show(PermisosMl.MSG_PERMISO_ADENDAR_CONTRATO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	 	                                               
+            	 	                                               }
+            	 	                                                
+            	 	                                                }else if(currentView==10){
+            	 	                                                	   
+            	 	                                                	   if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_PERSONAS) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1)
+            	 	                                                	   {
+            	 	                                                	   	
+            	 	                                                	   	if(PersonaMl.getInstance().listPersonas==null || PersonaMl.getInstance().listPersonas.length==0){	
+                    	
+                    	               											Alert.show("No hay datos que modificar, Agregue Personas para poder hacer esta operación","",0,null,null,alerta,0);
+               
+            	 	                                                	      }else if(PersonaMl.getInstance().personasPpl.dgpersonas.selectedItem==null){
+            	 	                                                	  	 
+            	 	                                                	  	    Alert.show("SELECCIONE UNA PERSONA DE LA LISTA PARA MODIFICARLA","",0,null,null,alerta,0);
+            	 	                                                	  
+            	 	                                                	     }else{
+            	 	                                                	     	
+            	 	                                                               var modpersona:modificarpersonas=modificarpersonas(PopUpManager.createPopUp(this,modificarpersonas,false));
+            	 	                                                               PopUpManager.centerPopUp(modpersona);
+            	 	                                                               PersonaMl.getInstance().selectablePersona=false;
+            	 	                                                               PermisosMl.getInstance().deshabilitarMenus();
+            	 	                                                              
+            	 	                                                              }
+            	 	                                                          }else{
+            	 	                                                               
+            	 	                                                                 Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_PERSONAS + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	 	                                                               
+            	 	                                                               }
+            	 	                                                              
+            	 	                                                      }else if(currentView==11){
+            	 	                                                      	      
+            	 	                                                      	         if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_FACTURAS) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1)
+            	 	                                                	   				{
+            	 	                                                	   	
+            	 	                                                	   					if(FacturasMl.getInstance().listfacturas.length==0){	
+                    	
+                    	               															Alert.show("No hay datos que modificar, Agregue Facturas para poder hacer esta operación","",0,null,null,alerta,0);
+               
+            	 	                                                	      					}else if(FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem==null){
+            	 	                                                	  	
+            	 	                                                	  	   							 Alert.show("SELECCIONE UNA FACTURA DE LA LISTA PARA MODIFICARLA","",0,null,null,alerta,0);
+            	 	                                                	  
+            	 	                                                	     					}else{
+            	 	                                                	     						
+            	 	                                                	     							FacturasMl.getInstance().CURRENT_AGREGAR_MODIFICAR = 2;	            	 	                                                	     	                     PantallasMl.ESTADO_PANTALLA=PantallasMl.getInstance().PANTALLA_MODIFICAR_FACTURA;
+            	 	                                                              				     var eMod11:PersonaEvent=new PersonaEvent(PersonaEvent.LISTAR_PERSONAS,null);
+            	 	                                                              				     CairngormEventDispatcher.getInstance().dispatchEvent(eMod11);
+            	 	                                                              				    
+            	 	                                                              				    
+            	 	                                                              				    //Modificacion Alejandro
+            	 	                                                              				     
+            	 	                                                              				     var dtallesFacturas:ArrayCollection = new ArrayCollection();
+            	 	                                                              				     dtallesFacturas = FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.detalleFacturaVOs;
+            	 	                                                              				     var aux1:Number=0;
+            	 	                                                              				     var aux2:Number=0;
+            	 	                                                              				    
+            	 	                                                              				     for each(var i:* in dtallesFacturas){
+            	 	                                                              				     	
+            	 	                                                              				     	//aux1 = aux1 + i.total;
+            	 	                                                              				     	aux2 =aux2 + (i.cantidad * i.precio);
+            	 	                                                              				     	
+            	 	                                                              				     }
+            	 	                                                              				     
+            	 	                                                              				     //FacturasMl.getInstance().TotalFactura = aux1;
+            	 	                                                              				     FacturasMl.getInstance().SubTotalFactura =aux2;
+            	 	                                                              				     
+            	 	                                                              				     FacturasMl.getInstance().detallesFacturasFx = new ArrayCollection();
+            	 	                                                              				     for each(var z:* in dtallesFacturas)
+            	 	                                                              				     {
+            	 	                                                              				     	var descrip:String = z.descripcionBienServicio;
+            	 	                                                              				     	var cantidad:int = z.cantidad;
+            	 	                                                              				     	var precio:Number = z.precio;
+            	 	                                                              				     	var total:Number = z.total;
+            	 	                                                              				     	
+            	 	                                                              				     	var idsRetenciones:Array = new Array();
+            	 	                                                              				     	var valorIdVo:ValorIdVO;
+            	 	                                                              				     	for each(var retencion:* in z.facturaRetencionVOs)
+            	 	                                                              				     	{
+            	 	                                                              				     		valorIdVo = new ValorIdVO().ValorIdVOConstructor(
+            	 	                                                              				     		retencion.retencionVO.id,
+            	 	                                                              				     		retencion.valor);
+            	 	                                                              				     	    
+            	 	                                                              				     		idsRetenciones.push(valorIdVo);
+
+            	 	                                                              				     	}
+            	 	                                                              				     	
+            	 	                                                              				     	var item:DetalleFacturaFx = new DetalleFacturaFx().
+            	 	                                                              				     	DetalleFacturaFxConstructor(0,
+            	 	                                                              				     	cantidad,
+            	 	                                                              				     	descrip,
+            	 	                                                              				     	precio,
+            	 	                                                              				     	total,
+            	 	                                                              				     	idsRetenciones);
+            	 	                                                              				     	
+            	 	                                                              				     	FacturasMl.getInstance().detallesFacturasFx.addItem(item);
+            	 	                                                              				     	
+            	 	                                                              				     }
+            	 	                                                              				     //Modificacion Alejandro
+                          																		     
+                          																		     
+                          																		     //////modificacion adrian 12 de feb 2010 para obtener el id del IVA
+                          																		     
+                          																		         if(FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.facturaIvaVOs.length!=0){
+                          																		     
+		                          																		     for each(var ivfac:* in FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.facturaIvaVOs){
+		                          																		     	
+		                          																		     	FacturasMl.getInstance().idIvaFactura = ivfac.iva.id;
+		                          																		     	break;
+		                          																		     	
+		                          																		     }
+                          																		         }else{
+                          																		         	
+                          																		         	    FacturasMl.getInstance().idIvaFactura=-1;
+                          																		              
+                          																		              }
+                          																		     /////////////////
+            	 	                                                              				    
+            	 	                                                              
+            	 	                                                              				}
+            	 	                                                          			}else{
+            	 	                                                               
+            	 	                                                                 		  Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_FACTURAS + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	 	                                                               
+            	 	                                                               			 }
+            	 	                                                      	      
+            	 	                                                              }else if(currentView==13){
+            	 	                                                              	           
+            	 	                                                              	         
+            	 	                                                              	       if(PermisosMl.getInstance().permitirPantalla(PermisosMl.MODIFICAR_CUENTAS_POR_PAGAR) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1) 
+            	 	                                                              	         {
+            	 	                                                              	           
+            	 	                                                              	           if(CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem!=null){
+            	 	                                                              	      
+            	 	                                                              	               PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_MODIFICAR_CUENTAS_X_PAGAR;
+            	 	                                                              	               
+            	 	                                                              	               var ev13:RecursoHumanoEvent = new RecursoHumanoEvent(RecursoHumanoEvent.LISTAR_RECURSO_HUMANO,null,null);
+            	 	                                                              	               CairngormEventDispatcher.getInstance().dispatchEvent(ev13);
+            	 	                                                              	             
+            	 	                                                              	             }else{
+            	 	                                                              	             	  
+            	 	                                                              	             	    Alert.show("SELECCIONE UNA CUENTA POR PAGAR DE LA LISTA PARA MODIFICARLA","",0,null,null,alerta,0);
+            	 	                                                              	             	   
+            	 	                                                              	                  }
+            	 	                                                              	                  
+            	 	                                                              	         }else{
+            	 	                                                              	         	
+            	 	                                                              	                 Alert.show(PermisosMl.MSG_PERMISO_MODIFICAR_CUENTAS_POR_PAGAR + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	 	                                                              	               
+            	 	                                                              	              }
+            	 	                                                              	      
+            	 	                                                                      }
+            	  
+            	 break;
+            	 }
+            	 case 3:{
+            	  ////ESPACIO PARA PANTALLAS ELIMINAR
+            	    if(currentView==1){
+            	    
+            	    if(PermisosMl.getInstance().permitirPantalla(PermisosMl.ELIMINAR_USUARIOS)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1){
+            	    
+            	    if(UsuariosSysMl.getInstance().listUs.length==0){	
+                    	
+                    	Alert.show("No hay datos que eliminar, Agregue Usuarios para poder hacer esta operación","",0,null,null,alerta,0);
+                    
+            	      }else if(UsuariosSysMl.getInstance().usuariosPpl.dgUsuarios.selectedItem==null){
+                        
+                        Alert.show("SELECCIONE UN USUARIO DE LA LISTA PARA ELIMINARLO","",0,null,null,alerta,0);
+                       
+                       }else{
+                       	
+            	             Alert.yesLabel="SI";
+            	             Alert.noLabel="NO";
+            	             al=Alert.show("¿Seguro que deseas borrar este Dato?\n" +"\n"+ "NOMBRE: "+UsuariosSysMl.getInstance().usuariosPpl.dgUsuarios.selectedItem.nombre+ "\n"+"APELLIDOS: "+ UsuariosSysMl.getInstance().usuariosPpl.dgUsuarios.selectedItem.apellido+"\n"+"CEDULA: "+ UsuariosSysMl.getInstance().usuariosPpl.dgUsuarios.selectedItem.cedula+"\n","Eliminar " + Application.application.arrNomSubModulos[currentView],Alert.YES|Alert.NO,this,closeHandlerUsuarios,erase,0);
+                       
+                            } 
+                 }else{
+                    
+                         Alert.show(PermisosMl.MSG_PERMISO_ELIMINAR_USUARIOS + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+                 
+                     }       
+                       
+                            
+                    }else if(currentView==2){
+                  	
+                  	       
+                  	      if(PermisosMl.getInstance().permitirPantalla(PermisosMl.ELIMINAR_ROLES)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1){ 
+                  	       
+                  	       if(RolSysMl.getInstance().listRol.length==0){	
+                    	
+                    	           Alert.show("No hay datos que eliminar, Agregue Roles para poder hacer esta operación","",0,null,null,alerta,0);
+                    	
+                  	         }else if(RolSysMl.getInstance().rolesPpl.dgroles.selectedItem==null){
+                  	 	       
+                  	 	       Alert.show("SELECCIONE UN ROL DE LA LISTA PARA ELIMINARLO","",0,null,null,alerta,0);
+                  	           
+                  	         }else{
+                  	
+            	         		   Alert.yesLabel="SI";
+            	        		   Alert.noLabel="NO";
+            	                   al=Alert.show("¿Seguro que deseas borrar este Dato?\n" +"\n"+ "NOMBRE: "+RolSysMl.getInstance().rolesPpl.dgroles.selectedItem.nombre +"\n","Eliminar " + Application.application.arrNomSubModulos[currentView],Alert.YES|Alert.NO,this,closeHandlerRoles,erase,0);
+                                   
+                                  }
+                         }else{
+                         
+                            Alert.show(PermisosMl.MSG_PERMISO_ELIMINAR_ROLES + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+
+                         }       
+                                  
+                                  
+                          }else if(currentView==3){
+                  	
+                  	        if(PermisosMl.getInstance().permitirPantalla(PermisosMl.ELIMINAR_CAJA_MENOR)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1){ 
+                  	
+                  	        if(CajaMenorMl.getInstance().listCajamenor.length==0){	
+                    	
+                    	       Alert.show("No hay datos que eliminar, Agregue Cajas Menores para poder hacer esta operación","",0,null,null,alerta,0);
+            	 	      	        
+                  	         }else if(CajaMenorMl.getInstance().cajaMenorPpl.dgCajaMenor.selectedItem==null){
+                  	 	       
+                  	 	       Alert.show("SELECCIONE UNA CAJA MENOR DE LA LISTA PARA ELIMINARLA","",0,null,null,alerta,0);
+                  	           
+                  	         }else{
+                  	
+            	         		   Alert.yesLabel="SI";
+            	        		   Alert.noLabel="NO";
+            	                   al=Alert.show("¿Seguro que deseas borrar este Dato?\n" +"\n"+ "CAJA MENOR: "+CajaMenorMl.getInstance().cajaMenorPpl.dgCajaMenor.selectedItem.nombre +"\n","Eliminar " + Application.application.arrNomSubModulos[currentView],Alert.YES|Alert.NO,this,closeHandlerCajaMenor,erase,0);
+                                   
+                                  }
+                            }else{
+                            
+                               Alert.show(PermisosMl.MSG_PERMISO_ELIMINAR_CAJA_MENOR + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+
+                            }
+                                  
+                           }else if(currentView==14){
+                  	
+                  	        if(PermisosMl.getInstance().permitirPantalla(PermisosMl.ELIMINAR_CUENTAS_BANCO)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1){ 
+                  	
+                  	          if(CajaMenorMl.getInstance().listCajamenor.length==0){	
+                    	
+                    	     		Alert.show("No hay datos que eliminar, Agregue Cuentas de Banco para poder hacer esta operación","",0,null,null,alerta,0);
+                    
+                  	        }else if(CajaMenorMl.getInstance().cuentasBancoPpl.dgCuentasBanco.selectedItem==null){
+                  	 	       
+                  	 	       Alert.show("SELECCIONE UNA CUENTA DE BANCO DE LA LISTA PARA ELIMINARLA","",0,null,null,alerta,0);
+                  	           
+                  	         }else{
+                  	
+            	         		   Alert.yesLabel="SI";
+            	        		   Alert.noLabel="NO";
+            	                   al=Alert.show("¿Seguro que deseas borrar este Dato?\n" +"\n"+ "CUENTA DE BANCO: "+CajaMenorMl.getInstance().cuentasBancoPpl.dgCuentasBanco.selectedItem.nombre +"\n","Eliminar " + Application.application.arrNomSubModulos[currentView],Alert.YES|Alert.NO,this,closeHandlerCuentabanco,erase,0);
+                                   
+                                  }
+                            }else{
+                            
+                               Alert.show(PermisosMl.MSG_PERMISO_ELIMINAR_CUENTA_BANCO+ " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+
+                            }
+                                  
+                                 
+                                 }else if(currentView==10){  
+                                 	
+                                    if(PermisosMl.getInstance().permitirPantalla(PermisosMl.ELIMINAR_PERSONAS)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1)
+                        	         {
+                        	         
+                        	         if(PersonaMl.getInstance().listPersonas==null || PersonaMl.getInstance().listPersonas.length==0){	
+                    	
+              								Alert.show("No hay datos que eliminar, Agregue Personas para poder hacer esta operación","",0,null,null,alerta,0);
+               
+                        	         }else if(PersonaMl.getInstance().personasPpl.dgpersonas.selectedItem==null){
+                        		      
+                        		      Alert.show("SELECCIONE UNA PERSONA DE LA LISTA PARA ELIMINARLA","",0,null,null,alerta,0);
+                        	       
+                        	         }else{
+                        	       	
+              							var clon:String = PersonaMl.getInstance().personasPpl.dgpersonas.selectedItem.nit;
+            	                        var nitNum1:String;
+            	                        var nitNum2:String;
+            	                        var mostratNit:String;
+            	
+						            	if(clon!="0"){
+						            	
+						            	   nitNum1 = clon.substring(0,(clon.length)-1);
+						            	   nitNum2 = clon.substr(clon.length-1,clon.length);	
+						            	   mostratNit = nitNum1 + " - " +nitNum2;	
+						            		
+						            	}else{
+						            		
+						            	       nitNum1="";
+						            	       nitNum2="";
+						            	       mostratNit = nitNum1 + " - " +nitNum2;
+						            	       
+						            	     }
+	            	
+	         
+                        	             Alert.yesLabel="SI";
+                        	             Alert.noLabel="NO";
+                        	             al = Alert.show("¿Seguro que deseas borrar este Dato?\n" +"\n"+ "NOMBRE O RAZÓN SOCIAL: "+PersonaMl.getInstance().personasPpl.dgpersonas.selectedItem.nombreRs +"\n" + "NIT: " + mostratNit +"\n" + "CEDULA: " + PersonaMl.getInstance().personasPpl.dgpersonas.selectedItem.cedula +"\n" + "TELÉFONO : " + PersonaMl.getInstance().personasPpl.dgpersonas.selectedItem.telefono +"\n","Eliminar " + Application.application.arrNomSubModulos[currentView],Alert.YES|Alert.NO,this,closeHandlerPersonas,erase,0);
+                        	            
+                        	              }
+                        	         }else{
+                        	         
+                        	              Alert.show(PermisosMl.MSG_PERMISO_ELIMINAR_PERSONAS+ " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+                        	            
+                        	         }   
+                        	            
+                        
+                                }else if(currentView==4){
+                                	
+                                	   if(PermisosMl.getInstance().permitirPantalla(PermisosMl.ELIMINAR_CENTRO_DE_COSTO)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1)
+                                         {
+                                        if(CentroCostoMl.getInstance().listCentroCosto.length==0){	
+                    	
+                    	               			Alert.show("No hay datos que eliminar, Agregue Centros de Costo para poder hacer esta operación","",0,null,null,alerta,0);
+                    	 
+                              	        }else if(CentroCostoMl.getInstance().CentroCostoPpl.dgCentroCosto.selectedItem==null){
+                              	      	    
+                              	      	    Alert.show("SELECCIONE UN CENTRO DE COSTO DE LA LISTA PARA ELIMINARLO","",0,null,null,alerta,0);
+                              	        
+                              	         }else{
+                              	           
+                              	               Alert.yesLabel="SI";
+                              	               Alert.noLabel="NO";
+                              	               al = Alert.show("¿Seguro que deseas borrar este Dato?" +"\n"+ "ID: "+CentroCostoMl.getInstance().CentroCostoPpl.dgCentroCosto.selectedItem.id +"\n" + "NOMBRE: " + CentroCostoMl.getInstance().CentroCostoPpl.dgCentroCosto.selectedItem.nombre +"\n" + "CIUDAD: " + CentroCostoMl.getInstance().CentroCostoPpl.dgCentroCosto.selectedItem.ciudad +"\n","Eliminar " + Application.application.arrNomSubModulos[currentView],Alert.YES|Alert.NO,this,closeHandlerCentroCosto,erase,0);
+                              	           
+                              	              }
+                                         }else{
+                                         
+                                               Alert.show(PermisosMl.MSG_PERMISO_ELIMINAR_CENTRO_DE_COSTO + " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+                                            
+                                              }
+                              	              
+                                      }else if(currentView==5){
+                                      
+                                      
+                                                 if(UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1){
+                                                 	
+                                                 	if(CajaMenorMl.getInstance().listCajasUsuarioEspecifico.length==0){	
+                    	
+                    	               			        Alert.show("No hay datos que eliminar, Agregue Movimientos para poder hacer esta operación","",0,null,null,alerta,0);
+               
+                                                    }else if(MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem==null){
+                              	      	    
+                              	      	   				 Alert.show("SELECCIONE UN MOVIMIENTO DE LA LISTA PARA ELIMINARLO","",0,null,null,alerta,0);
+                              	        
+                              	         				}else{
+                              	           
+                              	               				  Alert.yesLabel="SI";
+                              	              				  Alert.noLabel="NO";
+                              	               				  al = Alert.show("¿Seguro que deseas borrar este Dato?" +"\n"+ "ID: "+ MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.id +"\n" + "NOMBRE: " + MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.concepto +"\n" + "VALOR DEL MOVIMIENTO: " + MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.valor +"\n","Eliminar " + Application.application.arrNomSubModulos[currentView],Alert.YES|Alert.NO,this,closeHandlerMovimiento,erase,0);
+                              	           
+                              	                             }
+                                                 	
+                                                 
+                                                 }else{
+                                                 
+                                                        Alert.show(PermisosMl.MSG_ALERTA_ELIMINAR_MOVIMENTO,"mensaje de alerta",0,null,null,alertidea,0);
+                                                      
+                                                      }
+                                              
+                                              
+                                              }else if(currentView==11){
+                                	
+                                	  				 if(PermisosMl.getInstance().permitirPantalla(PermisosMl.ELIMINAR_FACTURAS)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1)
+                                         				{
+                                        				if(FacturasMl.getInstance().listfacturas.length==0){	
+                    	
+                    	               						Alert.show("No hay datos que eliminar, Agregue Facturas para poder hacer esta operación","",0,null,null,alerta,0);
+                    	 
+                              	        					}else if(FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem==null){
+                              	      	    
+                              	      	    				Alert.show("SELECCIONE UNA FACTURA DE LA LISTA PARA ELIMINARLA","",0,null,null,alerta,0);
+                              	        
+                              	         					}else{
+                              	           
+                              	               					Alert.yesLabel="SI";
+                              	               					Alert.noLabel="NO";
+                              	               					al = Alert.show("¿Seguro que deseas borrar este Dato?" +"\n"+ "FECHA DE FACTURACIÓN: "+UtilidadesMl.getInstance().formaterFechas(FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.fechaFacturacion) +"\n" + "FECHA PACTADA PARA PAGO: " + UtilidadesMl.getInstance().formaterFechas(FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.fechaPactadaPago) +"\n" + "SUBTOTAL: " + FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.subtutal +"\n" + "TOTAL: " +FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.total + "\n","Eliminar " + Application.application.arrNomSubModulos[currentView],Alert.YES|Alert.NO,this,closeHandlerFacturas,erase,0);
+                              	           
+                              	              					}
+                                         			}else{
+                                         
+                                               			Alert.show(PermisosMl.MSG_PERMISO_ELIMINAR_FACTURAS+ " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+                                            
+                                              			}
+                              	              
+                                      }else if(currentView==13){
+                                      	
+                                      	          if(PermisosMl.getInstance().permitirPantalla(PermisosMl.ELIMINAR_CUENTAS_POR_PAGAR)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1)
+                                         		    {
+                                      	
+	                                                  if(CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem!=null){
+	                                                  	
+	                                                  	Alert.yesLabel="SI";
+	                  	               					Alert.noLabel="NO";
+	                  	               					al = Alert.show("¿Seguro que deseas borrar este Dato?" +"\n"+ "NOMBRE: "+ CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem.nombre +"\n" + "CONCEPTO: " + CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem.concepto +"\n" + "ESTADO: " + CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem.estadoCuenta +"\n" + "VALOR: " + UtilidadesMl.getInstance().formaterMoneda(CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem.valor) + "\n","Eliminar " + Application.application.arrNomSubModulos[currentView],Alert.YES|Alert.NO,this,closeHandlerCuentasXPagar,erase,0);
+	                                                  	
+	                                                  }else{
+	                                                  	
+	                                                  	    Alert.show("SELECCIONE UNA CUENTA POR PAGAR DE LA LISTA PARA ELIMINARLA","",0,null,null,alerta,0);
+	                                                  	
+	                                                       }    
+                                         		    }else{
+                                         
+                                                			Alert.show(PermisosMl.MSG_PERMISO_ELIMINAR_CUENTAS_POR_PAGAR+ " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+                                            
+                                              			 }
+                                              }else if(currentView == 8){
+                                              	
+                                              	          if(PermisosMl.getInstance().permitirPantalla(PermisosMl.ELIMINAR_OFICIO)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1)
+		                                         		    {
+		                                      	
+			                                                  if(OficioMl.getInstance().OficioPpl.dgoficio.selectedItem!=null){
+			                                                  	
+				                                                  	Alert.yesLabel="SI";
+				                  	               					Alert.noLabel="NO";
+				                  	               					al = Alert.show("¿Seguro que deseas borrar este Dato?" +"\n"+ "NOMBRE DEL OFICIO: "+ OficioMl.getInstance().OficioPpl.dgoficio.selectedItem.nombre +"\n" + "OBJETO: " + OficioMl.getInstance().OficioPpl.dgoficio.selectedItem.objeto + "\n","Eliminar " + Application.application.arrNomSubModulos[currentView],Alert.YES|Alert.NO,this,closeHandlerOficio,erase,0);
+			                                                  	
+			                                                  }else{
+			                                                  	
+			                                                  	    Alert.show("SELECCIONE UN OFICIO A DESEMPEÑAR DE LA LISTA PARA ELIMINARLO","",0,null,null,alerta,0);
+			                                                  	
+			                                                       }    
+		                                         		    }else{
+		                                         
+		                                                			Alert.show(PermisosMl.MSG_PERMISO_ELIMINAR_OFICIO+ " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+		                                            
+		                                              			 }
+                                              	
+                                                      }
+                     
+             
+                 break;  
+            	 }
+            	 
+            	 case 4:{
+            	  ////ESPACIO PARA PANTALLAS DE BÚSQUEDA
+            	      if(currentView==5){
+            	      	
+            	      	
+            	     if(PermisosMl.getInstance().permitirPantalla(PermisosMl.BUSCAR_MOVIMIENTOS)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1){ 
+            	      	
+            	      if(CajaMenorMl.getInstance().listCajamenor.length>0 || CajaMenorMl.getInstance().listCajamenor!=null ){ 	
+            	      	
+            	      	 PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_BUSCAR_MOVIMIENTOS;
+            	      	 
+            	      	 MovimientoMl.getInstance().listConsultaMovimientoCajaMenor = null;
+            	      	 
+                         var cjmenor:CajaMenorVO;
+                         cjmenor = new CajaMenorVO(0,0,"",0,0,0,null,0,0,0,false);
+                         var event:CajaMenorEvent = new CajaMenorEvent(CajaMenorEvent.LISTAR_TODA_CAJA,cjmenor);
+                         CairngormEventDispatcher.getInstance().dispatchEvent(event);
+            	         
+            	         }else{
+            	      	       Alert.show("No hay datos que Consultar, Agregue Movimientos para poder hacer esta operación","",0,null,null,alerta,0);
+            	              }  
+            	      	
+            	      	 }else{
+                                                 
+                                Alert.show(PermisosMl.MSG_ALERTA_BUSQUEDA_MOVIMENTO,"mensaje de alerta",0,null,null,alertidea,0);
+                                                      
+                              }
+            	         
+            	         
+            	         
+            	      }else if(currentView==11){
+            	      	       
+            	      	       
+            	      	       if(PermisosMl.getInstance().permitirPantalla(PermisosMl.REPORTES_DE_FACTURAS)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1){
+            	      	       
+            	      	           if(PersonaMl.getInstance().listPersonas!=null){ 
+            	      	                
+            	      	                if(PersonaMl.getInstance().listPersonas.length>0){
+            	      	                      
+            	      	                     if(FacturasMl.getInstance().listfacturas!=null){
+            	      	                       
+            	      	                         if(FacturasMl.getInstance().listfacturas.length>0){
+            	      	                       	
+            	      	                                   	      	                          
+				            	      	               var busqfacturas:busquedaFacturas=busquedaFacturas(PopUpManager.createPopUp(this,busquedaFacturas,true));
+				            	               	       PopUpManager.centerPopUp(busqfacturas);
+            	      	                         
+            	      	                         
+            	      	                         }else{
+            	      	                         	
+            	      	                         	    Alert.show("No existen Facturas...Agregue una para realizar esta operación","Mensaje de alerta",0,null,null,alerta,0);
+            	      	                         	
+            	      	                              }
+            	      	                     
+            	      	                     }else{
+            	      	                     	
+            	      	                            Alert.show("No existen Facturas...Agregue una para realizar esta operación","Mensaje de alerta",0,null,null,alerta,0);
+            	      	                          
+            	      	                          }
+            	      	                
+            	      	                }else{
+            	      	                	
+            	      	                       Alert.show("No existen Facturas...Agregue una para realizar esta operación","Mensaje de alerta",0,null,null,alerta,0);
+            	      	                     
+            	      	                     }
+            	      	           
+            	      	           }else{
+            	      	                	
+            	      	                       Alert.show("No existen Facturas...Agregue una para realizar esta operación","Mensaje de alerta",0,null,null,alerta,0);
+            	      	                     
+            	      	                 }
+            	      	       
+            	      	       
+            	      	       }else{
+            	      	       	      Alert.show(PermisosMl.MSG_PERMISO_REPORTES_DE_FACTURAS+ " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+            	      	            }
+            	      	       
+            	         
+            	            }
+            	  
+                 break;  
+            	 }
+            	 
+            	 //////////////ESPACIO PARA PANTALLAS OTROS.....
+            	 case 5:
+            	 
+            	   
+            	     switch(currentView){
+            	     	
+            	     	case 11:
+            	     	 
+            	     if(PermisosMl.getInstance().permitirPantalla(PermisosMl.GESTION_DE_ABONO_FACTURAS)|| UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1)
+                        {  
+            	     	  
+            	     	 if(FacturasMl.getInstance().listfacturas.length==0){	
+                    	
+                    	             Alert.show("No hay datos que mostrar, Agregue Facturas para poder hacer esta operación","",0,null,null,alerta,0);
+                    	 
+                              	 }else if(FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem==null){
+                              	      	    
+                              	      	   Alert.show("SELECCIONE UNA FACTURA DE LA LISTA PARA GESTIONAR LOS ABONOS","",0,null,null,alerta,0);
+                              	        
+                              	         }else{
+                              	         	
+                              	         	   var eve11:AbonoFacturaEvent = new AbonoFacturaEvent(AbonoFacturaEvent.LISTAR_ABONO_FACTURA,null);
+                              	         	   CairngormEventDispatcher.getInstance().dispatchEvent(eve11);
+                              	         	   
+                              	         	   FacturasMl.getInstance().indiceGrilla = FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedIndex;
+                              	               
+                              	               }
+                        }else{
+                                         
+                                Alert.show(PermisosMl.MSG_PERMISO_GESTION_ABONO_FACTURAS+ " " + PermisosMl.MSG_ALERTA_PERMISO,"mensaje de alerta",0,null,null,alertidea,0);
+                                            
+                             }
+            	     	
+            	     	break;
+            	     	
+            	     }
+            	   
+            	 
+            	 break; 
+            	 
+            	 ////////////////FIN PANTALLAS OTROS////////////////
+            	}
+            	
+            }
+            
+            private function closeHandlerUsuarios(event:CloseEvent):void{
+            
+	            switch(event.detail){
+	            	
+		             case Alert.YES:
+		                UsuariosSysMl.getInstance().idUsuarioToEliminar = UsuariosSysMl.getInstance().usuariosPpl.dgUsuarios.selectedItem.id;
+		                var evento:UsuariosSysEvent = new UsuariosSysEvent(UsuariosSysEvent.ELIMINAR_USUARIOS,null);
+		                CairngormEventDispatcher.getInstance().dispatchEvent(evento);	
+		             break;
+	            }
+            }
+             private function closeHandlerPersonas(event:CloseEvent):void{
+             
+               switch(event.detail){
+               
+                 case Alert.YES:
+                     
+                    if(PersonaMl.getInstance().personasPpl.dgpersonas.selectedItem.esEmpresa==0){ 
+                     
+                     PersonaMl.getInstance().idPersonaToEliminar = PersonaMl.getInstance().personasPpl.dgpersonas.selectedItem.id;
+                     var evento:PersonaEvent = new PersonaEvent(PersonaEvent.ELIMINAR_PERSONA,null);
+                     CairngormEventDispatcher.getInstance().dispatchEvent(evento);
+                     }else{
+                   	     Alert.show("!! DATO PROTEGIDO POR EL SISTEMA. NO PUEDES REALIZAR ESTA OPERACIÓN ¡¡","Mensaje de Alerta",0,null,null,alerta,0);
+                        }
+                 break;
+                   
+               
+               }
+             
+             }
+               private function closeHandlerRoles(event:CloseEvent):void{
+             
+               switch(event.detail){
+               
+                 case Alert.YES:
+                     
+                     RolSysMl.getInstance().idRolToEliminar = RolSysMl.getInstance().rolesPpl.dgroles.selectedItem.id;
+                     var evento:RolesSysEvent = new RolesSysEvent(RolesSysEvent.ELIMINAR_ROLES,null);
+                     CairngormEventDispatcher.getInstance().dispatchEvent(evento);
+                 break;
+                   
+               
+               }
+             
+             }
+             
+             private function closeHandlerCajaMenor(event:CloseEvent):void{
+             
+               switch(event.detail){
+               
+                 case Alert.YES:
+                 
+                   CajaMenorMl.getInstance().idCajaMenorToEliminar = CajaMenorMl.getInstance().cajaMenorPpl.dgCajaMenor.selectedItem.id;
+                   var evento:CajaMenorEvent = new CajaMenorEvent(CajaMenorEvent.ELIMINAR_CAJA_MENOR,null);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(evento);
+                   
+                 break;
+               
+               }
+             
+             }
+              private function closeHandlerCuentabanco(event:CloseEvent):void{
+             
+               switch(event.detail){
+               
+                 case Alert.YES:
+                 
+                   CajaMenorMl.getInstance().idCajaMenorToEliminar = CajaMenorMl.getInstance().cuentasBancoPpl.dgCuentasBanco.selectedItem.id;
+                   var evento:CajaMenorEvent = new CajaMenorEvent(CajaMenorEvent.ELIMINAR_CAJA_MENOR,null);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(evento);
+                   
+                 break;
+               
+               }
+             
+             }
+             
+             private function closeHandlerCentroCosto(event:CloseEvent):void{
+             
+               switch(event.detail){
+               
+                 case Alert.YES:
+                   
+                   if(CentroCostoMl.getInstance().CentroCostoPpl.dgCentroCosto.selectedItem.esEmpresa==0){
+                   
+                   CentroCostoMl.getInstance().idCentroCostoToEliminar = CentroCostoMl.getInstance().CentroCostoPpl.dgCentroCosto.selectedItem.id;
+                   var evento:CentroCostoEvent = new CentroCostoEvent(CentroCostoEvent.ELIMINAR_CENTRO_COSTO,null);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(evento);
+                   
+                   }else{
+                   	     Alert.show("!! DATO PROTEGIDO POR EL SISTEMA. NO PUEDES REALIZAR ESTA OPERACIÓN ¡¡","Mensaje de Alerta",0,null,null,alerta,0);
+                        }
+                   
+                 break;
+               
+               }
+             
+             }
+             
+             private function closeHandlerMovimiento(event:CloseEvent):void{
+             
+               switch(event.detail){
+               
+                 case Alert.YES:
+                   
+                   MovimientoMl.getInstance().idMovimientoToEliminar = MovimientoMl.getInstance().MovimientoPpl.dgMovimientos.selectedItem.id;
+                   var evento:MovimientoEvent = new MovimientoEvent(MovimientoEvent.ELIMINAR_MOVIMIENTO,null);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(evento);
+                   
+                 break;
+               
+               }
+             
+             }
+             
+             private function closeHandlerFacturas(event:CloseEvent):void{
+             
+               switch(event.detail){
+               
+                 case Alert.YES:
+                   
+                   FacturasMl.getInstance().idFacturaToEliminar = FacturasMl.getInstance().FacturasPpl.dgfacturas.selectedItem.id;
+                   var evento:FacturaEvent = new FacturaEvent(FacturaEvent.ELIMINAR_FACTURA,null);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(evento);
+                   
+                 break;
+               
+               }
+             
+             }
+             
+             private function closeHandlerOficio(event:CloseEvent):void{
+             
+               switch(event.detail){
+               
+                 case Alert.YES:
+                   
+                   
+                   OficioMl.getInstance().idOficioToEliminar = OficioMl.getInstance().OficioPpl.dgoficio.selectedItem.id;
+                   var evento:OficioEvent = new OficioEvent(OficioEvent.ELIMINAR_OFICIO,null);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(evento);
+                   
+                 break;
+               
+               }
+             
+             }
+             
+             private function closeHandlerCuentasXPagar(event:CloseEvent):void{
+             
+               switch(event.detail){
+               
+                 case Alert.YES:
+                   
+                   CuentasPorPagarMl.getInstance().idRecHumanoToListar = -1;
+                   CuentasPorPagarMl.getInstance().idPersonaToListar = -1;  
+                   CuentasPorPagarMl.getInstance().idEstadoToListar = CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem.idEstadoCuenta ;
+                   CuentasPorPagarMl.getInstance().idTipoCuentaToListar = CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem.idGeneradorDeCuenta; 
+                   
+                   
+                   
+                   CuentasPorPagarMl.getInstance().idCuentaPpagarToEliminar = CuentasPorPagarMl.getInstance().CuentasPorPagarPpl.dgCuentaspagar.selectedItem.idCuentaPorPagar;
+                   var evento:CuentasPorPagarEvent = new CuentasPorPagarEvent(CuentasPorPagarEvent.ELIMINAR_CUENTA_X_PAGAR,null);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(evento);
+                   
+                 break;
+               
+               }
+             
+             }
+             
+             public function cerrarSesion(event:CloseEvent):void{
+              
+              switch(event.detail){
+              
+              case Alert.YES:
+                 
+                 UsuariosSysMl.getInstance().ClonPantallaInicio.log.text = "";
+              	 UsuariosSysMl.getInstance().ClonPantallaInicio.password.text = "";
+                 UsuariosSysMl.getInstance().usuarioIngresado=null;
+                 UsuariosSysMl.getInstance().enableButtonLogIn=true;
+                 currentView =15;
+                 UsuariosSysMl.getInstance().nomape="";
+                 UsuariosSysMl.getInstance().mostrarMenu=false;
+                 for each(var o:Object in PermisosMl.getInstance().CloseMainMenu.openItems)
+                      {
+                         PermisosMl.getInstance().CloseMainMenu.expandItem(o,false,false);
+                      }
+                      
+               
+              break;
+              } 
+             
+             }
+            
+		]]>
+	</mx:Script>
+	
+	
+	<mx:Style source="CSS/ESTILOSATSYS.css" />
+	<mx:Script source="as/main.as" />
+	
+	<mx:Fade id="fadeIn" alphaFrom="0" alphaTo="1" duration="1000"/>
+    <mx:Box width="100%" verticalAlign="middle" horizontalAlign="right">
+    
+       			<mx:Label id="tipoUsuario" textAlign="center" text="{UsuariosSysMl.getInstance().usuarioIngresado.isAdmin==1?('Administrador'):('')}" fontSize="9" color="#FFFFFF"/>
+     	
+    </mx:Box>
+    			
+	<mx:HBox horizontalAlign="left" width="100%" verticalGap="5">
+		<mx:HBox verticalAlign="middle" width="100%">
+			<mx:Image source="@Embed('REC/IMAGENES/ATSYS.png')" toolTipCreate="createCustomTip('Creado por:','Alejandro Lozano y Adrián Javier Urbano UNIVERSIDAD COLEGIO MAYOR DEL CAUCA.', event)" toolTip=" " />
+			<mx:Label text="AUXILIAR DE TESORERIA"  styleName="styleExplorerTitle" fontFamily="Arial" fontSize="22">
+				<mx:filters>
+	  				<flash.filters:DropShadowFilter xmlns:flash.filters="flash.filters.*" angle="90" blurX="5" blurY="5"
+	  					 distance="2" alpha=".3" color="0x000000" />
+	  			</mx:filters>
+			</mx:Label>
+			<mx:Box height="20" verticalAlign="bottom" >
+				<mx:Label  text="V 1.0" fontFamily="Arial"  color="#FFFFFF" fontSize="8" />	
+			</mx:Box>
+			
+		</mx:HBox>
+		
+		<mx:VBox  horizontalAlign="right" verticalAlign="middle"  height="100%">
+			
+			<mx:Box horizontalAlign="center" verticalAlign="middle" width="100%" height="100%">
+				<mx:Label enabled="{UsuariosSysMl.getInstance().mostrarSubMenu}" visible="{UsuariosSysMl.getInstance().mostrarMenu}" text="Usuario: {UsuariosSysMl.getInstance().nomape}" styleName="styleExplorerTitle" fontFamily="Arial" fontSize="14">
+				  <mx:filters>
+	  				 <flash.filters:DropShadowFilter xmlns:flash.filters="flash.filters.*" angle="90" blurX="5" blurY="5"
+	  					 distance="2" alpha=".3" color="0x000000" />
+	  			  </mx:filters>
+			    </mx:Label>
+			</mx:Box>
+		    <mx:Box enabled="{UsuariosSysMl.getInstance().mostrarSubMenu}" horizontalAlign="right" verticalAlign="middle" width="100%" height="100%">
+			   <mx:Image  toolTip="Cerrar la Sesión de {UsuariosSysMl.getInstance().nomape}" click="{Alert.yesLabel='SI'}{Alert.noLabel='NO'}{Alert.show('Estas seguro de Cerrar sesión?','Mensaje de Confirmación',Alert.YES|Alert.NO,this,cerrarSesion,salir,0)}" buttonMode="true"  visible="{UsuariosSysMl.getInstance().mostrarMenu}" source="@Embed(source='REC/IMAGENES/logout22.png')"/>
+		    </mx:Box>	  
+			
+			
+		</mx:VBox>
+	
+	</mx:HBox>
+
+	<mx:HBox x="436" y="255" width="100%" height="100%" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+		<mx:Canvas width="198" height="100%" id="box1" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+			<mx:Box width="100%" height="100%" styleName="fseControlBar" verticalScrollPolicy="off" horizontalScrollPolicy="off"/>
+			<mx:Box width="100%" height="100%" styleName="fseControlBar" backgroundAlpha="1" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+				<mx:filters>
+	  				<flash.filters:BevelFilter xmlns:flash.filters="flash.filters.*" angle="90" blurX="1" blurY="1"
+	  					 distance="1" highlightAlpha=".4" shadowAlpha=".4" highlightColor="0x000000" shadowColor="0xFFFFFF"  knockout="true"/>
+	  			</mx:filters>
+			</mx:Box>
+			
+			<mx:Image  source="{isClosed == false?(closeNav):openNav}" useHandCursor="true" buttonMode="true" mouseChildren="false"
+			 click="{discloseNav()}" id="closeNavBtn" left="10" top="10" toolTip="{isClosed==false?(cierre):abra}"/>
+			 
+			 <mx:Label text="{isClosed==false?(cierre):abra}" useHandCursor="true" buttonMode="true" mouseChildren="false" 
+			 	top="15" left="71" />
+			 	 <mx:ViewStack  left="5" top="50" bottom="30" right="5" id="navStack"> <!--backgroundImage="@Embed('REC/IMAGENES/logo_seratic.png')"-->
+				 	<views:TreeMenuPpl id="treeMenuPpl"  change="{currentView = treeMenuPpl.currentView}" verticalScrollPolicy="off" horizontalScrollPolicy="off"/>
+				  </mx:ViewStack>
+				
+		</mx:Canvas>
+		<mx:VBox height="100%" width="100%"  >
+			<mx:HBox width="100%" height="45" >
+				<mx:Canvas height="100%" width="100%" >
+					<!--mx:Box width="100%" height="100%" styleName="fseControlBar"/-->
+					<mx:Box width="100%" height="100%" styleName="fseControlBar" backgroundAlpha="1" >
+						<mx:filters>
+							<flash.filters:BevelFilter xmlns:flash.filters="flash.filters.*" angle="90" blurX="1" blurY="1"
+							distance="1" highlightAlpha=".4" shadowAlpha=".4" highlightColor="0x000000" shadowColor="0xFFFFFF"  
+							knockout="true"/>
+						</mx:filters>
+						
+					</mx:Box>
+					<mx:Image source="{arrImagenes[currentView]}"  useHandCursor="true"  mouseChildren="false" id="imgArriba"
+					    left="5" top="0" height="45" width="45" />
+					<mx:Label text="{arrNomModulos[currentView]}{arrNomSubModulos[currentView]}{currentView==6?(RecursoHumanoMl.getInstance().RecursoHumanoPpl.viewStckPpl.selectedIndex==0?(''):(' > Cuentas Bancarias')):('')} {currentView>0?(''):UsuariosSysMl.getInstance().nomape}" left="60" top="8" styleName="styleExplorerTitle" fontFamily="Arial" fontSize="22"  fontStyle="normal" fontWeight="normal">
+						<mx:filters>
+		  				<flash.filters:DropShadowFilter xmlns:flash.filters="flash.filters.*" angle="90" blurX="5" blurY="5"
+		  					 distance="2" alpha=".3" color="0x000000" />
+		  				</mx:filters>
+					</mx:Label>
+				</mx:Canvas>
+			</mx:HBox>
+			
+			<mx:ViewStack id="viewstack1" width="100%"  height="100%" selectedIndex="{currentView}">
+				<usuario:pantNull name="pantNull"  />
+				<usuario:usuariosPpl name="usuarios" />
+				<usuario:rolesPpl name="roles" />
+				<cajamenor:cajamenorPpl name="cjmenor"/>
+				<cajamenor:centroCostoPpl name="centrocosto"/>
+				<cajamenor:movimientoPpl name="movimiento"/>
+				<contratacion:recursohumanoPpal name="recursohumano"/>
+				<contratacion:valorformapagoPpl name="valorfpago"/>
+				<contratacion:oficiosPpl name="oficios"/>
+				<contratacion:ContratoPpl name="contratos"/>
+				<personas:personasPpl name="personas"/>
+				<facturas:facturasPpl name="facturas"/>
+				<CuentasCobro:CuentasCobroPpl name="cuentasCobro"/>
+				<CuentasPagar:CuentasPagarPpl name="CuentasPagar"/>
+				<cajamenor:CuentasBancoPpl name="cbanco"/>
+				<usuario:panLogin name="pantallaLogin"/>
+				<contratacion:CausacionPpl name="causacion"/>
+		    </mx:ViewStack>
+			
+		</mx:VBox>
+		
+	
+	</mx:HBox>	
+
+	<mx:Resize id="shrink" target="{box1}" duration="1000"  widthTo="45"/>
+	<mx:Resize id="grow"  heightTo="{Hbox1}" widthTo="198" target="{box1}" duration="1000" />
+	
+</mx:Application>

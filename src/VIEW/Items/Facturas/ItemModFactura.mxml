@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			import MODEL.UtilidadesMl;
+		]]>
+	</mx:Script>
+	<mx:Label text="{UtilidadesMl.getInstance().formaterMoneda(data.precio)}" />
+</mx:Canvas>

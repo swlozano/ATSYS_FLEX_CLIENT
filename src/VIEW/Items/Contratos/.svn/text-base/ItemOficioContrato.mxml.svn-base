@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml" verticalAlign="middle" horizontalAlign="center" width="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Label   text="{data.oficioDesempenar}"  width="100%" toolTip="{data.oficioDesempenar}" textAlign="center" color="#006699"/>
+</mx:Box>
+

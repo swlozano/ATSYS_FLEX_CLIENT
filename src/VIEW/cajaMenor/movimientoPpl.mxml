@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox width="100%" height="100%" xmlns:mx="http://www.adobe.com/2006/mxml"
+	 creationComplete="crearPantalla()"  styleName="glassPods"  verticalAlign="middle" horizontalAlign="center" xmlns:menu="VIEW.menu.*">
+	
+	<mx:Box width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom">
+	<mx:VRule height="10" visible="false"/>
+	 <mx:HBox width="95%" verticalAlign="middle" horizontalAlign="center">
+	 	<mx:HBox width="95%" verticalAlign="middle" horizontalAlign="center">
+	 	
+	 	<mx:Box verticalAlign="middle" horizontalAlign="left" width="20%">
+	 	  <mx:Image buttonMode="true" click="{imprimirMovimientos()}" toolTip="Imprimir Movimientos" source="@Embed(source='REC/IMAGENES/printt.png')"/>	
+	 	</mx:Box>
+	 	 
+	 	<mx:HBox verticalAlign="middle" horizontalAlign="right" width="80%">
+            <mx:Label id="labelBusqcajamenor" text="CUENTAS" x="378" y="0" fontWeight="bold" color="#FFFFFF" fontSize="15"/>
+		    <mx:ComboBox  id="cbxCajasmenores" change="listarMovimientos()" 
+		     selectedIndex="{CajaMenorMl.getInstance().listCajamenor == 0?(-1):(0)}"  dataProvider="{CajaMenorMl.getInstance().listCajamenor}" 
+		     labelField="nombre" prompt="{CajaMenorMl.getInstance().listCajamenor == 0?('No hay cajas que mostrar'):('')}" />	 		
+	 	</mx:HBox>
+	     
+	    </mx:HBox>
+	    <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	       
+	        <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	       	<mx:Label text="Fecha Inicio"/>
+	    	<mx:DateField id="fechaIn" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}"  editable="true"/>
+	    	<mx:Label text="Fecha Fin"/>
+	    	<mx:DateField id="fechafinal" dayNames="{UtilidadesMl.getInstance().arrayDias}" monthNames="{UtilidadesMl.getInstance().arrayMeses}" editable="true"/>
+	         
+	       </mx:HBox>
+	       
+	       <mx:HBox width="100%" verticalAlign="middle" horizontalAlign="left">
+		       	<mx:Button click="{listarConFechas()}" upSkin="@Embed(source='REC/IMAGENES/ir.png')" downSkin="@Embed(source='REC/IMAGENES/ir2.png')" overSkin="@Embed(source='REC/IMAGENES/ir.png')"/>
+	       </mx:HBox>
+	       	
+	    </mx:HBox>
+	</mx:HBox>
+		<mx:Box width="95%" height="95%" >
+			<mx:DataGrid verticalAlign="middle" selectable="{MovimientoMl.getInstance().selectableMovimento}" width="100%" height="100%"  dataProvider="{CajaMenorMl.getInstance().listCajamenor == 0?(null):(MovimientoMl.getInstance().listMovimientoCajaMenor)}" id="dgMovimientos" themeColor="#307BAB" alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15">
+				<mx:columns>
+				    <mx:DataGridColumn headerText="Fecha Movimiento" dataField="fecha" width="170" itemRenderer="VIEW.Items.Movimientos.ItemFechaMovimiento"/>
+				    <mx:DataGridColumn headerText="Concepto"  dataField="concepto"  width="250" itemRenderer="VIEW.Items.Movimientos.ItemConcepto"/>
+					<mx:DataGridColumn headerText="De"  width="150" textAlign="center" labelFunction="labelFunctipoDe"/>
+					<mx:DataGridColumn headerText="Para" labelFunction="labelFunctipoPara" width="150" textAlign="center"/>
+					<mx:DataGridColumn headerText="Centro de Costo" dataField="centroCosto" width="150" textAlign="center"/>
+					<mx:DataGridColumn headerText="Valor" dataField="valor" width="150" itemRenderer="VIEW.Items.Movimientos.ItemValorMovimiento"/>
+					<mx:DataGridColumn headerText="Saldo" dataField="saldo" width="150" itemRenderer="VIEW.Items.Movimientos.ItemSaldoMovimiento"/>
+				</mx:columns>
+			</mx:DataGrid>
+			
+		</mx:Box>
+	</mx:Box>
+	<menu:MenuAbajo />
+	
+	<mx:Script>
+		<![CDATA[
+			import VIEW.Items.Movimientos.ImprimirDataGridMovimientos;
+			import mx.printing.FlexPrintJob;
+			import MODEL.UtilidadesMl;
+			import EVENT.MovimientoEvent;
+			import MODEL.MovimientoMl;
+			import VO.CajaMenorVO;
+			import mx.controls.Alert;
+			import mx.collections.ArrayCollection;
+			import MODEL.CajaMenorMl;
+			import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import EVENT.CajaMenorEvent;
+			
+			[Embed(source="/REC/IMAGENES/ir.png")]
+			 public var ir:Class;
+			 
+			 [Embed(source="/REC/IMAGENES/warn.png")]
+			public var alerta:Class;
+			
+			
+			public function crearPantalla():void
+		     {
+			
+			 	MovimientoMl.getInstance().MovimientoPpl=this;
+			
+		     }
+		    			
+		    public function imprimirMovimientos():void{
+		    	
+		    	var printJob:FlexPrintJob = new FlexPrintJob();
+    
+                if(printJob.start()) {
+                    
+                    
+                      var mov:ImprimirDataGridMovimientos = new ImprimirDataGridMovimientos();
+                      
+                      addChild(mov);
+                    
+                      mov.mov.text="Movimientos SERATIC LTDA";
+                      
+                      mov.dgMov.dataProvider = dgMovimientos.dataProvider;
+                      
+                      printJob.addObject(mov);
+    
+                      printJob.send();
+    
+    
+                      removeChild(mov);
+                      
+                 }
+		    	
+		    }			
+		    			
+			public function listarMovimientos():void{
+			     
+			     MovimientoMl.getInstance().idCajaMenorToBuscarMov = new int();
+			     MovimientoMl.getInstance().nombreCajaMenorSelecEnMovimientosPpl = new String();
+			     
+			     MovimientoMl.getInstance().idCajaMenorToBuscarMov = cbxCajasmenores.selectedItem.id;	
+			     MovimientoMl.getInstance().nombreCajaMenorSelecEnMovimientosPpl = cbxCajasmenores.selectedItem.nombre;		     
+			     
+			     MovimientoMl.getInstance().fechaFinMov=null;
+			     MovimientoMl.getInstance().fechaInMov=null;
+			     
+			     var e:MovimientoEvent= new MovimientoEvent(MovimientoEvent.LISTAR_MOVIMIENTO_CAJA_MENOR,null);
+			     CairngormEventDispatcher.getInstance().dispatchEvent(e);
+			
+			}
+		public function listarConFechas():void{
+				
+		 if(CajaMenorMl.getInstance().listCajamenor.length>0){
+			 		
+			 	
+				
+				MovimientoMl.getInstance().idCajaMenorToBuscarMov = new int();
+				
+				var fechain:Date = new Date(fechaIn.text);
+				var fechafin:Date = new Date(fechafinal.text);
+				
+				MovimientoMl.getInstance().fechaInMov = fechain;
+				MovimientoMl.getInstance().fechaFinMov = fechafin;
+				
+				if(fechaIn.text==""){
+					
+					Alert.show("ingrese fecha inicio","mensaje de alerta",0,null,null,alerta,0);
+					
+				    }else if(fechafinal.text==""){
+					   
+					     Alert.show("ingrese fecha fin","mensaje de alerta",0,null,null,alerta,0);
+					
+				         }else if(fechaIn.text!="" && fechafinal.text!="" && (fechaIn.selectedDate > fechafinal.selectedDate)){
+				         
+				                     Alert.show("La Fecha Fin no puede ser menor que la Fecha Inicio","",0,null,null,alerta,0); 
+				                 
+				                 }else{ 
+				
+							     MovimientoMl.getInstance().idCajaMenorToBuscarMov = cbxCajasmenores.selectedItem.id;	
+							      
+							     var e:MovimientoEvent= new MovimientoEvent(MovimientoEvent.LISTAR_MOVIMIENTO_CAJA_MENOR,null);
+						         CairngormEventDispatcher.getInstance().dispatchEvent(e);
+							 
+							    }  
+	     }else{
+	   	     Alert.show("Para poder realizar esta consulta deben existir Cajas Menores o Cuentas de Banco","mensaje de alerta",0,null,null,alerta,0);
+	        }       
+				
+				
+			}
+			
+		public function labelFunctipoDe(item:Object,dgcolumn:DataGridColumn):String {
+             if(item.tipoMovimiento	== 1/*Ingreso*/){
+             	return item.persona	+ "";
+             }
+             else{
+             	return item.personaResponsable.nombreRs;
+             }  	
+	         
+               
+        }
+	
+		public function labelFunctipoPara(item:Object,dgcolumn:DataGridColumn):String {
+               	
+	         if(item.tipoMovimiento	== 1/*Ingreso*/){
+             	return item.personaResponsable.nombreRs;	
+             }
+             else{
+				return item.persona	+ "";
+             	
+             }
+               
+        }		 
+			
+		]]>
+	</mx:Script>
+	
+</mx:VBox>

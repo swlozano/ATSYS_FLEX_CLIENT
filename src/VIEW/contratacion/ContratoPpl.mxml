@@ -1,0 +1,743 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox creationComplete="{crearPantalla()}" width="100%" height="100%" xmlns:mx="http://www.adobe.com/2006/mxml"   styleName="glassPods"  verticalAlign="middle" horizontalAlign="center" xmlns:menu="VIEW.menu.*">
+	<mx:Box width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom">
+	 <mx:VRule height="10" visible="false"/>
+    	<mx:Canvas>
+    	<mx:HBox width="100%" verticalAlign="middle" horizontalAlign="center">
+	       
+	       <!--tales-->
+	         
+	       
+	       	
+	        <mx:LinkButton label="Volver a Contratos"  
+	    	click="{viewStckPpl.selectedIndex = 0,UsuariosSysMl.getInstance().mostrarSubMenu=true,habilitarMenuContratos()}"
+	    	visible="{viewStckPpl.selectedIndex != 0 ?(true):(false)}" color="#FFFFFF" fontSize="11" textDecoration="underline"/>
+	       
+	     	<mx:Label id="lblcontrato" text="CONTRATOS" visible="{viewStckPpl.selectedIndex!=0?(false):(true)}" fontWeight="bold" color="#FCFCFC" fontSize="15"/>
+	     	<mx:Image id="imgbusqueda" source="{buscar}" visible="{viewStckPpl.selectedIndex!=0?(false):(true)}"/>
+	        <mx:ComboBox visible="{viewStckPpl.selectedIndex!=0?(false):(true)}" prompt="{ContratoMl.getInstance().listContrato!=null||ContratoMl.getInstance().listContrato>0?('Seleccione filtro por estado'):('No hay datos que filtrar')}" enabled="{ContratoMl.getInstance().listContrato.length>0||ContratoMl.getInstance().listContrato!=null?(true):(false)}"  change="{listarContratos()}"  id="cbxEstadoContrato" dataProvider="{arrEstadoContrato}" width="194"/>
+	        
+      	    <mx:MenuBar id="menuContratos" labelField="@label" visible="{viewStckPpl.selectedIndex!=0?(false):(true)}" itemClick="{menuHandler(event)}" cornerRadius="5">
+      	    	<mx:XMLList>
+			            <menuitem label="Opciones de Contrato">
+			            
+			                <menuitem label="Terminar Contrato">
+			                   <menuitem label="Gestionar Terminación" data="9"/>
+			                   <menuitem label="Ver Historial" data="10"/>
+			                </menuitem>
+			                
+			                <menuitem label="Liquidar Contrato">
+			                   <menuitem label="Generar Liquidación" data="1"/>
+			                   <menuitem label="Modificar Liquidación" data="2"/>
+			                   <menuitem label="Eliminar Liquidación" data="3"/>
+			                   <menuitem label="Ver Liquidación" data="4"/>
+			                </menuitem>
+			                
+			                <menuitem label="Generar Valores Forma Pago" data="11"/>
+			                
+			                <menuitem label="Ver Valores Forma Pago" data="12"/>
+			                
+			            </menuitem>
+			            
+			            
+			            
+			            <menuitem label="Solicitudes de Servicios">
+			                <menuitem label="Fichas de Permiso" data="5"/>
+			                <menuitem label="Fichas de Incapacidad" data="6"/>
+			                <menuitem label="Fichas de Préstamo" data="7"/>
+			            </menuitem>
+			            
+			          
+			            
+			            <menuitem label="Observaciones">
+			               
+			               <menuitem label="Observaciones/Memorandos" data="8"/>
+			            
+			            </menuitem>
+                </mx:XMLList>
+      	    </mx:MenuBar>
+      	   
+      	   
+      	   
+      	   <!--tales-->
+      	    
+      	</mx:HBox>
+      	
+      	</mx:Canvas>
+      	
+      <mx:ViewStack  width="95%" height="95%" id="viewStckPpl" selectedIndex="0">
+      	
+			<mx:Box width="95%" height="95%" >
+				<mx:DataGrid width="100%" horizontalScrollPolicy="auto" enabled="{ContratoMl.getInstance().selectableContrato}" dataProvider="{ContratoMl.getInstance().listContrato}" height="100%" id="dgcontrato"  alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15">
+					<mx:columns>
+						<mx:DataGridColumn textAlign="center" headerText="TIPO" labelFunction="dg_labelFunctipoContrato" width="230"/>
+						<mx:DataGridColumn textAlign="center" headerText="OFICIO" labelFunction="dg_labelFuncOficio"  width="170"/>
+						<mx:DataGridColumn textAlign="center" headerText="FECHA INICIO" itemRenderer="VIEW.Items.Contratos.ItemFechaInicioContrato" dataField="fechaInicio" width="120"/>
+						<mx:DataGridColumn textAlign="center" headerText="FECHA FIN" itemRenderer="VIEW.Items.Contratos.ItemFechaFinContrato" dataField="fechaFin" width="120"/>
+						<mx:DataGridColumn textAlign="center" labelFunction="dg_labelFuncRecHumano" headerText="RECURSO HUMANO"  width="230"/>
+						<mx:DataGridColumn textAlign="center" headerText="NACIONALIDAD LABORES" labelFunction="dg_labelFuncCountryLabores" width="200"/>
+						<mx:DataGridColumn textAlign="center" headerText="NACIONALIDAD CONTRATO" labelFunction="dg_labelFuncCountryContrato" width="200"/>
+						<mx:DataGridColumn textAlign="center" headerText="ESTADO" labelFunction="dg_labelFuncEstado" width="150"/>
+					    <mx:DataGridColumn textAlign="center" width="120" headerText="ADENDOS" itemRenderer="VIEW.Items.Contratos.itemAdendosContrato"/>
+					</mx:columns>
+				</mx:DataGrid>
+			</mx:Box>
+			
+			<mx:Box width="95%" height="95%">
+				<mx:DataGrid width="100%" dataProvider="{ContratoMl.getInstance().listAdendos}"  height="100%" id="dgadendos" themeColor="#307BAB" alternatingItemColors="[#F7F7F7, #D8DEE8]" fontSize="15">
+					<mx:columns>
+					
+						<mx:DataGridColumn  textAlign="center" labelFunction="dg_labelFuncFechaInit" dataField="fechaInicio" headerText="FECHA INICIO" />
+						<mx:DataGridColumn textAlign="center" labelFunction="dg_labelFuncFechaFin" dataField="fechaFin" headerText="FECHA FIN"/>
+						
+					</mx:columns>
+				</mx:DataGrid>
+			</mx:Box>
+		
+	 </mx:ViewStack>  
+		
+	</mx:Box>
+	
+	<mx:XML format="e4x" id="menuOpcContratos1"> 
+        <root>
+            <editItem label="Mas opciones de Contrato"/> 
+            <separator type="separator"/> 
+            <editItem label="Terminar Contrato"/> 
+            <editItem label="Liquidar Contrato"/> 
+            <editItem label="Solicitudes de Servicios"/> 
+     
+        </root>
+    </mx:XML>
+	
+	<menu:MenuAbajo id="mnudown"/>
+	<mx:Script>
+	<![CDATA[
+		import MODEL.LiquidacionMl;
+		import EVENT.ValorFpagoEvent;
+		import MODEL.UtilidadesMl;
+		import MODEL.SolicitudesServiciosMl;
+		import EVENT.LiquidacionEvent;
+		import MODEL.UsuariosSysMl;
+		import MODEL.PermisosMl;
+		import mx.collections.ArrayCollection;
+		import MODEL.ContratoMl;
+		import com.adobe.cairngorm.control.CairngormEventDispatcher;
+		import EVENT.ContratoEvent;
+		import MODEL.PantallasMl;
+		import mx.controls.Alert;
+		import mx.core.Application;
+		import mx.controls.Menu;
+        import mx.managers.PopUpManager;
+        import mx.events.MenuEvent;
+
+		     [Bindable]
+			 [Embed(source="/REC/IMAGENES/f.png")]
+		 	 public var buscar:Class;
+		 	 
+		 	 [Embed(source="/REC/IMAGENES/warn2.png")]
+			 public var alerta:Class;
+		 	 
+		 	 [Bindable]
+		     [Embed(source="/REC/IMAGENES/alertopt.png")]
+		     public var alertidea:Class; 
+		 	 
+		 	 /*[Bindable] 
+              public var menuOpcContratos1:Array = ["MAS OPCIONES DE CONTRATO","-----------------------","TERMINAR CONTRATO       ","LIQUIDAR CONTRATO       ","SOLICITUDES DE SERVICIOS"];
+		*/
+		      [Bindable] 
+		      public var arrEstadoContrato:Array = new Array("VIGENTES","TERMINADOS","TODOS");
+		      
+		      
+		      public function habilitarMenuContratos():void{
+		      	
+		      	lblcontrato.visible = true;
+		      	imgbusqueda.visible= true;
+		      	cbxEstadoContrato.visible = true;
+		      	menuContratos.visible = true;
+		      	mnudown.enabled=true;
+		      }
+		      
+		      public function dg_labelFuncFechaInit(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var retorno:String;
+        
+                 //var fechain:Date = new Date(item.fechaInicio);
+                  
+                 retorno = UtilidadesMl.getInstance().formaterFechas(item.fechaInicio); 
+              	
+                 return retorno;
+               
+              }
+              
+              public function dg_labelFuncFechaFin(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var retorno:String;
+        
+                 //var fechain:Date = new Date(item.fechaInicio);
+                  
+                 retorno = UtilidadesMl.getInstance().formaterFechas(item.fechaFin); 
+              	
+                 return retorno;
+               
+              }
+		      
+		      public function menuHandler(event:MenuEvent):void{
+		      	
+		      	var op:int =event.item.@data;
+		      	
+		      	switch(op){
+		      		
+		      		case 4:
+		      		 
+		      		  
+		      		 if(dgcontrato.selectedItem==null){
+		 	      	 
+	     					    Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+	   
+	   					}else{
+	 	                       
+	 	                       if(dgcontrato.selectedItem.tiposContrato.id!=1){
+	 	                            if(dgcontrato.selectedItem.estado==1){
+	     	                       
+	     	     					   var evvl:LiquidacionEvent = new LiquidacionEvent(LiquidacionEvent.LISTAR_LIQUIDACION,null);
+	     	     					   CairngormEventDispatcher.getInstance().dispatchEvent(evvl);
+	     	     					   /////para saber si intenta listar o generar///
+	     	     					   
+	     	     					  LiquidacionMl.getInstance().BanderaGenerarOListar = false;
+	     	     					   
+	     	     					   //////////////////////////////////////////////
+	     	                       
+	     	                       }
+	     	                       else
+	     	                       {
+	     	                       		 Alert.show("Para poder Ver la Liquidación, Primero se debe terminar el Contrato","Mensaje de Alerta",0,null,null,alerta,0);
+	     	                       	}
+	     	   				   }
+	     	   				   else
+	     	   				   {
+	     	   				   		Alert.show("Esta acción solo se puede realizar para contratos por nomina","Mensaje de Alerta");
+	     	   				   
+	     	   				   }
+	     	  				}
+		      		  
+		      		
+		      		
+		      		
+		      		break;
+		      		
+		      		case 12:
+		      		 
+		      		  if(dgcontrato.selectedItem==null){
+				 	      	 
+				 	      	      Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+				 	      	
+				 	  }else{
+				 	  	
+				 	         ContratoMl.getInstance().idContratoToVisualizarVfp = dgcontrato.selectedItem.id;
+				 	         var evVis:ValorFpagoEvent = new ValorFpagoEvent(ValorFpagoEvent.LISTAR_VFP_TO_VISUALIZAR,null,null);
+				 	         CairngormEventDispatcher.getInstance().dispatchEvent(evVis);
+				 	         
+				 	       }
+		      		
+		      		break;
+		      		
+		      		case 11:
+		      		 
+		      		  if(dgcontrato.selectedItem==null){
+				 	      	 
+				 	      	      Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+				 	      	
+				 	  }else{
+				 	  	
+				 	         ContratoMl.getInstance().idContratoToGenerarVFPago = dgcontrato.selectedItem.id;
+				 	         var evGen:ValorFpagoEvent = new ValorFpagoEvent(ValorFpagoEvent.GENERAR_VALORES_FORMA_PAGO,null,null);
+				 	         CairngormEventDispatcher.getInstance().dispatchEvent(evGen);
+				 	         
+				 	       }
+		      		
+		      		break;
+		      		
+		      		case 9:
+		      		
+		      		    if(validarPermisos(op) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1 )
+                	      {
+		 	      	    
+		 	      	    
+				 	      	  if(dgcontrato.selectedItem==null){
+				 	      	 
+				 	      	      Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+				 	      	
+				 	      		}else{
+				 	      	              
+				 	      	              ContratoMl.getInstance().TerminarContratoIndice =0;
+				 	      	              
+				 	      	              ContratoMl.getInstance().TerminarContratoWidth = 500;  
+				 	      	              
+				 	      	              ContratoMl.getInstance().TerminarContratoheight =462;  
+				 	      	                
+					 	                  PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_TERMINAR_CONTRATOS;
+					 	                  
+					 	                  ContratoMl.getInstance().tipoListarTerminacionesContrato = 1;
+					 	                  
+					 	                  var e:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_TERMINACIONES_CONTRATO_POR_RESPUESTA,null,null,null);
+					 	                  CairngormEventDispatcher.getInstance().dispatchEvent(e);
+				 	      	         
+				 	      	         }
+				 	      	         
+				 	      }else{
+                	               	
+                	            Alert.show(PermisosMl.MSG_PERMISO_TERMINAR_CONTRATO+" "+PermisosMl.MSG_ALERTA_PERMISO,"Mensaje de alerta",0,null,null,alertidea,0);
+                	                     
+                	           }
+		      		
+		      		break;
+		      		
+		      		case 10:
+		      		
+		      		   if(validarPermisos(9) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1 )
+                	      {
+		 	      	    
+		 	      	    
+				 	      	  if(dgcontrato.selectedItem==null){
+				 	      	 
+				 	      	      Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+				 	      	
+				 	      		}else{
+				 	      	              
+				 	      	              ContratoMl.getInstance().TerminarContratoIndice =1;
+				 	      	              
+				 	      	              ContratoMl.getInstance().TerminarContratoWidth = 850;
+				 	      	              ContratoMl.getInstance().TerminarContratoheight =340;  
+				 	      	              
+				 	      	              
+					 	                  PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_TERMINAR_CONTRATOS;
+					 	                  
+					 	                  ContratoMl.getInstance().tipoListarTerminacionesContrato = 1;
+					 	                  
+					 	                  var ev:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_TERMINACIONES_CONTRATO_POR_RESPUESTA,null,null,null);
+					 	                  CairngormEventDispatcher.getInstance().dispatchEvent(ev);
+				 	      	         
+				 	      	         }
+				 	      	         
+				 	      }else{
+                	               	
+                	            Alert.show(PermisosMl.MSG_PERMISO_TERMINAR_CONTRATO+" "+PermisosMl.MSG_ALERTA_PERMISO,"Mensaje de alerta",0,null,null,alertidea,0);
+                	                     
+                	           }
+		      		
+		      		break;
+		      		
+		      		case 1:
+		      		
+		      		      if(validarPermisos(op) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1 )
+                	         {
+		 	        	    
+		 	        	    
+		 	        	               if(dgcontrato.selectedItem==null){
+		 	      	 
+		 	      	  					    Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+		 	      	
+		 	      						}else{
+		 	        	                       
+		 	        	                       if(dgcontrato.selectedItem.tiposContrato.id!=1){
+		 	        	                            if(dgcontrato.selectedItem.estado==1){
+			 	        	                       
+			 	        	     					   var evv:LiquidacionEvent = new LiquidacionEvent(LiquidacionEvent.LISTAR_LIQUIDACION,null);
+			 	        	     					   CairngormEventDispatcher.getInstance().dispatchEvent(evv);
+			 	        	     					   /////para saber si intenta listar o generar///
+			 	        	     					   
+			 	        	     					   LiquidacionMl.getInstance().BanderaGenerarOListar = true;
+			 	        	     					   
+			 	        	     					   //////////////////////////////////////////////
+			 	        	                       
+			 	        	                       }
+			 	        	                       else
+			 	        	                       {
+			 	        	                       		 Alert.show("Para poder realizar la Liquidación, Primero se debe terminar el Contrato","Mensaje de Alerta",0,null,null,alerta,0);
+			 	        	                       	}
+			 	        	   				   }
+			 	        	   				   else
+			 	        	   				   {
+			 	        	   				   		Alert.show("Esta acción solo se puede realizar para contratos por nomina","Mensaje de Alerta");
+			 	        	   				   
+			 	        	   				   }
+			 	        	  				}
+                	        }else{
+                	        	
+                	              Alert.show(PermisosMl.MSG_PERMISO_LIQUIDAR_CONTRATO+" "+PermisosMl.MSG_ALERTA_PERMISO,"Mensaje de alerta",0,null,null,alertidea,0);
+                	             
+                	             }
+		      		
+		      		break;
+		      		
+		      		case 5:
+		      		
+		      		  if(validarPermisos(5) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1 )
+                	    {
+                	 	            
+		 	               	     
+	                	    if(dgcontrato.selectedItem==null){
+	       	 
+	       	  					Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+	       	
+	       						}else{
+	                	                 SolicitudesServiciosMl.getInstance().SolicitudIndice =0;    
+	 	               	      			 var solicitudservicio1:solicitudesServicios=solicitudesServicios(PopUpManager.createPopUp(PantallasMl.atsys,solicitudesServicios,false));
+	 	                           		 PopUpManager.centerPopUp(solicitudservicio1);
+	 	                                 ContratoMl.getInstance().selectableContrato=false;
+	 	                                 PermisosMl.getInstance().deshabilitarMenus();
+	 	                             
+	 	                             }
+	    	               }else{
+	    	               	
+	    	                      Alert.show(PermisosMl.MSG_PERMISO+" "+PermisosMl.MSG_ALERTA_PERMISO,"Mensaje de alerta",0,null,null,alertidea,0);
+	    	                     
+	    	                    }
+		      		
+		      		break;
+		      		
+		      		case 6:
+		      		
+		      		   if(validarPermisos(5) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1 )
+                	    {
+                	 	            
+		 	               	     
+	                	    if(dgcontrato.selectedItem==null){
+	       	 
+	       	  					Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+	       	
+	       						}else{
+	                	                 SolicitudesServiciosMl.getInstance().SolicitudIndice =1;    
+	 	               	      			 var solicitudservicio2:solicitudesServicios=solicitudesServicios(PopUpManager.createPopUp(PantallasMl.atsys,solicitudesServicios,false));
+	 	                           		 PopUpManager.centerPopUp(solicitudservicio2);
+	 	                                 ContratoMl.getInstance().selectableContrato=false;
+	 	                                 PermisosMl.getInstance().deshabilitarMenus();
+	 	                             
+	 	                             }
+	    	               }else{
+	    	               	
+	    	                      Alert.show(PermisosMl.MSG_PERMISO+" "+PermisosMl.MSG_ALERTA_PERMISO,"Mensaje de alerta",0,null,null,alertidea,0);
+	    	                     
+	    	                    }
+		      		
+		      		break;
+		      		
+		      		case 7:
+		      		
+		      		  if(validarPermisos(5) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1 )
+                	    {
+                	 	            
+		 	               	     
+	                	    if(dgcontrato.selectedItem==null){
+	       	 
+	       	  					Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+	       	
+	       						}else{
+	                	                 SolicitudesServiciosMl.getInstance().SolicitudIndice =2;    
+	 	               	      			 var solicitudservicio3:solicitudesServicios=solicitudesServicios(PopUpManager.createPopUp(PantallasMl.atsys,solicitudesServicios,false));
+	 	                           		 PopUpManager.centerPopUp(solicitudservicio3);
+	 	                                 ContratoMl.getInstance().selectableContrato=false;
+	 	                                 PermisosMl.getInstance().deshabilitarMenus();
+	 	                             
+	 	                             }
+	    	               }else{
+	    	               	
+	    	                      Alert.show(PermisosMl.MSG_PERMISO+" "+PermisosMl.MSG_ALERTA_PERMISO,"Mensaje de alerta",0,null,null,alertidea,0);
+	    	                     
+	    	                    }
+		      		
+		      		break;
+		      		
+		      		case 8:
+		      		
+		      		   if(validarPermisos(5) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1 )
+                	    {
+                	 	            
+		 	               	     
+	                	    if(dgcontrato.selectedItem==null){
+	       	 
+	       	  					Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+	       	
+	       						}else{
+	                	                 SolicitudesServiciosMl.getInstance().SolicitudIndice =3;    
+	 	               	      			 var solicitudservicio4:solicitudesServicios=solicitudesServicios(PopUpManager.createPopUp(PantallasMl.atsys,solicitudesServicios,false));
+	 	                           		 PopUpManager.centerPopUp(solicitudservicio4);
+	 	                                 ContratoMl.getInstance().selectableContrato=false;
+	 	                                 PermisosMl.getInstance().deshabilitarMenus();
+	 	                             
+	 	                             }
+	    	               }else{
+	    	               	
+	    	                      Alert.show(PermisosMl.MSG_PERMISO+" "+PermisosMl.MSG_ALERTA_PERMISO,"Mensaje de alerta",0,null,null,alertidea,0);
+	    	                     
+	    	                    }
+		      		
+		      		break;
+		      		
+		      	}
+		      	
+		      }
+		      
+		      
+		      public function crearPantalla():void
+		      {
+			
+			 	ContratoMl.getInstance().ContratoPpl=this;
+				
+		      }
+		     
+		      public function dg_labelFuncEstado(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var retorno:String;
+                  
+                  if(parseFloat(item.estado)==0){
+                  
+                   retorno = "Vigente"; 
+                  
+                  }else if(parseFloat(item.estado)==1){
+                  	
+                            retorno = "Terminado"; 
+                           
+                          }
+                   
+              	
+                 return retorno;
+               
+              }
+		      
+		      public function dg_labelFuncRecHumano(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var nombreApe:String;
+                  
+                 nombreApe = item.recursoHumano.nombre; 
+              	
+                 return nombreApe;
+               
+              }
+              
+              public function dg_labelFuncCountryLabores(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var pais:String;
+                  
+                 pais = item.countryByIdNacionLabores.name;
+              	
+                 return pais;
+               
+              }
+              
+              public function dg_labelFuncCountryContrato(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var pais:String;
+                  
+                 pais = item.countryByIdNacionContrato.name;
+              	
+                 return pais;
+               
+              }
+              
+              public function dg_labelFunctipoContrato(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;
+                  
+                 nombre = item.tiposContrato.tipoContrato;
+              	
+                 return nombre;
+               
+              }
+		      
+		      public function dg_labelFuncOficio(item:Object,dgcolumn:DataGridColumn):String {
+            
+                 var nombre:String;
+                  
+                 nombre = item.oficioDesempenar.nombre;
+              	
+                 return nombre;
+               
+              }
+		      
+		      public function listarContratos():void{
+		         
+		          var e:ContratoEvent;
+		         
+		          if(cbxEstadoContrato.selectedIndex==0){
+		          	 
+		          	 ContratoMl.getInstance().banEstadoContrato=1;
+		          	 
+		              }else if(cbxEstadoContrato.selectedIndex==1){
+
+                             ContratoMl.getInstance().banEstadoContrato=2;
+		          	     	        
+		                  }else if(cbxEstadoContrato.selectedIndex==2){
+
+                                    ContratoMl.getInstance().banEstadoContrato=3;
+		          	     	        
+		                          }
+		                  
+		                  
+				          	  e = new ContratoEvent(ContratoEvent.LISTAR_CONTRATO,null,null,null);
+				          	  CairngormEventDispatcher.getInstance().dispatchEvent(e);
+		       
+		      }
+		      
+		      public function validarPermisos(opc:int):Boolean{
+        
+          
+		           switch(opc){        
+		            
+		             case 5:
+		              
+		        		var idPermisos:ArrayCollection = new ArrayCollection();
+						idPermisos.addItem(PermisosMl.AGREGAR_FICHA_PERMISO);
+						idPermisos.addItem(PermisosMl.ELIMINAR_FICHA_PERMISO);
+						idPermisos.addItem(PermisosMl.MODIFICAR_FICHA_PERMISO);
+						
+						idPermisos.addItem(PermisosMl.AGREGAR_FICHA_INCAPACIDAD);
+						idPermisos.addItem(PermisosMl.ELIMINAR_FICHA_INCAPACIDAD);
+						idPermisos.addItem(PermisosMl.MODIFICAR_FICHA_INCAPACIDAD);
+						
+						idPermisos.addItem(PermisosMl.AGREGAR_FICHA_PRESTAMO);
+						idPermisos.addItem(PermisosMl.ELIMINAR_FICHA_PRESTAMO);
+						idPermisos.addItem(PermisosMl.MODIFICAR_FICHA_PRESTAMO);
+						
+						idPermisos.addItem(PermisosMl.AGREGAR_MEMORANDOS);
+						idPermisos.addItem(PermisosMl.ELIMINAR_MEMORANDOS);
+						idPermisos.addItem(PermisosMl.MODIFICAR_MEMORANDOS);
+						return PermisosMl.getInstance().validarPermisos
+						(UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idPermisos); 
+						
+					 break;
+					 	      
+					 	      
+				      case 9:
+		           
+			               var idPermisos2:ArrayCollection = new ArrayCollection();
+			               idPermisos2.addItem(PermisosMl.TERMINAR_CONTRATO);
+			               
+			               return PermisosMl.getInstance().validarPermisos
+						   (UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idPermisos2);
+		               
+		               break;	 	
+		               
+		               
+		               case 1:
+		           
+			               var idPermisos3:ArrayCollection = new ArrayCollection();
+			               idPermisos3.addItem(PermisosMl.LIQUIDAR_CONTRATO);
+			               
+			               return PermisosMl.getInstance().validarPermisos
+						   (UsuariosSysMl.getInstance().usuarioIngresado.usuarioSistemaRols,idPermisos3);
+		               
+		               break;      
+					 	      
+		           }
+		           
+		          return false;
+		      }
+		      
+		      
+		 	  public function showWindow2(opc:int):void {
+		 	    
+		 	      if(opc==2){
+		 	      	    
+		 	      	    
+		 	      	    if(validarPermisos(opc) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1 )
+                	      {
+		 	      	    
+		 	      	    
+				 	      	  if(dgcontrato.selectedItem==null){
+				 	      	 
+				 	      	      Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+				 	      	
+				 	      		}else{
+				 	      	    
+					 	                  PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_TERMINAR_CONTRATOS;
+					 	                  
+					 	                  ContratoMl.getInstance().tipoListarTerminacionesContrato = 1;
+					 	                  
+					 	                  var e:ContratoEvent = new ContratoEvent(ContratoEvent.LISTAR_TERMINACIONES_CONTRATO_POR_RESPUESTA,null,null,null);
+					 	                  CairngormEventDispatcher.getInstance().dispatchEvent(e);
+				 	      	         
+				 	      	         }
+				 	      	         
+				 	      }else{
+                	               	
+                	            Alert.show(PermisosMl.MSG_PERMISO_TERMINAR_CONTRATO+" "+PermisosMl.MSG_ALERTA_PERMISO,"Mensaje de alerta",0,null,null,alertidea,0);
+                	                     
+                	           }	         
+				 	      	         
+		 	             
+		 	        
+		 	        }else if(opc==3){
+		 	        	  
+		 	        	     if(validarPermisos(opc) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1 )
+                	         {
+		 	        	    
+		 	        	    
+		 	        	               if(dgcontrato.selectedItem==null){
+		 	      	 
+		 	      	  					    Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+		 	      	
+		 	      						}else{
+		 	        	    
+		 	        	     					var evv:LiquidacionEvent = new LiquidacionEvent(LiquidacionEvent.LISTAR_LIQUIDACION,null);
+		 	        	     					CairngormEventDispatcher.getInstance().dispatchEvent(evv);
+		 	        	     					
+		 	        	   					  }
+                	        }else{
+                	        	
+                	              Alert.show(PermisosMl.MSG_PERMISO_LIQUIDAR_CONTRATO+" "+PermisosMl.MSG_ALERTA_PERMISO,"Mensaje de alerta",0,null,null,alertidea,0);
+                	             
+                	             }
+		 	        	    
+		 	               
+		 	               
+		 	               }else if(opc==4){
+		 	               	     
+		 	               	     
+		 	               	     if(validarPermisos(opc) || UsuariosSysMl.getInstance().usuarioIngresado.isAdmin == 1 )
+                	               {
+                	 	            
+		 	               	     
+		 	               	        if(dgcontrato.selectedItem==null){
+		 	      	 
+		 	      	  					Alert.show("SELECCIONE UN CONTRATO PARA REALIZAR ESTA OPERACIÓN","",0,null,null,alerta,0);
+		 	      	
+		 	      						}else{
+		 	               	                     
+			 	               	      			 var solicitudservicio:solicitudesServicios=solicitudesServicios(PopUpManager.createPopUp(PantallasMl.atsys,solicitudesServicios,false));
+			 	                           		 PopUpManager.centerPopUp(solicitudservicio);
+			 	                                 ContratoMl.getInstance().selectableContrato=false;
+			 	                                 PermisosMl.getInstance().deshabilitarMenus();
+			 	                             
+			 	                             }
+                	               }else{
+                	               	
+                	                      Alert.show(PermisosMl.MSG_PERMISO+" "+PermisosMl.MSG_ALERTA_PERMISO,"Mensaje de alerta",0,null,null,alertidea,0);
+                	                     
+                	                    }
+			 	                             
+			 	                             
+			 	                      }
+		 	  
+		 	  }
+		 	 
+		 	
+		 	 
+	]]>
+   </mx:Script>
+	
+</mx:VBox>
+
+
+
+
+
+
+
+
+
+
+
+
+                   

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml" horizontalAlign="center" verticalAlign="middle" width="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			import MODEL.RecursoHumanoMl;
+			
+			[Bindable]
+			[Embed(source="/REC/IMAGENES/docs.png")]
+			public var doc:Class;
+			
+		]]>
+	</mx:Script>
+	
+	<!--mx:Label  text="{data.nombre}"  width="100%" toolTip="{data.nombre}" textAlign="center"/-->
+    <mx:Image source="{doc}" width="14" height="14" toolTip="DOCUMENTACIÓN
+			  	    {'\n\n'} Presento Rut? = {RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presentoRut==1?('SI'):('NO')}
+			  	    {'\n\n'} Presento Cédula? = {RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presentoCedula==1?('SI'):('NO')}
+			  	    {'\n\n'} Presento Hoja de Vida? = {RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presntoHv==1?('SI'):('NO')}
+			  	    {'\n\n'} Presento Entrevista? = {RecursoHumanoMl.getInstance().RecursoHumanoPpl.dgrecursohumano.selectedItem.presentoEntrevista==1?('SI'):('NO')}
+			  	    {'\n\n'}
+			  	    "/>
+</mx:Box>
+

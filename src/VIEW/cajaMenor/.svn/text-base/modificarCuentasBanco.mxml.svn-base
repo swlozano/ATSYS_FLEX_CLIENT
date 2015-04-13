@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	creationComplete="{creationCompleteHandler()}" close="returnName()" 
+	layout="absolute"  width="500" height="400" 
+	showCloseButton="false" 
+	borderSkin="CSS.SKIN.PopUpSkin"
+	x="{(Application.application.width/2)-(this.width/2)}"
+    y = "{(Application.application.height/2)-(this.height/2)}"
+    initialize="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosmodificarCuentab,0,-1 ,true)}"
+	color="#FDFDFD" fontSize="12">
+	
+	<mx:Script>
+		<![CDATA[
+			import EVENT.PersonaEvent;
+			import MODEL.PersonaMl;
+			import MODEL.PantallasMl;
+			import mx.core.Application;
+			import mx.collections.ArrayCollection;
+			import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import EVENT.CajaMenorEvent;
+			import VO.CajaMenorVO;
+			import MODEL.UtilidadesMl;
+			import MODEL.PermisosMl;
+			import MODEL.UsuariosSysMl;
+			import MODEL.CajaMenorMl;
+			import mx.events.ValidationResultEvent;
+			import mx.validators.Validator;
+			import mx.managers.PopUpManager;
+			
+			
+			[Bindable]
+            public var formIsValid:Boolean=true;
+            [Bindable]
+            public var formIsEmpty:Boolean=true;
+            private var focussedFormControl:DisplayObject;
+			
+            private function modificarCbanco():void{
+            	
+              if(formIsValid){	
+            
+              modValCbanco.text = UtilidadesMl.getInstance().combertirDecimalToEntero(modValCbanco.text);
+              var cajamenor:CajaMenorVO=new CajaMenorVO(CajaMenorMl.getInstance().cuentasBancoPpl.dgCuentasBanco.selectedItem.id,cbxModResponsable.selectedItem.id,modNomCbanco.text,parseFloat(modValCbanco.text),0,0,getUsuariosToNotificarSeleccionadosMod(),0,0,1,false);
+              var event:CajaMenorEvent = new CajaMenorEvent(CajaMenorEvent.CONFIGURAR_CAJA_MENOR,cajamenor);
+              CairngormEventDispatcher.getInstance().dispatchEvent(event);
+           	  returnName();
+              }
+            }
+			
+			public function getUsuariosToNotificarSeleccionadosMod():Array
+            {
+            	
+            	UsuariosSysMl.getInstance().idUsuNotificacion = new Array();
+            	
+            	for each( var x:* in UsuariosSysMl.getInstance().listUs)
+            	{
+            		if(x.asignado)
+            			UsuariosSysMl.getInstance().idUsuNotificacion.push(x.id);
+            	}
+            	
+            	return UsuariosSysMl.getInstance().idUsuNotificacion;
+            }
+			
+			private function returnName():void {
+                 PopUpManager.removePopUp(this);
+                 CajaMenorMl.getInstance().selectableCBanco=true;
+                
+                 PermisosMl.getInstance().CloseMainMenu.enabled=true;
+		         UsuariosSysMl.getInstance().mostrarSubMenu=true;
+            }
+            
+            private function validateForm(event:Event):void{
+            
+               focussedFormControl = event.target as DisplayObject;
+               formIsValid = true;
+               validate(modnameValidator);
+               validate(modvalorValidator);
+               validate(respValidator);
+               
+               
+            }
+            
+            private function validate(validator:Validator):Boolean{
+            
+               var validatorSource:DisplayObject = validator.source as DisplayObject;
+               var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+               var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+               var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+               formIsValid = formIsValid && currentControlIsValid;
+               return currentControlIsValid;
+            } 
+            
+            private function creationCompleteHandler():void
+            {
+               CajaMenorMl.getInstance().Clon_pantallamodificarCuenta = this;	
+               resetFocus();
+            }   
+          
+            private function clearFormHandler():void
+            {
+              
+               formIsEmpty=true;
+               resetFocus();
+            }
+           
+            private function resetFocus():void
+            {
+                focusManager.setFocus(modNomCbanco);
+            }
+            
+         /*   
+             private function llamarCbx():void
+            {
+                txtModResponsable.setVisible(false);
+                cbxModResponsable.setVisible(true);
+            }
+            
+            private function cambiarSelecCbx():void
+            {
+                cbxModResponsable.setVisible(false);
+                txtModResponsable.setVisible(true);
+                var borrar:Object = cbxModResponsable.selectedItem;
+                CajaMenorMl.getInstance().txtModResponsableText = cbxModResponsable.selectedItem.nombre + " " +  cbxModResponsable.selectedItem.apellido;
+                
+            }*/
+            
+            public function checkall():void{
+            
+               //RolSysMl.getInstance().checarallCheckbox();   
+                UsuariosSysMl.getInstance().checarallCheckbox(); 
+                          
+               var cont:int=0;
+               var ar:ArrayCollection = new ArrayCollection();
+               ar=UsuariosSysMl.getInstance().listUs as ArrayCollection;
+               for each(var x:* in UsuariosSysMl.getInstance().listUs){
+               
+                  if(checkbxselecallresponsables.selected){
+                    
+                    x.asignado=true;
+                     
+                  }else{
+                  
+                    x.asignado=false;
+                    
+                  }
+                  ar.getItemAt(cont).asignado=x.asignado;
+               		cont++;
+               }
+               UsuariosSysMl.getInstance().listUs=ar;
+               
+              
+            }
+            
+            private function ComprobarExistenciaPersona():void{
+            	
+            	PantallasMl.ESTADO_PANTALLA = PantallasMl.getInstance().PANTALLA_MODCUENTA_COMPROBAR_EXISTENCIA_PERSONA;
+            	PersonaMl.getInstance().cedulaToComprobar = cbxModResponsable.selectedItem.cedula;
+            	var o:Object = cbxModResponsable.selectedItem;
+            	var i:int = PersonaMl.getInstance().cedulaToComprobar;
+            	var e:PersonaEvent = new PersonaEvent(PersonaEvent.COMPROBAR_EXISTENCIA_PERSONAS,null);
+            	CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            	
+            }
+            
+            public function lblfunction_nombreApe(item:Object):String{
+            	
+            	var retorno:String;
+            	
+            	retorno = item.nombre +" "+ item.apellido;
+            	
+            	return retorno; 
+            	
+            }
+			
+		]]>
+	</mx:Script>
+	
+	<mx:StringValidator 
+    	requiredFieldError="!!Este campo es Obligatorio. Ingrese el Nombre de la Cuenta de Banco por favor¡¡"
+    	tooShortError="!!Este campo necesita al menos 2 caracteres mínimo¡¡"
+    	tooLongError="!!Demasiados caracteres¡¡"
+        id="modnameValidator"
+        source="{modNomCbanco}" 
+        property="text"
+        minLength="2"
+        maxLength="100"
+    />
+    
+    <mx:NumberValidator
+   	
+	   	 minValue="0"
+	     lowerThanMinError="!!Seleccione un Responsable de la lista¡¡"
+	     property="selectedIndex"
+	     id="respValidator"
+	     source="{cbxModResponsable}" 
+   	
+   	/>
+   
+	 <mx:NumberValidator
+   	
+   	 minValue="100"
+     lowerThanMinError="!!El Valor es Muy bajo¡¡"
+     requiredFieldError="!!Este campo es Obligatorio. Ingrese el Valor por favor¡¡"
+     maxValue="999999999"
+     exceedsMaxError="!!Monto excedido"
+   	 property="text"
+     id="modvalorValidator"
+     source="{modValCbanco}" 
+   	
+   	/>
+	 
+	 <mx:VBox  width="100%" height="100%" id="vbox1" horizontalAlign="center" verticalAlign="middle" >
+	 
+	                
+	                <mx:Box width="100%" height="35"  borderSkin="CSS.SKIN.BoxSkinUp" id="box1" verticalAlign="middle" horizontalAlign="center">
+		 				<mx:Canvas width="100%" height="100%" id="canvas1"  fontSize="13">
+		 					<mx:Label  id="lblAddCmenor" text="{UtilidadesMl.getInstance().tituloPantalla}" color="#FFFFFF" fontWeight="bold" fontSize="13"
+		 	     			x="{(canvas1.width/2)-(lblAddCmenor.width/2)}" y="12"/>	
+		 				</mx:Canvas>
+		 			</mx:Box>
+	                
+	            
+	            <mx:Box id="box2" height="78%" width="100%" borderSkin="CSS.SKIN.BoxSkinMedio" verticalAlign="middle" horizontalAlign="center">
+	            
+					<mx:Form   verticalScrollPolicy="off" width="96%" height="88%">
+				    	
+				    	<mx:FormItem label="NOMBRE"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11"> 	
+					  	    <mx:TextInput  text="{CajaMenorMl.getInstance().cuentasBancoPpl.dgCuentasBanco.selectedItem.nombre}" change="validateForm(event)" id="modNomCbanco"  width="75%" maxChars="20"/>  	  	
+					  	</mx:FormItem>
+					  	
+					  	<mx:Spacer height="6"/>
+					  	
+					  	<mx:FormItem label="VALOR"  fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11"> 	
+					  	    <mx:TextInput focusIn="{modValCbanco.text=UtilidadesMl.getInstance().combertirDecimalToEntero(modValCbanco.text)}" focusOut="{modValCbanco.text=UtilidadesMl.getInstance().formaterMoneda(modValCbanco.text)}" text="{UtilidadesMl.getInstance().formaterMoneda(CajaMenorMl.getInstance().cuentasBancoPpl.dgCuentasBanco.selectedItem.montoInicio)}" change="validateForm(event)" restrict="0-9"  id="modValCbanco"  width="75%"/>  	  	
+					  	</mx:FormItem>
+				    	
+				    	<mx:Spacer height="6"/>
+				    	
+					  	<mx:FormItem label="RESPONSABLE DE CUENTA" fontWeight="bold" color="#FFFFFF" width="100%" fontSize="11">
+					  		<mx:Canvas width="100%">
+					  			<mx:ComboBox change="{ComprobarExistenciaPersona(),validateForm(event)}" toolTip="{cbxModResponsable.selectedItem.nombre +' '+ cbxModResponsable.selectedItem.apellido}" id="cbxModResponsable" minWidth="{modValCbanco.width}" maxWidth="{modValCbanco.width}" labelFunction="lblfunction_nombreApe" dataProvider="{UsuariosSysMl.getInstance().listUsCbx}" 
+					  			selectedIndex="{CajaMenorMl.getInstance().cbxModResponsableSeletectIndex}" />	
+					  			<!--mx:TextInput id="txtModResponsable" editable="false" text="{CajaMenorMl.getInstance().txtModResponsableText}" 
+					  				width="75%" click="{llamarCbx()}"/-->
+					  		</mx:Canvas>
+					  		
+					  	</mx:FormItem>
+					  	
+					  	<mx:Spacer height="6"/>
+					    
+					    <mx:Box width="100%" verticalAlign="middle" horizontalAlign="center">
+					       <mx:HRule width="96%"/>	
+					    </mx:Box>
+					    <mx:Spacer height="6"/>
+					  	
+					  	<mx:Box verticalAlign="middle" horizontalAlign="center" width="100%" fontWeight="bold" >
+					  	    <mx:HBox>
+		  	      	    	 	<mx:Label text="SELECCIONAR TODOS LOS CORREOS" color="#FFFFFF" fontSize="11" fontWeight="bold"/>
+		  	      	       		<mx:CheckBox selected="false" id="checkbxselecallresponsables" change="checkall()" />	
+		  	      	    	</mx:HBox>
+					  	</mx:Box>
+					  	
+					  	<mx:Box width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+					  	   <mx:DataGrid width="95%" dataProvider="{UsuariosSysMl.getInstance().listUs}" id="dgUsCBanco"  height="100%"  textAlign="center" color="#000000" fontSize="10">
+					  	      <mx:columns>
+				                     <mx:DataGridColumn headerText="Nombres" dataField="nombre" textAlign="center" />
+				                     <mx:DataGridColumn headerText="Apellidos" dataField="apellido" textAlign="center" />
+								     <mx:DataGridColumn headerText="Asignado" dataField="id" width="80" textAlign="center">	  	     
+					  	                        <mx:itemRenderer>
+										    	           <mx:Component>
+										    	            <mx:CheckBox  click="data.asignado=!data.asignado"  
+										    	            	selected="{data.asignado}"  horizontalCenter="true"/>
+										    	           </mx:Component>   
+										    	</mx:itemRenderer>
+									 </mx:DataGridColumn> 
+							 </mx:columns>
+					  	   </mx:DataGrid>
+					    </mx:Box>
+				    	
+				    </mx:Form>
+				    
+				</mx:Box>
+				
+				
+				<mx:Box width="100%" height="40"  borderSkin="CSS.SKIN.BoxSkinAbajo" id="box3" verticalAlign="middle" horizontalAlign="center">
+	    		  <mx:HBox width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+	      
+				      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+				      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%">
+				      		<mx:Image source="{UtilidadesMl.getInstance().backEnable==true?(UtilidadesMl.getInstance().rutaback):UtilidadesMl.getInstance().rutaback2}"
+				      			  mouseOver="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosmodificarCuentab,0,-1,false)}" toolTip="Atras" />	
+				      	</mx:Box>
+				      	<mx:Box horizontalAlign="right" verticalAlign="middle" width="50%" disabledColor="#000000">
+				      		<mx:Image id="ok" source="{formIsValid == true?UtilidadesMl.getInstance().rutaCheck:UtilidadesMl.getInstance().rutaCheck2}"  toolTip="Aceptar" enabled="{formIsValid}" click="{modificarCbanco()}" />	
+				      	</mx:Box>
+				      	
+				      </mx:HBox>
+				      <mx:HBox height="100%" width="50%" verticalAlign="middle">
+				      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left" >
+				      			<mx:Image id="cancel" source="@Embed(source='REC/IMAGENES/delete.png')" click="{returnName()}" toolTip="Cancelar" 
+				      				/>	
+				      		</mx:Box>
+				      		<mx:Box width="50%" verticalAlign="middle" horizontalAlign="left">
+				      			<mx:Image source="{UtilidadesMl.getInstance().nextEnable==true?(UtilidadesMl.getInstance().next):UtilidadesMl.getInstance().next2}"  toolTip="Siguiente" mouseOver="{UtilidadesMl.getInstance().validarNavtilewindow(UtilidadesMl.getInstance().arrayTitulosmodificarCuentab,0,-1,true)}"/>	
+				      		</mx:Box>
+				      		
+				    	</mx:HBox>
+	             </mx:HBox>
+				 	
+	        </mx:Box>    
+	
+		</mx:VBox>
+	
+</mx:TitleWindow>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box verticalAlign="middle" horizontalAlign="center" xmlns:mx="http://www.adobe.com/2006/mxml" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+  <mx:Label textAlign="center" toolTip="{(data.concepto)}" text="{(data.concepto)}"  color="#006699"/>
+</mx:Box>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box verticalAlign="middle" horizontalAlign="center" xmlns:mx="http://www.adobe.com/2006/mxml" 
+	horizontalScrollPolicy="off" verticalScrollPolicy="off" width="40">
+	<mx:Script>
+		<![CDATA[
+			import MODEL.UtilidadesMl;
+		]]>
+	</mx:Script>
+	<mx:Label textAlign="center" text="{UtilidadesMl.getInstance().formaterMoneda(data.precio)}"  />
+</mx:Box>

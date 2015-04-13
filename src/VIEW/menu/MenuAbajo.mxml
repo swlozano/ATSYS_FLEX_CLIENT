@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+	<mx:Box  xmlns:mx="http://www.adobe.com/2006/mxml"  width="100%" height="67" horizontalAlign="center" verticalAlign="top" 
+	 	creationComplete="{UtilidadesMl.getInstance().Clon_MenuAbajo = this,creationCompleteIndex()}" verticalScrollPolicy="off" horizontalScrollPolicy="off" xmlns:menu="VIEW.usuarios.*" >
+		 <mx:VBox width="95%" height="90%" styleName="fseControlBar" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+			<mx:Canvas height="100%" width="100%" id="canvas1" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+					<!--mx:Box width="100%" height="100%" styleName="fseControlBar"/-->
+					<mx:Box width="100%" height="100%" styleName="fseControlBar" backgroundAlpha="1" id="bx" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+						<mx:filters>
+							<flash.filters:BevelFilter xmlns:flash.filters="flash.filters.*" angle="90" blurX="1" blurY="1"
+							distance="1" highlightAlpha=".4" shadowAlpha=".4" highlightColor="0x000000" shadowColor="0xFFFFFF"  
+							knockout="true"/>
+						</mx:filters>
+					</mx:Box>
+					<mx:VBox id="VbxSubMenu" enabled="{UsuariosSysMl.getInstance().mostrarSubMenu}" width="100%" height="100%" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+						<mx:Image source="{isClosed == false?(closeNav):openNav}" toolTip="{isClosed==false?(Application.application.Off):Application.application.On}" useHandCursor="true" buttonMode="true" mouseChildren="false"
+			 			 click="{discloseNav()}" id="closeNavBtn" width="100%" verticalAlign="middle" horizontalAlign="center"/>	
+					    <mx:HBox  verticalScrollPolicy="off" horizontalScrollPolicy="off" width="100%" height="38" id="hboxMnuabajo" horizontalAlign="center" verticalAlign="top">
+							
+
+							
+							<mx:Button id="btnadd" width="32"  click="{Application.application.showWindow(1)}" toolTip="Añade {Application.application.arrNomSubModulos[Application.application.currentView]} " height="32" upSkin="@Embed(source='REC/IMAGENES/add.png')" downSkin="@Embed(source='REC/IMAGENES/add2.png')" overSkin="@Embed(source='REC/IMAGENES/add.png')"/>
+					        <mx:HRule visible="false" id="hr1" height="0" width="10"/>
+					        <mx:Button  id="btndelete" width="32" click="{Application.application.showWindow(3)}" height="32" toolTip="Elimina {Application.application.arrNomSubModulos[Application.application.currentView]} " upSkin="@Embed(source='REC/IMAGENES/delete.png')" downSkin="@Embed(source='REC/IMAGENES/delete2.png')" overSkin="@Embed(source='REC/IMAGENES/delete.png')" />   
+					        <mx:HRule visible="false" id="hr2" height="0" width="10"/>
+					        <mx:Button id="btnupdate" width="32" click="{Application.application.showWindow(2)}" height="32" toolTip="{changetooltipbtnupdate()}{Application.application.arrNomSubModulos[Application.application.currentView]}" upSkin="@Embed(source='REC/IMAGENES/update.png')" downSkin="@Embed(source='REC/IMAGENES/update2.png')" overSkin="@Embed(source='REC/IMAGENES/update.png')" />   					    
+                            <mx:HRule visible="false" id="hr3" height="0" width="10"/>
+             				<mx:Button id="btnfind" width="32"  click="{Application.application.showWindow(4)}" height="32" toolTip="Búsqueda de {Application.application.arrNomSubModulos[Application.application.currentView]}" upSkin="{find}" downSkin="{find2}" overSkin="{find}" />   					    
+                            <mx:HRule visible="false" id="hr4" height="0" width="10"/>
+             				<mx:Button id="btnabonofactura" click="{Application.application.showWindow(5)}" visible="false" enabled="false" width="0"  height="0" toolTip="Gestión de abonado de factura" upSkin="@Embed(source='REC/IMAGENES/lana.png')" downSkin="@Embed(source='REC/IMAGENES/lana2.png')" overSkin="@Embed(source='REC/IMAGENES/lana.png')" />  
+                             
+                               
+					    </mx:HBox>
+					    					
+					</mx:VBox>
+								 		 
+				 </mx:Canvas>
+				 
+		</mx:VBox>
+			<mx:Resize id="shrink" target="{this}" duration="1000" heightTo="{closeNavBtn.height + 10}" widthTo="{closeNavBtn.height + 60}"/>
+			<mx:Resize id="grow"   target="{this}" duration="1000"  heightTo="{alto}" widthTo="{Application.application.anchoMenuAbajo - 5}"   />
+			
+			<mx:Script>
+		<![CDATA[
+			import MODEL.UtilidadesMl;
+			import MODEL.UsuariosSysMl;
+			import MODEL.CajaMenorMl;
+			import flash.sampler.getSize;
+			import mx.core.Application;
+			import mx.controls.Alert;
+			
+			[Bindable]
+			[Embed(source="/REC/IMAGENES/closeNavMenu.png")]
+			public var closeNav:Class;
+			
+			[Bindable]
+			[Embed(source="/REC/IMAGENES/find.png")]
+			public var find:Class;
+				
+			[Bindable]
+			[Embed(source="/REC/IMAGENES/find2.png")]
+			public var find2:Class;	
+				
+			[Bindable]
+			[Embed(source="/REC/IMAGENES/openNavMenu.png")]
+			public var openNav:Class;
+			
+						
+			[Bindable]
+			public var isClosed:Boolean = false;
+			
+			[Bindable]
+			public var bandera:Boolean = true;
+			
+			[Bindable]public var ancho:int;
+			[Bindable]public var alto:int;
+			
+			public function changetooltipbtnupdate():String{
+			
+			  var updates:String;
+			
+			   if(Application.application.currentView==3){
+			     
+			     updates="Configura ";
+			     
+			   }else if(Application.application.currentView==9){
+			    
+			            updates="Adendo ";
+			   
+			          }else if(Application.application.currentView!=3 && Application.application.currentView!=9){
+	                                    		            
+			                  updates="Modifica ";
+			          }
+			 
+			 return updates;
+			 
+			}
+			
+			
+			
+			public function bloquearBtnModificar():void{
+			 
+			   
+			
+			}
+			
+			public function bloquearBtnabonoFACTURA():void{
+				
+				
+			 	if(Application.application.currentView==11){
+			 		
+			 		btnabonofactura.setVisible(true);
+			   	    btnabonofactura.enabled = true;
+			   	    btnabonofactura.width=32;
+			   	    btnabonofactura.height=32;
+			 		
+			 	}else{
+			 		  btnabonofactura.setVisible(false);
+			   	      btnabonofactura.enabled = false;
+			   	      btnabonofactura.width=0;
+			   	      btnabonofactura.height=0;
+			 	     }
+				
+			}
+			
+			public function blockbtnborrar():void{
+			
+			  if(Application.application.currentView==9 || Application.application.currentView==6){
+			      btndelete.width=0;
+				  btndelete.height=0;
+				  btndelete.visible=false;  
+				  btndelete.enabled=false;
+				  btnupdate.x=btndelete.x;
+				  btnupdate.y=btndelete.y;
+			  }else{
+			        btndelete.width=32;
+					btndelete.height=32;
+					btndelete.visible=true;
+					btndelete.enabled=true;
+					
+			  }
+			
+			}
+			
+			public function estadoBtnBusqueda():void{
+			
+			  if(Application.application.currentView==5 || Application.application.currentView==11 ){
+			  
+			        bandera = true;
+			        //btnfind
+			        btnfind.width=32;
+			        btnfind.height=32;
+			        btnfind.visible=true;
+			        btnfind.enabled=true;
+			        
+			        
+			     
+			  
+			  }else{
+			   
+			       bandera=false;
+			     //btnfind
+			      btnfind.visible=false;
+			      btnfind.height=0;
+			      btnfind.width=0;
+			      btnfind.enabled=false;
+			  }
+			
+			}
+			
+			public function cambiarEstadoBtnsMenu():void
+			{
+			   if(isClosed == false){
+			   	
+			      //btnadd
+			      
+			      
+			      btnadd.visible=false;
+			      btnadd.width=0;
+			      btnadd.height=0;
+			      btnadd.enabled=false;
+			      //btndelete
+			      btndelete.width=0;
+				  btndelete.height=0;
+				  btndelete.visible=false;  
+				  btndelete.enabled=false;
+				  
+				  //btnupdate
+			      btnupdate.visible=false;
+			      btnupdate.height=0;
+			      btnupdate.width=0;
+			      btnupdate.enabled=false;
+			      
+			      //btnabonofac
+			      btnabonofactura.setVisible(false);
+			      btnabonofactura.height=0;
+			      btnabonofactura.width=0;
+			      btnabonofactura.enabled=false;
+			      
+			      if(bandera==true){
+			      btnfind.visible=false;
+			      btnfind.height=0;
+			      btnfind.width=0;
+			      btnfind.enabled=false;
+			      //bandera=false;
+			      }
+			      
+			      
+			      hr1.height=0;
+			      hr1.width=0;
+			      
+			      hr2.height=0;
+			      hr2.width=0;
+			      
+			      hr3.height=0;
+			      hr3.width=0;
+      
+
+			   }else{
+			   	    //btnadd
+			   	    
+			   	    
+			   	    if(Application.application.currentView==9 || Application.application.currentView==6){
+			           btndelete.width=0;
+				       btndelete.height=0;
+				       btndelete.visible=false;  
+				       btndelete.enabled=false;
+				       btnupdate.x=btndelete.x;
+				       btnupdate.y=btndelete.y;
+			        }else{
+			        
+			        btndelete.width=32;
+					btndelete.height=32;
+					btndelete.visible=true;
+					btndelete.enabled=true;
+			        }
+			        
+			   		btnadd.visible=true;
+			      	btnadd.width=32;
+			      	btnadd.height=32;
+			      	btnadd.enabled=true;
+			      	//btndelete
+			        
+			        btnupdate.visible=true;
+			        btnupdate.height=32;
+			        btnupdate.width=32;
+			        btnupdate.enabled=true;
+			        
+			        
+			        if(Application.application.currentView==11){
+			        	
+			   	     btnabonofactura.setVisible(true);
+			      	 btnabonofactura.height=32;
+			      	 btnabonofactura.width=32;
+			      	 btnabonofactura.enabled=true;
+			   	     
+			        	
+			        }else{
+			        
+					//btnupdate
+					/*btnupdate.width=0;
+			   	     btnupdate.height=0;
+			   	     btnupdate.visible=false;
+			   	     btnupdate.enabled=false;*/
+					
+			        
+			        btnabonofactura.setVisible(false);
+			      	btnabonofactura.height=0;
+			      	btnabonofactura.width=0;
+			      	btnabonofactura.enabled=false;
+			        
+			        }
+			        //bandera=true;
+			      if(bandera==true){
+			      btnfind.visible=true;
+			      btnfind.height=32;
+			      btnfind.width=32;
+			      btnfind.enabled=true;
+			      //bandera=false;
+			      }
+			        
+			        hr1.height=0;
+			        hr1.width=10;
+			      
+			        hr2.height=0;
+			        hr2.width=10;
+			        
+			        hr3.height=0;
+			        hr3.width=10;
+			        
+			        
+		    	}	  
+			}
+				
+			public function discloseNav():void 
+			{
+				cambiarEstadoBtnsMenu();
+				if (isClosed == false) {
+					
+					
+					hboxMnuabajo.visible=false;
+					shrink.end();
+					shrink.play();
+					isClosed = true;
+					
+				} 
+				else 
+				{
+					
+					hboxMnuabajo.visible=true;
+					grow.end();
+					grow.play();
+					isClosed = false;
+					
+				}
+				
+			}
+			public function creationCompleteIndex():void
+			{
+			   
+			    estadoBtnBusqueda();
+			    blockbtnborrar();
+			    bloquearBtnModificar();
+			    bloquearBtnabonoFACTURA();
+				alto = this.height;
+				Application.application.menuAbajo = this;
+				
+			}
+		]]>
+	</mx:Script>
+	</mx:Box>
+	

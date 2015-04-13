@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox width="100%" height="100%" xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="crearPantalla()"  styleName="glassPods" verticalAlign="middle" horizontalAlign="center" xmlns:menu="VIEW.menu.*">
+	<mx:Box width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom">
+		<mx:Box width="95%" height="95%" >
+			<mx:DataGrid alternatingItemColors="[#F7F7F7, #D8DEE8]" 
+				fontSize="15" width="100%" selectable="{RolSysMl.getInstance().selectableRol}"  dataProvider="{RolSysMl.getInstance().listRol}" height="100%" id="dgroles" >
+				<mx:columns>
+					<mx:DataGridColumn  headerText="ID" dataField="id" width="50" textAlign="center"/>
+					<mx:DataGridColumn headerText="Nombre del Rol" dataField="nombre" textAlign="center"/>
+				</mx:columns>
+			</mx:DataGrid>
+			
+		</mx:Box>
+	</mx:Box>
+	<menu:MenuAbajo />
+	
+	<mx:Script>
+	<![CDATA[
+		import MODEL.PermisosMl;
+		import MODEL.RolSysMl;
+		
+		public function crearPantalla():void
+		{
+			 RolSysMl.getInstance().rolesPpl=this;
+			 PermisosMl.getInstance().rolesPpl=this;
+		}
+		
+	]]>
+   </mx:Script>
+	
+</mx:VBox>

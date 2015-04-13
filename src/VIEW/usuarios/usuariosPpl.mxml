@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox width="100%" height="100%" xmlns:mx="http://www.adobe.com/2006/mxml" 
+	 creationComplete="{crearPantalla()}" styleName="glassPods" verticalAlign="middle" 
+	 horizontalAlign="center" xmlns:menu="VIEW.menu.*" xmlns:otros="VIEW.otros.*">
+	<mx:Script >
+		<![CDATA[
+			import VIEW.otros.ItemColumna;
+			//import mx.charts.chartClasses.DataDescription;
+			private var selectetIndex:int;
+			public  function openCbx():void
+			{
+				//cbxCoincidencia.
+				if( UtilidadesMl.coincidencias.length > 0)
+				{
+					UsuariosSysMl.getInstance().cbxCoincidenciaVisible = true;
+					cbxCoincidencia.open();
+				}
+				else
+				{
+					UsuariosSysMl.getInstance().cbxCoincidenciaVisible = false;
+				}
+			}
+			
+			public  function visibleCbx():Boolean
+			{
+				//cbxCoincidencia.
+				if( UtilidadesMl.coincidencias.length > 0)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Box width="100%" height="100%" horizontalAlign="center" verticalAlign="bottom">
+	 <mx:VRule height="10" visible="false"/>
+    	<mx:HBox width="95%" verticalAlign="middle" horizontalAlign="left">
+	     	<mx:Label text="Usuarios" x="{dgUsuarios.x}" y="2"  color="#FCFCFC" fontSize="15"/>
+	     	<mx:Image source="{buscar}" x="455" y="-5"/>
+	        <mx:TextInput   id="txtbusquedausers" focusIn="txtbusquedausers.text=''" focusOut="txtbusquedausers.text='Buscar usuarios rápidamente'"  
+	        	x="492" y="1" text="Buscar usuarios rápidamente" fontStyle="italic" fontSize="11" 
+	        	change="{UtilidadesMl.buscarConcidencias(UsuariosSysMl.getInstance().listUsClonado,txtbusquedausers.text,UtilidadesMl.USUARIO_TIPO),openCbx()}"/>
+	       
+	         <otros:CbxCoincidencia  id="cbxCoincidencia" change="{UtilidadesMl.getInstance().buscarIndexSelect(cbxCoincidencia.selectedItem.index,dgUsuarios.rowCount)}"/>
+	         
+      	</mx:HBox>
+		<mx:Box width="95%" height="95%" >
+			<mx:DataGrid  selectable="{UsuariosSysMl.getInstance().selectableUs}" 
+				dataProvider="{UsuariosSysMl.getInstance().listUs}" width="100%" height="100%" 
+				id="dgUsuarios" name="dgusu" alternatingItemColors="[#F7F7F7, #D8DEE8]" 
+				fontSize="15"  sortableColumns="false" selectedIndex="{UtilidadesMl.getInstance().dgSelectedIndex}" verticalScrollPosition="{UtilidadesMl.getInstance().verticalScrollPosition}">
+				<mx:columns>
+					<mx:DataGridColumn headerText="Nombres" textAlign="center" dataField="nombre" itemRenderer="VIEW.otros.ItemColumna"/>
+					<mx:DataGridColumn headerText="Apellidos" textAlign="center" dataField="apellido"/>
+					<mx:DataGridColumn headerText="Cedula" dataField="cedula" textAlign="center"/>
+					<mx:DataGridColumn headerText="E-mail" dataField="correoElectronico" textAlign="center"/>
+				</mx:columns>
+			</mx:DataGrid>
+			
+		</mx:Box>
+	</mx:Box>
+	<menu:MenuAbajo />
+	<mx:Script>
+	<![CDATA[
+		import MODEL.UtilidadesMl;
+		import mx.managers.PopUpManager;
+		import com.adobe.cairngorm.control.CairngormEventDispatcher;
+		import EVENT.UsuariosSysEvent;
+		import VO.UsuariosSysVO;
+		import MODEL.UsuariosSysMl;
+		import mx.core.Application;
+		import mx.collections.ArrayCollection;
+		import mx.controls.dataGridClasses.DataGridListData;
+		import mx.controls.Alert;
+		import mx.events.DataGridEvent;
+		import flash.sampler.getSamples;
+		[Bindable]
+		[Embed(source="/REC/IMAGENES/f.png")]
+		public var buscar:Class;
+		 	
+		public function crearPantalla():void
+		{
+			 UsuariosSysMl.getInstance().usuariosPpl=this;
+			 			 
+		}
+		
+		 	 
+	]]>
+   </mx:Script>
+	
+</mx:VBox>

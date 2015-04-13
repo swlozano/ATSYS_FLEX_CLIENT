@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="992" verticalAlign="middle" horizontalAlign="center" height="500">
+	<mx:Style>
+		  
+		  DataGrid {
+					   fontSize: 6;
+					   headerStyleName: "mydataGridHeaderStyle";
+					}
+					
+					.mydataGridHeaderStyle {
+					   fontSize: 9;
+					}
+		  
+		  
+	</mx:Style>
+
+<mx:Script>
+	<![CDATA[
+		import MODEL.UtilidadesMl;
+		import mx.controls.dataGridClasses.DataGridColumn;
+		
+		   public function labelFunctipoDe(item:Object,dgcolumn:DataGridColumn):String {
+             if(item.tipoMovimiento	== 1/*Ingreso*/){
+             	return item.persona	+ "";
+             }
+             else{
+             	  
+             	  if(item.personaResponsable!=null){  
+             	     return item.personaResponsable.nombreRs;
+             	  }else{
+             	  	
+             	  	    return "";
+             	  	
+             	       } 
+             }  	
+	         
+               
+        }
+	
+		public function labelFunctipoPara(item:Object,dgcolumn:DataGridColumn):String {
+               	
+	         if(item.tipoMovimiento	== 1/*Ingreso*/){
+	         	
+	              if(item.personaResponsable!=null){  
+             	     return item.personaResponsable.nombreRs;
+             	  }else{
+             	  	
+             	  	    return "";
+             	  	
+             	       } 
+             }
+             else{
+             	 
+				    return item.persona	+ "";
+             	
+             }
+               
+        }
+		
+	]]>
+</mx:Script>
+	
+	<mx:Label id="mov" textAlign="center"/>
+	
+    <mx:PrintDataGrid id="dgMov" width="100%" height="80%" styleName="DataGrid">
+        <mx:columns>
+            
+            <mx:DataGridColumn headerText="Fecha Movimiento" dataField="fecha" width="130" itemRenderer="VIEW.Items.Movimientos.ItemFechaMovimiento"/>
+		    <mx:DataGridColumn headerText="Concepto"  dataField="concepto"  width="270" itemRenderer="VIEW.Items.Movimientos.ItemConcepto"/>
+			<mx:DataGridColumn headerText="De"  width="150" textAlign="center" labelFunction="labelFunctipoDe"/>
+			<mx:DataGridColumn headerText="Para" labelFunction="labelFunctipoPara" width="150" textAlign="center"/>
+			<mx:DataGridColumn headerText="Centro de Costo" dataField="centroCosto" width="150" textAlign="center"/>
+			<mx:DataGridColumn headerText="Valor" dataField="valor" width="150" itemRenderer="VIEW.Items.Movimientos.ItemValorMovimiento"/>
+			<mx:DataGridColumn headerText="Saldo" dataField="saldo" width="150" itemRenderer="VIEW.Items.Movimientos.ItemSaldoMovimiento"/>
+            
+            
+        </mx:columns>
+    </mx:PrintDataGrid>
+	
+</mx:VBox>
